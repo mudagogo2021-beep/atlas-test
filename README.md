@@ -65,5 +65,10 @@ Optional top-level fields:
 
 `build_manifest.py` keeps these fields when it regenerates the manifest.
 
+## Map tools
+- **Place search** (🔍, top-right of the map; collapses to a bubble on phones): autocomplete over a local index of base-unit names (countries, US states and counties, Malaysia/Indonesia states and districts, Singapore areas, French départements, plus any ADM2 country loaded by zooming). No external geocoder. Picking a place zooms to it, outlines it in amber, and opens its data popup if the current map covers it. To index another base, add `[baseId, ISO3]` to `SRC` in `app.js`.
+- **Scale bar**: miles and km, bottom-left.
+- **💡 Suggest an idea**: floating button that opens a pre-filled GitHub issue on this repo.
+
 ## Rebuild scripts (box only)
 `/workspace/maps/build_bundle.py` (bases + language data), `build_gb.py` (geoBoundaries per-country files), `build_datasets.py` (other datasets), `build_manifest.py` (manifest + palette).

@@ -50,3 +50,21 @@ body.home #start{display:block}body.home #panel,body.home #toggle,body.home #exp
 #start.incat .crumb button{flex:none}#start.incat .crumb h3{color:#fff}
 @media (max-width:760px){#start.incat{background:linear-gradient(180deg,#1E2430 0,#1E2430 150px,var(--bg) 150px)}#start.incat .crumb{flex-direction:column;align-items:flex-start}}
 @media (max-width:760px){body.home .brand span{display:flex}}
+/* search bubble */
+#search{position:fixed;top:68px;right:354px;z-index:1001;width:300px;max-width:calc(100vw - 80px);background:#fff;border-radius:999px;box-shadow:0 4px 16px #0003;display:flex;align-items:center;border:2px solid var(--bar)}
+#qbtn{background:none;border:0;width:40px;height:40px;font-size:16px;flex:none}
+#q{border:0;outline:0;flex:1;min-width:0;font:500 14px Inter,system-ui,sans-serif;background:none;padding-right:14px;height:40px}
+#qres{position:absolute;top:46px;left:0;right:0;margin:0;padding:0;list-style:none;background:#fff;border-radius:12px;box-shadow:0 8px 24px #0003;overflow:hidden}
+#qres:empty{display:none}#qres li{padding:8px 14px;cursor:pointer;border-top:1px solid var(--line)}#qres li:first-child{border-top:0}
+#qres li b{display:block;font-size:13.5px}#qres li small{color:var(--muted);font-size:11.5px}#qres li:hover,#qres li.act{background:#FFF4E2}#qres li.none{color:var(--muted);cursor:default}
+body.home #search{display:none}
+/* idea FAB */
+#idea{position:fixed;right:356px;bottom:52px;z-index:1001;background:var(--accent);color:var(--bar);font-weight:800;text-decoration:none;border-radius:999px;padding:11px 18px;box-shadow:0 6px 18px #0004;font-size:14px;transition:transform .15s}
+#idea:hover{transform:translateY(-2px)}body.home #idea{right:20px;bottom:44px}
+/* scale bar */
+.leaflet-control-scale{margin-bottom:12px!important}.leaflet-control-scale-line{background:#ffffffd9;border-color:var(--bar);color:var(--bar);font:600 10.5px Inter,system-ui,sans-serif}
+@media (max-width:760px){
+ #search{right:12px;top:68px;width:auto}#search:not(.open){width:44px}#search:not(.open) #q,#search:not(.open) #qres{display:none}#search.open{left:60px}
+ #idea{right:12px;bottom:44px;padding:0;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-size:22px}#idea span{display:none}
+ body.home #idea{right:14px;bottom:42px}body.open #idea{bottom:calc(58vh + 40px)}
+ .leaflet-bottom.leaflet-left{bottom:0}body.open .leaflet-control-scale{display:none}}
