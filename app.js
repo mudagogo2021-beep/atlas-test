@@ -18,7 +18,7 @@ M.datasets.forEach(d=>$('#ds').add(new Option(d.title,d.id)));
 let lastSel='',D,layer,overlays=[],outl=[],pts,hidden=new Set();
 $('#toggle').onclick=()=>document.body.classList.toggle('open');
 $('#ds').onchange=()=>{hidden.clear();show($('#ds').value,{})};
-$('#field').onchange=()=>{hidden.clear();render()};
+$('#field').onchange=()=>{hidden.clear();si&&(si.value='');render();buildSlider();$('#flegt').textContent=$('#field').selectedOptions[0].text};
 function fmt(v){return v==null||v===''?'—':typeof v==='number'?(Math.abs(v)>=1000?v.toLocaleString():+v.toFixed(2)+''):Array.isArray(v)?v.join(', '):v}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function colorer(f,vals){
@@ -57,12 +57,12 @@ async function show(id,opt){
     const outline=oid==='regions13_outline';
     overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map))}
   if(D.view&&!opt.keepView)map.fitBounds(D.view);
-  render()}
+  render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
 function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
 function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.flagField])}" style="height:14px;border:1px solid #0002;vertical-align:middle"> `:'';
   return `<b>${flag}${esc(fmt(p.name??p[d.key]))}</b><table>`+(d.popup||[]).filter(k=>k!=='name').map(k=>{let v=p[k];const s=typeof v==='string'&&/^https?:/.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener">link</a>`:esc(fmt(v));return `<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${s}</td></tr>`}).join('')+'</table>'}
-function render(){
+function render(){hideCard(true);
   if(D.lines)return renderLines();
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
@@ -74,7 +74,8 @@ function render(){
   const drawn=new Set(feats.map(o=>o.ft));
   layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const o=feats.find?null:null;const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
       return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
-    onEachFeature:(ft,l)=>l.bindPopup(()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})}))}).addTo(map);
+    onEachFeature:(ft,l)=>{const P=()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})});l.bindPopup(P);
+      l.on('mouseover',()=>{if(!matchMedia('(hover:hover)').matches)return;hov(l);if(!pinned)showCard(P(),false)});l.on('mouseout',()=>{unhov(l);if(!pinned)hideCard()})}}).addTo(map);
   overlays.forEach(o=>o.bringToFront());outl.forEach(o=>o.on&&o.g.bringToFront());
   const sk=D.id+JSON.stringify(sel),zf=sk!==lastSel;lastSel=sk;
   if(zf&&sel.length&&D.zoomOnFilter!==false&&feats.length&&feats.length<D._base.features.length*0.5)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:feats.map(o=>o.ft)}).getBounds(),{padding:[20,20],maxZoom:9});
@@ -119,9 +120,42 @@ async function admRefresh(){if(!$('#admchk').checked||map.getZoom()<5){admGroup.
     const g=await loadBase('adm',iso);admGroup.addLayer(L.geoJSON(g,{style:{color:'#3A1407',weight:.5,fill:false},interactive:false}))}}
 $('#admchk').onchange=()=>{admGroup.addTo(map);admRefresh()};map.on('moveend',admRefresh);
 window.atlasMap=map;
+// ---- floating UI (generic) ----
+let pinned=false,hl2=null;const info=$('#info');
+function hov(l){if(l.setStyle&&l!==hl2){l._o=l._o||{...l.options};l.setStyle({weight:2.5,color:'#F2A541'});l.bringToFront&&l.bringToFront()}}
+function unhov(l){if(l!==hl2&&l._o&&l.setStyle)l.setStyle({weight:l._o.weight,color:l._o.color})}
+function showCard(html,pin=true){pinned=pin;info.querySelector('.body').innerHTML=html;info.classList.add('on');info.classList.toggle('pin',pin)}
+function hideCard(force){if(force||!pinned){info.classList.remove('on');pinned=false;if(hl2){const l=hl2;hl2=null;unhov(l)}}}
+info.querySelector('.x').onclick=()=>hideCard(true);
+map.on('popupopen',e=>{const p=e.popup,src=p._source;const c=p.getContent();const html=typeof c==='function'?c(src):c;map.closePopup(p);
+  if(hl2&&hl2!==src){const l=hl2;hl2=null;unhov(l)}if(src&&src.setStyle&&src.feature){hov(src);hl2=src}showCard(html,true);dismissHint()});
+map.on('click',()=>{});
+// reset view control
+const RC=L.Control.extend({options:{position:'topleft'},onAdd(){const b=L.DomUtil.create('a','leaflet-bar reset');b.href='#';b.title='Reset view';b.setAttribute('role','button');b.setAttribute('aria-label','Reset view');b.innerHTML='⟲';
+  L.DomEvent.on(b,'click',e=>{L.DomEvent.stop(e);hideCard(true);if(D&&D.view)map.fitBounds(D.view)});return b}});new RC().addTo(map);
+// first-visit hint
+function dismissHint(){const h=$('#hint');if(h.classList.contains('on')){h.classList.remove('on');try{localStorage.setItem('atlasHint','1')}catch(e){}}}
+function maybeHint(){let seen=false;try{seen=localStorage.getItem('atlasHint')}catch(e){}if(seen)return;$('#hint').classList.add('on');setTimeout(dismissHint,7000)}
+$('#hint').onclick=dismissHint;
+// floating legend collapse
+$('#flegbtn').onclick=()=>{$('#fleg').classList.toggle('min')};
+if(innerWidth<=760)$('#fleg').classList.add('min');
+// time slider: built from any numeric filter named year (or "slider":true)
+function buildSlider(){const ts=$('#tslider');ts.classList.remove('on');ts.innerHTML='';if(!D)return;
+  const fl=(D.filters||[]).find(f=>f.slider||f.field==='year');if(!fl)return;const sel=document.querySelector(`#filters select[data-f="${fl.field}"]`);if(!sel)return;
+  const fn=$('#field').value,have=new Set(D._rows.filter(r=>r[fn]!=null).map(r=>String(r[fl.field])));
+  let vals=[...sel.options].map(o=>o.value).filter(v=>v!==''&&!isNaN(+v));if(vals.some(v=>have.has(v)))vals=vals.filter(v=>have.has(v));vals=vals.map(Number).sort((a,b)=>a-b);
+  if(!vals.includes(+sel.value)){sel.value=String(vals[vals.length-1]);render()}if(vals.length<2)return;
+  ts.innerHTML=`<span class="lab">${esc(fl.label)}</span><button class="pl" aria-label="Play">▶</button><input type="range" min="0" max="${vals.length-1}" step="1" aria-label="${esc(fl.label)}"><b class="val"></b>`;
+  const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl');let tm=null;
+  const set=i=>{r.value=i;v.textContent=vals[i];sel.value=String(vals[i]);render()};
+  r.value=Math.max(0,vals.indexOf(+sel.value));v.textContent=vals[+r.value];r.oninput=()=>set(+r.value);
+  pl.onclick=()=>{if(tm){clearInterval(tm);tm=null;pl.textContent='▶';return}pl.textContent='❚❚';if(+r.value>=vals.length-1)set(0);tm=setInterval(()=>{const i=+r.value+1;if(i>=vals.length){clearInterval(tm);tm=null;pl.textContent='▶';return}set(i)},1100)};
+  sel.addEventListener('change',()=>{const i=vals.indexOf(+sel.value);if(i>=0){r.value=i;v.textContent=vals[i]}});ts.classList.add('on')}
+
 const zc=()=>{const z=map.getZoom(),c=map.getContainer().classList;c.toggle('lowz',z<5);c.toggle('tinyz',z<3.5)};map.on('zoomend',zc);zc();
 // scale bar (mi + km)
-L.control.scale({position:'bottomleft',metric:true,imperial:true,maxWidth:130}).addTo(map);
+L.control.scale({position:innerWidth<=760?'topleft':'bottomleft',metric:true,imperial:true,maxWidth:130}).addTo(map);
 // place search: local index of base units only (no geocoder)
 const SRC=[['world'],['us_states'],['us_counties'],['adm1','MYS'],['adm','MYS'],['adm','SGP'],['adm1','IDN'],['adm','IDN'],['adm','FRA']];
 const CN={MYS:'Malaysia',SGP:'Singapore',IDN:'Indonesia',FRA:'France'};let SI=null,hl=null;const seen=new Set();
@@ -150,7 +184,7 @@ const CI=M.categoryInfo||{},autoC=['#2F6DB5','#C8553D','#2E9E4F','#7B3FA0','#F07
 const cats=[...new Set([...(M.categories||[]),...M.datasets.map(d=>d.category||'More maps')])].filter(c=>M.datasets.some(d=>(d.category||'More maps')===c));
 const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[c]||{})});
 const icon=v=>v&&/\.(png|svg|jpe?g|webp)$/i.test(v)?`<img src="${esc(v)}" alt="">`:esc(v||'🗺️');
-function home(cat){if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open');$('#title').textContent='';
+function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open');$('#title').textContent='';
   document.title=cat?cat+" · Muda's Atlas":"Muda's Atlas · What would you like to explore?";const box=$('#cards');$('#start').classList.toggle('incat',!!cat);
   if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),n=M.datasets.filter(d=>(d.category||'More maps')===c).length;
       return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} map${n>1?'s':''}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';

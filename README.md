@@ -70,8 +70,16 @@ Optional top-level fields:
 - **Scale bar**: miles and km, bottom-left.
 - **💡 Suggest an idea**: floating button that opens a pre-filled GitHub issue on this repo.
 
+## Floating on-map controls (automatic for every dataset)
+- **Legend card** (bottom-left; a collapsible chip on phones): tap a row to hide/show that category or class.
+- **Info card**: hover (desktop) previews a place; tap/click pins it with the full popup fields; × closes. Lines and points (A380, Amish settlements) use the same card.
+- **Time slider** (bottom): appears when a dataset has a filter on `year` (or any filter with `"slider":true`). Only years that have values for the current "Colour by" field are offered. ▶ plays through them.
+- **Reset view** (⟲ under the zoom buttons) returns to the dataset's `view`. A one-time hint ("Tap a place or the legend") shows on first visit.
+- Dataset option `outlines`: `[{"base":"megaregions","label":"Region borders & names","labelField":"megaregion","style":{"color":"#1E2430","weight":2},"toggle":true,"default":true}]` draws bold borders (and labels at `lx`/`ly` or the shape centre) from any base; `toggle:true` adds a checkbox (used for "Show state lines").
+- `zoomOnFilter:false` stops the map zooming to the filtered areas.
+
 ## Rebuild scripts (box only)
-`/workspace/maps/build_bundle.py` (bases + language data), `build_gb.py` (geoBoundaries per-country files), `build_datasets.py` (other datasets), `build_manifest.py` (manifest + palette).
+`/workspace/maps/build_bundle.py` (bases + language data), `build_gb.py` (geoBoundaries per-country files), `build_datasets.py` (other datasets), `build_manifest.py` (manifest + palette), `megaregions/build.py`+`build2.py` (Nelson & Rae county assignment), Amish county data from the 2020 USRC Group Detail workbook (`/workspace/maps/amish/`).
 
 ## Line (origin–destination) datasets
 Add `"lines":{"airports":"data/x_airports.json","code":"iata","from":"from","to":"to","size":"size","sizeLabel":"…"}` to a dataset whose `file` has one row per route. The app draws great-circle lines coloured by the selected category field, plus circles at each endpoint sized by the summed `size`. Tapping a line shows the dataset `popup` fields; tapping an airport lists its routes. A filter with `"from":"lines"` lists every endpoint code (matches either end). Example: `a380_routes`.

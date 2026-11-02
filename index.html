@@ -15,6 +15,10 @@
 <header id="bar"><button id="homebtn" class="brand" aria-label="Back to start screen"><img src="favicon.svg" alt=""><span><b>Muda's Atlas</b><small>@youngsirmuda</small></span></button>
  <h1 id="title"></h1><button id="explore" class="pill" aria-label="All maps">☷ <span>All maps</span></button><button id="toggle" class="pill" aria-label="Show controls">☰</button></header>
 <div id="map"></div>
+<div id="fleg"><button id="flegbtn" aria-label="Show or hide legend"><span id="flegt">Legend</span><i>▾</i></button><div id="legend"></div></div>
+<div id="info" role="dialog" aria-live="polite"><button class="x" aria-label="Close">×</button><div class="body"></div></div>
+<div id="tslider"></div>
+<div id="hint">👆 Tap a place or the legend</div>
 <div id="search" class="open"><button id="qbtn" aria-label="Search places">🔍</button><input id="q" type="search" placeholder="Search a county, district, country…" autocomplete="off" aria-label="Search places"><ul id="qres"></ul></div>
 <a id="idea" href="https://github.com/mudagogo2021-beep/atlas-test/issues/new?title=Map%20idea%3A%20&amp;body=What%20would%20you%20like%20mapped%3F%0A%0AWhere%20(country%2Fregion)%3A%0A%0AA%20data%20source%20if%20you%20know%20one%3A%0A" target="_blank" rel="noopener" aria-label="Suggest an idea">💡<span> Suggest an idea</span></a>
 <aside id="panel">
@@ -23,7 +27,6 @@
  <div id="filters"></div>
  <div id="toggles"></div>
  <label class="chk"><input type="checkbox" id="admchk"> Show admin units worldwide (ADM2, loads on zoom)</label>
- <div id="legend"></div>
  <details id="srcbox" open><summary>Sources &amp; notes</summary><div id="sources"></div></details>
 </aside>
 <section id="start" aria-label="Start screen"><div class="wrap">

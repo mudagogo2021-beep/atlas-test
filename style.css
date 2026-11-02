@@ -71,3 +71,30 @@ body.home #search{display:none}
 .rlabel span{display:inline-block;transform:translate(-50%,-50%);white-space:nowrap;font:800 10.5px/1.1 Inter,system-ui,sans-serif;color:#1E2430;background:#ffffffd0;border:1.5px solid #1E2430;border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:.02em;pointer-events:none}
 .leaflet-container.lowz .rlabel span{font-size:8px;padding:1px 3px;border-width:1px}
 .leaflet-container.tinyz .rlabel{display:none}
+/* floating legend */
+#fleg{position:fixed;left:12px;bottom:84px;z-index:1001;width:250px;max-height:calc(100vh - 230px);display:flex;flex-direction:column;background:#fffffff2;border-radius:12px;box-shadow:0 6px 20px #0003;overflow:hidden;border:1px solid var(--line)}
+#flegbtn{display:flex;align-items:center;gap:8px;background:var(--bar);color:#fff;border:0;padding:8px 12px;font-weight:700;font-size:12.5px;text-align:left}#flegbtn span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#flegbtn i{font-style:normal;transition:transform .2s}
+#fleg.min #legend{display:none}#fleg.min #flegbtn i{transform:rotate(-90deg)}#fleg.min{width:auto;max-width:220px}
+#fleg #legend{overflow:auto;padding:6px 10px 8px}#fleg #legend h3{display:none}
+#legend .row{padding:3px 4px;border-radius:6px}#legend .row:hover{background:#FFF4E2}
+body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!important}
+/* info card */
+#info{position:fixed;top:122px;right:354px;width:290px;max-height:calc(100vh - 260px);overflow:auto;z-index:1001;background:#fff;border-radius:12px;box-shadow:0 8px 24px #0003;border-top:4px solid var(--accent);padding:12px 14px;display:none;font-size:13px}
+#info.on{display:block}#info:not(.pin){pointer-events:none}#info .x{position:absolute;top:4px;right:6px;background:none;border:0;font-size:22px;line-height:1;color:var(--muted)}#info:not(.pin) .x{display:none}
+#info .body>b:first-child{display:block;font-size:15px;font-weight:800;margin:0 24px 6px 0}#info table{border-collapse:collapse;width:100%}#info td{padding:3px 4px;border-top:1px solid var(--line);vertical-align:top}#info td:first-child{color:var(--muted);text-transform:capitalize;width:45%}
+/* time slider */
+#tslider{position:fixed;left:calc((100vw - 340px)/2);transform:translateX(-50%);bottom:44px;z-index:1001;display:none;align-items:center;gap:10px;background:var(--bar);color:#fff;border-radius:999px;padding:6px 16px 6px 8px;box-shadow:0 6px 18px #0004;width:min(460px,calc(100vw - 760px))}
+#tslider.on{display:flex}#tslider .lab{font-size:11px;color:#C9CED8;text-transform:uppercase;font-weight:700;padding-left:6px}#tslider input{flex:1;accent-color:var(--accent);min-width:80px}#tslider .val{font-size:16px;color:var(--accent);min-width:42px;text-align:right}
+#tslider .pl{background:var(--accent);color:var(--bar);border:0;border-radius:50%;width:30px;height:30px;font-size:12px;flex:none}
+/* hint */
+#hint{position:fixed;top:50%;left:calc((100vw - 340px)/2);transform:translate(-50%,-50%);z-index:1003;background:var(--bar);color:#fff;font-weight:700;padding:12px 18px;border-radius:999px;box-shadow:0 8px 24px #0005;display:none;cursor:pointer;border:2px solid var(--accent)}
+#hint.on{display:block;animation:hintin .4s}@keyframes hintin{from{opacity:0;transform:translate(-50%,-30%)}}
+.leaflet-bar.reset{display:block;width:30px;height:30px;line-height:30px;text-align:center;background:#fff;font-size:18px;font-weight:700;color:var(--ink);text-decoration:none;border:2px solid #0003;border-radius:4px;background-clip:padding-box}
+@media (max-width:1100px) and (min-width:761px){#tslider{width:auto;left:20px;transform:none;right:550px}}
+@media (max-width:760px){
+ #fleg{left:10px;bottom:40px;max-height:42vh;width:min(260px,calc(100vw - 90px))}#fleg.min{width:auto}
+ body:has(#tslider.on) #fleg{bottom:94px}
+ #tslider{left:10px;right:74px;transform:none;width:auto;bottom:40px;padding:5px 12px 5px 6px}#tslider .lab{display:none}
+ #info{top:auto;bottom:40px;left:10px;right:10px;width:auto;max-height:45vh;z-index:1003}
+ #hint{left:50%}
+ body.open #fleg,body.open #tslider,body.open #info{display:none!important}}
