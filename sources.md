@@ -95,3 +95,9 @@
 - Rae, A. & Nelson, G.D. United States Commutes and Megaregions data for GIS, v5, University of Sheffield (Figshare), doi:10.15131/shef.data.4110156.v5, CC BY 4.0 — mosaic-regions (detailed) tract-built regions; counties assigned by largest area share (/workspace/maps/megaregions/build.py, build2.py)
 ### Where do America's Amish live? (by county) (`us_amish_2026`)
 - 2020 U.S. Religion Census, Group Detail Data by County, ASARB — https://www.usreligioncensus.org/interactive-tables (Amish Groups, undifferentiated)
+
+## How did the world's airline network grow? (`airline_timeline`)
+- Milestone routes 1914–2018 (22 segments): each verified against its Wikipedia article (link in each route's popup), accessed 2 Nov 2026. Milestones only, not complete networks.
+- 2014 network: OpenFlights routes.dat/airlines.dat (June 2014 snapshot, ODbL) https://openflights.org/data.php — 67,663 records → 18,763 undirected airport pairs; 1,460 records skipped (airport not matched).
+- Airport positions: OurAirports (public domain), incl. closed Croydon (GB-1268) and Kemayoran (ID-0231).
+- Gap: no open complete network for 1915–2013 or 2015–2026.

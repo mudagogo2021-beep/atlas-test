@@ -1836,6 +1836,94 @@
     }
    ],
    "notes": "Routes scheduled on the Airbus A380 for the Northern winter 2026/27 season (25 Oct 2026 – 27 Mar 2027), as of November 2026. One line per airline route (both directions). Data accessed 2 Nov 2026. Frequencies are weekly A380 flights each way from airline schedule filings (AeroRoutes, MainlyMiles, ANA). Where no current count was published (most Emirates routes) the field says 'unknown' and a January 2026 reference count from Flightradar24 is shown instead; circle sizes use that reference, so they are approximate. Block times are only given where a source published them (Singapore Airlines). Distances are great-circle from OurAirports coordinates. Not shown: Emirates Dubai–Washington (777-300ER this winter per AeroRoutes, although Cirium/BI still listed it), Qantas Melbourne–Los Angeles (A380 removed 24 Oct 2026), Lufthansa Munich–Boston/Denver/Mumbai (summer only). British Airways London–Johannesburg is shown but sources conflict (see route note). GEEK NOTES — Active A380s: Emirates 116 in fleet (85 active Sep 2026), BA 12, Singapore 12, Qantas 10, Etihad 9, Lufthansa 8, Qatar 8, Asiana 6, Korean Air 5, ANA 3 (Wikipedia, Jun 2026; ch-aviation via BI). Longest A380 route: Emirates Dubai–Auckland, 14,199 km (8,823 mi). Shortest: Asiana Seoul–Tokyo Narita, 1,257 km (781 mi). Busiest A380 airport: Dubai (about 550 weekly A380 departures, using the Jan 2026 reference counts), then London Heathrow and Singapore."
+  },
+  {
+   "id": "airline_timeline",
+   "title": "How did the world's airline network grow?",
+   "category": "Aviation",
+   "icon": "🛫",
+   "region": "World",
+   "blurb": "Press ▶: milestone scheduled routes from the 1914 Tampa airboat to jet-age firsts, then the full 2014 OpenFlights network (~18.8k airport pairs). Early years are milestones only, not complete networks.",
+   "base": "world",
+   "file": "data/airline_timeline_routes.json",
+   "key": "id",
+   "view": [
+    [
+     -45,
+     -160
+    ],
+    [
+     65,
+     175
+    ]
+   ],
+   "fields": [
+    {
+     "name": "era",
+     "label": "Layer",
+     "type": "category",
+     "colors": {
+      "Milestone route": "#E4572E",
+      "OpenFlights 2014 snapshot": "#1F5FBF"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year (routes open by)",
+     "slider": true,
+     "cumulative": "end_year"
+    },
+    {
+     "field": "era",
+     "label": "Layer"
+    },
+    {
+     "field": "airport",
+     "label": "Airport",
+     "from": "lines"
+    }
+   ],
+   "popup": [
+    "route",
+    "airline",
+    "airlines_n",
+    "year",
+    "end_year",
+    "note",
+    "source",
+    "accessed"
+   ],
+   "lines": {
+    "airports": "data/airline_timeline_airports.json",
+    "code": "code",
+    "from": "from",
+    "to": "to",
+    "size": "size",
+    "sizeLabel": "airlines on route",
+    "noun": "route",
+    "detail": "year",
+    "airlineList": "al"
+   },
+   "overlays": [],
+   "points": null,
+   "flagField": null,
+   "notes": "Cumulative: a year shows every route opened by then that had not ended (Airboat Line 1914 only; Concorde to 2003). 1914–2013 = verified milestone routes only, NOT complete networks. 2014+ = OpenFlights route database (June 2014 snapshot, last update), deduplicated to undirected airport pairs; 1,460 route records with unmatched airports skipped. No 2026 complete network (no open source). Multi-stop historic services are drawn as one line; closed airports (Croydon, Kemayoran) from OurAirports. Counts are dataset counts, not world totals.",
+   "sources": [
+    {
+     "label": "OpenFlights route & airline databases (June 2014 snapshot), ODbL (accessed 2 Nov 2026)",
+     "url": "https://openflights.org/data.php"
+    },
+    {
+     "label": "OurAirports airport coordinates, public domain (accessed 2 Nov 2026)",
+     "url": "https://ourairports.com/data/"
+    },
+    {
+     "label": "Wikipedia articles cited per milestone route (St. Petersburg–Tampa Airboat Line, AT&T, KLM, Pan Am, Imperial Airways, China Clipper, Comet, 707, 747, Southwest, Concorde, Ryanair, Singapore Airlines), accessed 2 Nov 2026",
+     "url": "https://en.wikipedia.org/wiki/St._Petersburg%E2%80%93Tampa_Airboat_Line"
+    }
+   ]
   }
  ],
  "categories": [

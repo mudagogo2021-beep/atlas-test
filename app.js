@@ -96,22 +96,23 @@ let linesLayer=null;
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
-  const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):String(r[s.f])===s.v));
+  const FD=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):FD[s.f]&&FD[s.f].cumulative?(+r[s.f]<=+s.v&&!(r[FD[s.f].cumulative]!=null&&+r[FD[s.f].cumulative]<=+s.v)):String(r[s.f])===s.v));
   const C=colorer(f,rows.map(r=>r[f.name]));const vis=rows.filter(r=>!hidden.has(r[f.name]));
   if(layer)map.removeLayer(layer);layer=L.geoJSON(D._base,{style:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
-  if(linesLayer)map.removeLayer(linesLayer);if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);
+  if(linesLayer)map.removeLayer(linesLayer);if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
   const dep={},by={};
   for(const r of vis){const a=AP.get(r[Lc.from]),b=AP.get(r[Lc.to]);if(!a||!b)continue;
     for(const c of[r[Lc.from],r[Lc.to]]){dep[c]=(dep[c]||0)+(+r[Lc.size]||0);(by[c]=by[c]||[]).push(r)}
-    const g=gcPts([a.lat,a.lon],[b.lat,b.lon]);const col=C.fn(r[f.name]);
-    for(const sh of[-360,0,360])L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:col,weight:2.2,opacity:.75}).bindPopup(()=>popup(D,r)).addTo(linesLayer)}
+    const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);
+    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:col,weight:big?.7:2.2,opacity:big?.35:.75,renderer:rend}).bindPopup(()=>popup(D,r)).addTo(linesLayer)}
   const mx=Math.max(1,...Object.values(dep));
   for(const c of Object.keys(by)){const a=AP.get(c),list=by[c];
-    const html=`<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} A380 route${list.length>1?'s':''} shown`+(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:'')+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${esc(fmt(r.weekly_A380_each_way))}/wk</td></tr>`).join('')+'</table>';
-    for(const sh of[-360,0,360])L.circleMarker([a.lat,a.lon+sh],{radius:3+13*Math.sqrt((dep[c]||0)/mx),color:'#111',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(html).bindTooltip(c).addTo(linesLayer)}
+    const html=`<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:'')+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>';
+    for(const sh of(big?[0]:[-360,0,360]))L.circleMarker([a.lat,a.lon+sh],{renderer:rend,radius:(big?1.5:3)+(big?7:13)*Math.sqrt((dep[c]||0)/mx),color:'#111',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(html).bindTooltip(c).addTo(linesLayer)}
+  const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${vis.length} routes · ${Object.keys(by).length} airports shown. Circle size = ${esc(Lc.sizeLabel||'size')}.</p>`);
+  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${vis.length.toLocaleString()} routes · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. Circle size = ${esc(Lc.sizeLabel||'size')}.</p>`);
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();
