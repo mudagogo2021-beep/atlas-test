@@ -520,6 +520,163 @@
    "blurb": "The 13 Nations cultural regions of America, state by state"
   },
   {
+   "id": "mys_district_ethnicity",
+   "title": "Where do Malaysia's Chinese live? (by district)",
+   "base": "adm",
+   "country": "MYS",
+   "file": "data/mys_district_ethnicity.json",
+   "key": "name",
+   "view": [
+    [
+     0.8,
+     99.5
+    ],
+    [
+     7.5,
+     119.5
+    ]
+   ],
+   "fields": [
+    {
+     "name": "chinese_pct",
+     "label": "Chinese, % of population",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": [
+      10,
+      20,
+      35,
+      50
+     ]
+    },
+    {
+     "name": "malay_pct",
+     "label": "Malay, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      25,
+      50,
+      70,
+      85
+     ]
+    },
+    {
+     "name": "other_bumi_pct",
+     "label": "Other Bumiputera, %",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      10,
+      25,
+      50,
+      75
+     ]
+    },
+    {
+     "name": "indian_pct",
+     "label": "Indian, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      3,
+      7,
+      12,
+      20
+     ]
+    },
+    {
+     "name": "noncitizen_pct",
+     "label": "Non-citizens, %",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "population_k",
+     "label": "Population (thousands)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year",
+     "default": 2025,
+     "noAll": true
+    },
+    {
+     "field": "state",
+     "label": "State"
+    }
+   ],
+   "popup": [
+    "district",
+    "state",
+    "year",
+    "population_k",
+    "chinese_pct",
+    "malay_pct",
+    "other_bumi_pct",
+    "indian_pct",
+    "other_citizen_pct",
+    "noncitizen_pct"
+   ],
+   "sources": [
+    {
+     "label": "Department of Statistics Malaysia, population by district (OpenDOSM population_district)",
+     "url": "https://open.dosm.gov.my/"
+    },
+    {
+     "label": "Boundaries: geoBoundaries MYS ADM2",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ],
+   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown.",
+   "category": "Population & ethnicity",
+   "icon": "🌴",
+   "region": "Malaysia",
+   "blurb": "Chinese share of all 150+ districts, with Malay and Indian views too"
+  },
+  {
    "id": "us_county_hispanic_black_2020",
    "title": "What share of each US county is Hispanic or Black?",
    "base": "us_counties",
@@ -862,163 +1019,6 @@
    "icon": "🐴",
    "region": "USA",
    "blurb": "Amish population and settlements, 2026"
-  },
-  {
-   "id": "mys_district_ethnicity",
-   "title": "What share of each Malaysian district is Chinese, Malay or Indian?",
-   "base": "adm",
-   "country": "MYS",
-   "file": "data/mys_district_ethnicity.json",
-   "key": "name",
-   "view": [
-    [
-     0.8,
-     99.5
-    ],
-    [
-     7.5,
-     119.5
-    ]
-   ],
-   "fields": [
-    {
-     "name": "chinese_pct",
-     "label": "Chinese, % of population",
-     "type": "number",
-     "scale": [
-      "#FFF5F0",
-      "#FCBBA1",
-      "#FB6A4A",
-      "#CB181D",
-      "#67000D"
-     ],
-     "breaks": [
-      10,
-      20,
-      35,
-      50
-     ]
-    },
-    {
-     "name": "malay_pct",
-     "label": "Malay, %",
-     "type": "number",
-     "scale": [
-      "#F7FCF5",
-      "#C7E9C0",
-      "#74C476",
-      "#238B45",
-      "#00441B"
-     ],
-     "breaks": [
-      25,
-      50,
-      70,
-      85
-     ]
-    },
-    {
-     "name": "other_bumi_pct",
-     "label": "Other Bumiputera, %",
-     "type": "number",
-     "scale": [
-      "#FFF5EB",
-      "#FDD0A2",
-      "#FD8D3C",
-      "#D94801",
-      "#7F2704"
-     ],
-     "breaks": [
-      10,
-      25,
-      50,
-      75
-     ]
-    },
-    {
-     "name": "indian_pct",
-     "label": "Indian, %",
-     "type": "number",
-     "scale": [
-      "#FCFBFD",
-      "#DADAEB",
-      "#9E9AC8",
-      "#6A51A3",
-      "#3F007D"
-     ],
-     "breaks": [
-      3,
-      7,
-      12,
-      20
-     ]
-    },
-    {
-     "name": "noncitizen_pct",
-     "label": "Non-citizens, %",
-     "type": "number",
-     "scale": [
-      "#F7FBFF",
-      "#C6DBEF",
-      "#6BAED6",
-      "#2171B5",
-      "#08306B"
-     ],
-     "breaks": "quantile"
-    },
-    {
-     "name": "population_k",
-     "label": "Population (thousands)",
-     "type": "number",
-     "scale": [
-      "#F7FBFF",
-      "#C6DBEF",
-      "#6BAED6",
-      "#2171B5",
-      "#08306B"
-     ],
-     "breaks": "quantile"
-    }
-   ],
-   "filters": [
-    {
-     "field": "year",
-     "label": "Year",
-     "default": 2025,
-     "noAll": true
-    },
-    {
-     "field": "state",
-     "label": "State"
-    }
-   ],
-   "popup": [
-    "district",
-    "state",
-    "year",
-    "population_k",
-    "chinese_pct",
-    "malay_pct",
-    "other_bumi_pct",
-    "indian_pct",
-    "other_citizen_pct",
-    "noncitizen_pct"
-   ],
-   "sources": [
-    {
-     "label": "Department of Statistics Malaysia, population by district (OpenDOSM population_district)",
-     "url": "https://open.dosm.gov.my/"
-    },
-    {
-     "label": "Boundaries: geoBoundaries MYS ADM2",
-     "url": "https://www.geoboundaries.org/"
-    }
-   ],
-   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown.",
-   "category": "Population & ethnicity",
-   "icon": "🌴",
-   "region": "Malaysia",
-   "blurb": "Chinese, Malay and Indian share of each district"
   },
   {
    "id": "mys_state_ethnicity",

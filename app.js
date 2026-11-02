@@ -64,7 +64,7 @@ function render(){
   if(layer)map.removeLayer(layer);
   const drawn=new Set(feats.map(o=>o.ft));
   layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const o=feats.find?null:null;const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
-      return{color:'#fff',weight:D.base==='world'?.6:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
+      return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
     onEachFeature:(ft,l)=>l.bindPopup(()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})}))}).addTo(map);
   overlays.forEach(o=>o.bringToFront());
   if(pts)map.removeLayer(pts);pts=null;
