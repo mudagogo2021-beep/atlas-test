@@ -1459,6 +1459,195 @@
    "icon": "🎒",
    "region": "France",
    "blurb": "Share of pupils in private school, by département"
+  },
+  {
+   "id": "a380_routes",
+   "title": "Where does the A380 still fly?",
+   "category": "Aviation",
+   "icon": "✈️",
+   "region": "World",
+   "blurb": "Every airport with scheduled Airbus A380 service this winter, and the lines to each destination.",
+   "base": "world",
+   "file": "data/a380_routes_nw26.json",
+   "key": "id",
+   "view": [
+    [
+     -45,
+     -160
+    ],
+    [
+     65,
+     175
+    ]
+   ],
+   "fields": [
+    {
+     "name": "airline",
+     "label": "Airline",
+     "type": "category",
+     "colors": {
+      "Emirates": "#D71A21",
+      "British Airways": "#1F5FBF",
+      "Singapore Airlines": "#F2A900",
+      "Qatar Airways": "#5C0632",
+      "Qantas": "#FF7A00",
+      "Etihad Airways": "#B8946A",
+      "Lufthansa": "#111111",
+      "Korean Air": "#00A1DE",
+      "Asiana Airlines": "#8A8D8F",
+      "ANA": "#2E9E4F"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "airline",
+     "label": "Airline"
+    },
+    {
+     "field": "hub",
+     "label": "Hub (origin)"
+    },
+    {
+     "field": "airport",
+     "label": "Airport",
+     "from": "lines"
+    },
+    {
+     "field": "region",
+     "label": "Destination region"
+    }
+   ],
+   "popup": [
+    "airline",
+    "flights",
+    "weekly_A380_each_way",
+    "weekly_reference_Jan2026",
+    "distance",
+    "block_time",
+    "season",
+    "cabin_layout",
+    "airline_A380_fleet",
+    "note",
+    "source",
+    "source_2",
+    "source_3",
+    "accessed"
+   ],
+   "lines": {
+    "airports": "data/a380_airports.json",
+    "code": "iata",
+    "from": "from",
+    "to": "to",
+    "size": "size",
+    "sizeLabel": "weekly A380 flights (approx.)"
+   },
+   "overlays": [],
+   "points": null,
+   "flagField": null,
+   "sources": [
+    {
+     "label": "Business Insider / Cirium, \"Where you can still fly the A380\" (Nov 2026 schedule), 20 Sep 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.businessinsider.com/airbus-a380-routes-destinations-airlines-2026-9"
+    },
+    {
+     "label": "Flightradar24 Blog, \"Emirates A380 routes in 2026\" (Jan 2026 flight list; used as frequency reference only) (accessed 2 Nov 2026)",
+     "url": "https://www.flightradar24.com/blog/aviation-news/airline-news/airline-routes/emirates-a380-routes-in-2026-where-the-superjumbo-flies/"
+    },
+    {
+     "label": "AeroRoutes, Emirates NW26 London Gatwick, 23 Dec 2025 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/251223-eknw26lgw"
+    },
+    {
+     "label": "AeroRoutes, Emirates NW26 Beijing A380, 10 Sep 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260910-eknw26pe"
+    },
+    {
+     "label": "AeroRoutes, Emirates NW26 Dusseldorf, 3 Oct 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/261003-eknw26dus"
+    },
+    {
+     "label": "AeroRoutes, Emirates NW26 Washington (777-300ER, not A380), 15 Sep 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260915-eknw26iad"
+    },
+    {
+     "label": "AeroRoutes, Qatar Airways NW26 A380 operations, 21 Jul 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260721-qrnw26380"
+    },
+    {
+     "label": "MainlyMiles, \"Where is Singapore Airlines flying its A380s?\", 28 Sep 2026 (accessed 2 Nov 2026)",
+     "url": "https://mainlymiles.com/2026/09/28/where-is-sia-flying-airbus-a380s/"
+    },
+    {
+     "label": "AeroRoutes, Lufthansa NW26 intercontinental changes, 20 May 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260520-lhnw26inc"
+    },
+    {
+     "label": "AeroRoutes, British Airways Sep 2026–Mar 2027 A380 changes, 27 Apr 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260427-banw26388"
+    },
+    {
+     "label": "Simple Flying / Cirium, \"British Airways cuts A380 Heathrow routes to just 4\" (accessed 2 Nov 2026)",
+     "url": "https://simpleflying.com/british-airways-cuts-a380-heathrow-routes-to-just-4/"
+    },
+    {
+     "label": "AeroRoutes, Etihad A380 Bangkok in NW26, 25 Feb 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260225-eynw26bkk"
+    },
+    {
+     "label": "AeroRoutes, Etihad NW26 Europe changes, 16 Aug 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260816-eynw26eu"
+    },
+    {
+     "label": "AeroRoutes, Etihad Jun 2026 A380 Singapore, 16 Jun 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260616-eyjun26sin"
+    },
+    {
+     "label": "AeroRoutes, Etihad A380 Tokyo from Jun 2026, 24 Nov 2025 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/251124-eyns26nrt"
+    },
+    {
+     "label": "AeroRoutes, Korean Air–Asiana NW26 international changes, 3 Sep 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260902-keoznw26int"
+    },
+    {
+     "label": "AeroRoutes, Asiana 4Q26 A380 regional revisions, 19 Oct 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/261019-oz4q26388"
+    },
+    {
+     "label": "AeroRoutes, Qantas reduces Sydney–Los Angeles in NW26, 3 Mar 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260303-qfnw26sydlax"
+    },
+    {
+     "label": "AeroRoutes, Qantas expands A380 Sydney–Singapore from Dec 2026, 26 Feb 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260226-qfnw26sydsin"
+    },
+    {
+     "label": "AeroRoutes, Qantas NW26 Sydney–Johannesburg, 21 Jul 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260721-qfnw26jnb"
+    },
+    {
+     "label": "AeroRoutes, Qantas removes A380 Melbourne–Los Angeles in NW26, 26 Feb 2026 (accessed 2 Nov 2026)",
+     "url": "https://www.aeroroutes.com/eng/260226-qfnw26mellax"
+    },
+    {
+     "label": "ANA, FLYING HONU (A380) Narita–Honolulu schedule (accessed 2 Nov 2026)",
+     "url": "https://www.ana.co.jp/en/jp/international/area/hawaii/a380/"
+    },
+    {
+     "label": "Wikipedia, List of Airbus A380 operators (fleet, June 2026) (accessed 2 Nov 2026)",
+     "url": "https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators"
+    },
+    {
+     "label": "Wikipedia airline fleet tables (cabin layouts): Emirates/BA/SQ/QR/EY/LH/Korean Air/Asiana/ANA (accessed 2 Nov 2026)",
+     "url": "https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators"
+    },
+    {
+     "label": "OurAirports airports.csv (public domain) (accessed 2 Nov 2026)",
+     "url": "https://ourairports.com/data/"
+    }
+   ],
+   "notes": "Routes scheduled on the Airbus A380 for the Northern winter 2026/27 season (25 Oct 2026 – 27 Mar 2027), as of November 2026. One line per airline route (both directions). Data accessed 2 Nov 2026. Frequencies are weekly A380 flights each way from airline schedule filings (AeroRoutes, MainlyMiles, ANA). Where no current count was published (most Emirates routes) the field says 'unknown' and a January 2026 reference count from Flightradar24 is shown instead; circle sizes use that reference, so they are approximate. Block times are only given where a source published them (Singapore Airlines). Distances are great-circle from OurAirports coordinates. Not shown: Emirates Dubai–Washington (777-300ER this winter per AeroRoutes, although Cirium/BI still listed it), Qantas Melbourne–Los Angeles (A380 removed 24 Oct 2026), Lufthansa Munich–Boston/Denver/Mumbai (summer only). British Airways London–Johannesburg is shown but sources conflict (see route note). GEEK NOTES — Active A380s: Emirates 116 in fleet (85 active Sep 2026), BA 12, Singapore 12, Qantas 10, Etihad 9, Lufthansa 8, Qatar 8, Asiana 6, Korean Air 5, ANA 3 (Wikipedia, Jun 2026; ch-aviation via BI). Longest A380 route: Emirates Dubai–Auckland, 14,199 km (8,823 mi). Shortest: Asiana Seoul–Tokyo Narita, 1,257 km (781 mi). Busiest A380 airport: Dubai (about 550 weekly A380 departures, using the Jan 2026 reference counts), then London Heathrow and Singapore."
   }
  ],
  "categories": [

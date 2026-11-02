@@ -63,3 +63,30 @@
 - Annuaire de l'éducation (school counts) — https://data.education.gouv.fr/explore/dataset/fr-en-annuaire-education/
 - Boundaries: geoBoundaries FRA ADM2 — https://www.geoboundaries.org/
 - Note: Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn.
+
+## Aviation — "Where does the A380 still fly?" (data/a380_routes_nw26.json, data/a380_airports.json), accessed 2 Nov 2026
+- Business Insider / Cirium, "Where you can still fly the A380" (Nov 2026 schedule), 20 Sep 2026: https://www.businessinsider.com/airbus-a380-routes-destinations-airlines-2026-9
+- Flightradar24 Blog, "Emirates A380 routes in 2026" (Jan 2026 flight list; used as frequency reference only): https://www.flightradar24.com/blog/aviation-news/airline-news/airline-routes/emirates-a380-routes-in-2026-where-the-superjumbo-flies/
+- AeroRoutes, Emirates NW26 London Gatwick, 23 Dec 2025: https://www.aeroroutes.com/eng/251223-eknw26lgw
+- AeroRoutes, Emirates NW26 Beijing A380, 10 Sep 2026: https://www.aeroroutes.com/eng/260910-eknw26pe
+- AeroRoutes, Emirates NW26 Dusseldorf, 3 Oct 2026: https://www.aeroroutes.com/eng/261003-eknw26dus
+- AeroRoutes, Emirates NW26 Washington (777-300ER, not A380), 15 Sep 2026: https://www.aeroroutes.com/eng/260915-eknw26iad
+- AeroRoutes, Qatar Airways NW26 A380 operations, 21 Jul 2026: https://www.aeroroutes.com/eng/260721-qrnw26380
+- MainlyMiles, "Where is Singapore Airlines flying its A380s?", 28 Sep 2026: https://mainlymiles.com/2026/09/28/where-is-sia-flying-airbus-a380s/
+- AeroRoutes, Lufthansa NW26 intercontinental changes, 20 May 2026: https://www.aeroroutes.com/eng/260520-lhnw26inc
+- AeroRoutes, British Airways Sep 2026–Mar 2027 A380 changes, 27 Apr 2026: https://www.aeroroutes.com/eng/260427-banw26388
+- Simple Flying / Cirium, "British Airways cuts A380 Heathrow routes to just 4": https://simpleflying.com/british-airways-cuts-a380-heathrow-routes-to-just-4/
+- AeroRoutes, Etihad A380 Bangkok in NW26, 25 Feb 2026: https://www.aeroroutes.com/eng/260225-eynw26bkk
+- AeroRoutes, Etihad NW26 Europe changes, 16 Aug 2026: https://www.aeroroutes.com/eng/260816-eynw26eu
+- AeroRoutes, Etihad Jun 2026 A380 Singapore, 16 Jun 2026: https://www.aeroroutes.com/eng/260616-eyjun26sin
+- AeroRoutes, Etihad A380 Tokyo from Jun 2026, 24 Nov 2025: https://www.aeroroutes.com/eng/251124-eyns26nrt
+- AeroRoutes, Korean Air–Asiana NW26 international changes, 3 Sep 2026: https://www.aeroroutes.com/eng/260902-keoznw26int
+- AeroRoutes, Asiana 4Q26 A380 regional revisions, 19 Oct 2026: https://www.aeroroutes.com/eng/261019-oz4q26388
+- AeroRoutes, Qantas reduces Sydney–Los Angeles in NW26, 3 Mar 2026: https://www.aeroroutes.com/eng/260303-qfnw26sydlax
+- AeroRoutes, Qantas expands A380 Sydney–Singapore from Dec 2026, 26 Feb 2026: https://www.aeroroutes.com/eng/260226-qfnw26sydsin
+- AeroRoutes, Qantas NW26 Sydney–Johannesburg, 21 Jul 2026: https://www.aeroroutes.com/eng/260721-qfnw26jnb
+- AeroRoutes, Qantas removes A380 Melbourne–Los Angeles in NW26, 26 Feb 2026: https://www.aeroroutes.com/eng/260226-qfnw26mellax
+- ANA, FLYING HONU (A380) Narita–Honolulu schedule: https://www.ana.co.jp/en/jp/international/area/hawaii/a380/
+- Wikipedia, List of Airbus A380 operators (fleet, June 2026): https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators
+- Wikipedia airline fleet tables (cabin layouts): Emirates/BA/SQ/QR/EY/LH/Korean Air/Asiana/ANA: https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators
+- OurAirports airports.csv (public domain): https://ourairports.com/data/

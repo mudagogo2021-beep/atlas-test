@@ -72,3 +72,6 @@ Optional top-level fields:
 
 ## Rebuild scripts (box only)
 `/workspace/maps/build_bundle.py` (bases + language data), `build_gb.py` (geoBoundaries per-country files), `build_datasets.py` (other datasets), `build_manifest.py` (manifest + palette).
+
+## Line (origin–destination) datasets
+Add `"lines":{"airports":"data/x_airports.json","code":"iata","from":"from","to":"to","size":"size","sizeLabel":"…"}` to a dataset whose `file` has one row per route. The app draws great-circle lines coloured by the selected category field, plus circles at each endpoint sized by the summed `size`. Tapping a line shows the dataset `popup` fields; tapping an airport lists its routes. A filter with `"from":"lines"` lists every endpoint code (matches either end). Example: `a380_routes`.
