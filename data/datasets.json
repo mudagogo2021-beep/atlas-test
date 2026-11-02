@@ -48,6 +48,12 @@
    "key": "name",
    "name": "name",
    "normalize": true
+  },
+  "megaregions": {
+   "label": "Nelson & Rae megaregions (2016)",
+   "file": "base/megaregions.geojson",
+   "key": "megaregion",
+   "name": "megaregion"
   }
  },
  "overlayOutlines": {
@@ -463,6 +469,147 @@
    "icon": "🍁",
    "region": "Canada",
    "blurb": "English or French as the second official language, by province"
+  },
+  {
+   "id": "us_megaregions",
+   "title": "Where does America actually commute?",
+   "base": "us_counties",
+   "file": "data/us_megaregions.json",
+   "key": "GEOID",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "category": "Regions",
+   "icon": "🚗",
+   "region": "USA",
+   "blurb": "50+ megaregions drawn from 4 million commuter flows, not state lines",
+   "fields": [
+    {
+     "name": "megaregion",
+     "label": "Megaregion",
+     "type": "category",
+     "colors": {
+      "Albuquerque Plateaus": "#A9C98C",
+      "Amarillo Lubbock": "#F4C66B",
+      "Atlanta": "#F4C66B",
+      "Austin San Antonio": "#F4C66B",
+      "Bay Area Sacramento": "#9CC3D5",
+      "Big Sky": "#F4C66B",
+      "Blue Ridge": "#E8957E",
+      "Boston New England": "#9CC3D5",
+      "Central FL": "#F4C66B",
+      "Charlotte": "#9CC3D5",
+      "Chicago": "#9CC3D5",
+      "Cincinnati Columbus": "#F4C66B",
+      "Cleveland": "#E8957E",
+      "Columbia Plateau": "#9CC3D5",
+      "Connecticut Valley": "#E8957E",
+      "Corn Belt": "#F4C66B",
+      "Dallas Ft Worth": "#9CC3D5",
+      "Deep South": "#9CC3D5",
+      "Denver Front Range": "#E8957E",
+      "Detroit Toledo": "#9CC3D5",
+      "El Paso": "#9CC3D5",
+      "Houston": "#E8957E",
+      "Hudson Valley": "#F4C66B",
+      "Indianapolis": "#E8957E",
+      "Kansas City": "#9CC3D5",
+      "Las Vegas": "#E8957E",
+      "Little Rock Memphis": "#F4C66B",
+      "Los Angeles": "#9CC3D5",
+      "Louisville": "#9CC3D5",
+      "Miami": "#9CC3D5",
+      "Mid CA": "#E8957E",
+      "Milwaukee Madison": "#E8957E",
+      "NYC": "#9CC3D5",
+      "Nashville": "#A9C98C",
+      "New Orleans": "#A9C98C",
+      "NorCal": "#E8957E",
+      "OK City": "#E8957E",
+      "Omaha Great Plains": "#E8957E",
+      "Philadelphia": "#F4C66B",
+      "Phoenix": "#F4C66B",
+      "Pittsburgh": "#9CC3D5",
+      "Portland": "#A9C98C",
+      "Raleigh-Roanoke": "#A9C98C",
+      "Reno": "#A9C98C",
+      "Richmond Tidewater": "#E8957E",
+      "Rio Grande": "#9CC3D5",
+      "Sacagawea": "#A9C98C",
+      "Salt Lake": "#9CC3D5",
+      "San Diego": "#A9C98C",
+      "Savannah Charleston": "#E8957E",
+      "Seattle": "#F4C66B",
+      "St Louis": "#A9C98C",
+      "Twin Cities": "#9CC3D5",
+      "Upper Peninsula": "#F4C66B",
+      "Upstate NY": "#E8957E",
+      "Washington Baltimore": "#A9C98C",
+      "West Texas": "#E8957E"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "megaregion",
+     "label": "Region"
+    }
+   ],
+   "popup": [
+    "megaregion",
+    "county",
+    "states_spanned",
+    "counties_in_region",
+    "anchor_city",
+    "alt_name_2016",
+    "county_area_in_region_pct"
+   ],
+   "outlines": [
+    {
+     "base": "megaregions",
+     "label": "Region borders & names",
+     "labelField": "megaregion",
+     "style": {
+      "color": "#1E2430",
+      "weight": 2.2
+     },
+     "toggle": true,
+     "default": true
+    },
+    {
+     "base": "us_states",
+     "label": "Show state lines",
+     "style": {
+      "color": "#B3261E",
+      "weight": 1.2,
+      "dashArray": "4 3"
+     },
+     "toggle": true,
+     "default": false
+    }
+   ],
+   "sources": [
+    {
+     "label": "Nelson, G.D. & Rae, A. (2016) An Economic Geography of the United States: From Commutes to Megaregions. PLOS ONE 11(11): e0166083",
+     "url": "https://doi.org/10.1371/journal.pone.0166083"
+    },
+    {
+     "label": "Data: Rae & Nelson, United States Commutes and Megaregions data for GIS (mosaic-regions), Univ. of Sheffield Figshare, doi:10.15131/shef.data.4110156.v5, CC BY 4.0",
+     "url": "https://doi.org/10.15131/shef.data.4110156"
+    },
+    {
+     "label": "Counties: US Census Bureau 2023 cartographic boundaries",
+     "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+    }
+   ],
+   "notes": "Method: the authors took 4.16 million tract-to-tract commuter flows (ACS 2006–2010), ran the Combo community-detection algorithm to group tracts that commute to each other, then refined the result visually into megaregions (Fig. 11 of the paper). This map uses the authors' official tract-built region file (mosaic-regions, detailed) and assigns each 2023 county to the region covering most of its land area (computed in equal-area projection); 49 counties are split across regions with under 60% in one. Region names are the paper's (‘Dalls Ft Worth’ spelling corrected); two regions unnamed in the paper use the authors' later names (Sacagawea, Big Sky), and the later alternative names are in each popup. Alaska and Hawaii were not part of the study. Colours are a 4-colour scheme so neighbouring regions never share a colour; they carry no meaning."
   },
   {
    "id": "regions13_outline",
@@ -948,24 +1095,24 @@
   },
   {
    "id": "us_amish_2026",
-   "title": "Where do America's Amish live?",
-   "base": "us_states",
-   "file": "data/us_state_amish_2026.json",
-   "key": "state",
+   "title": "Where do America's Amish live? (by county)",
+   "base": "us_counties",
+   "file": "data/us_county_amish_2020.json",
+   "key": "GEOID",
    "view": [
     [
-     30,
-     -100
+     33,
+     -98
     ],
     [
-     47,
-     -70
+     46,
+     -72
     ]
    ],
    "fields": [
     {
-     "name": "amish",
-     "label": "Amish population (2026)",
+     "name": "amish_adherents_2020",
+     "label": "Amish adherents (2020)",
      "type": "number",
      "scale": [
       "#FFF5EB",
@@ -974,11 +1121,16 @@
       "#D94801",
       "#7F2704"
      ],
-     "breaks": "quantile"
+     "breaks": [
+      100,
+      500,
+      2000,
+      8000
+     ]
     },
     {
-     "name": "share_of_us_amish_pct",
-     "label": "% of all US Amish",
+     "name": "amish_per_1000",
+     "label": "Amish per 1,000 residents (2020)",
      "type": "number",
      "scale": [
       "#FFF5EB",
@@ -987,14 +1139,45 @@
       "#D94801",
       "#7F2704"
      ],
-     "breaks": "quantile"
+     "breaks": [
+      5,
+      20,
+      60,
+      150
+     ]
+    },
+    {
+     "name": "amish_congregations_2020",
+     "label": "Amish church districts (2020)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      2,
+      5,
+      20,
+      60
+     ]
     }
    ],
-   "filters": [],
+   "filters": [
+    {
+     "field": "state",
+     "label": "State",
+     "from": "base"
+    }
+   ],
    "popup": [
-    "name",
-    "amish",
-    "share_of_us_amish_pct"
+    "county",
+    "amish_adherents_2020",
+    "amish_congregations_2020",
+    "amish_per_1000",
+    "settlements_2026"
    ],
    "points": {
     "file": "data/us_amish_settlements_2026.json",
@@ -1011,14 +1194,19 @@
    },
    "sources": [
     {
-     "label": "Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026",
+     "label": "2020 U.S. Religion Census, Group Detail by County (ASARB, 2022/2023 update) — “Amish Groups, undifferentiated”",
+     "url": "https://www.usreligioncensus.org/interactive-tables"
+    },
+    {
+     "label": "Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026 (settlement dots)",
      "url": "https://groups.etown.edu/amishstudies/amish-population-2026"
     }
    ],
    "category": "Religion & communities",
    "icon": "🐴",
    "region": "USA",
-   "blurb": "Amish population and settlements, 2026"
+   "blurb": "Amish church members in every county, with the biggest 2026 settlements",
+   "notes": "County colours use the 2020 U.S. Religion Census count of Amish adherents (members, their children and regular attenders) and congregations (church districts) for 'Amish Groups, undifferentiated' only; Amish-Mennonite and Beachy groups are excluded. The bundle's 2026 Young Center data has only state totals and the 12 largest settlements, so those settlements are drawn as dots and listed in the popup of the county their centre falls in; they are not used for county colours. 2020 Connecticut figures use the old 8 counties and cannot show on the 2023 planning regions (CT has no Amish settlements). Counties with no Amish congregations are grey."
   },
   {
    "id": "mys_state_ethnicity",

@@ -15,7 +15,7 @@ const world=await loadBase('world');L.geoJSON(world,{style:{color:'#fff',weight:
 // UI
 const st=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
 M.datasets.forEach(d=>$('#ds').add(new Option(d.title,d.id)));
-let D,layer,overlays=[],pts,hidden=new Set();
+let lastSel='',D,layer,overlays=[],outl=[],pts,hidden=new Set();
 $('#toggle').onclick=()=>document.body.classList.toggle('open');
 $('#ds').onchange=()=>{hidden.clear();show($('#ds').value,{})};
 $('#field').onchange=()=>{hidden.clear();render()};
@@ -45,7 +45,14 @@ async function show(id,opt){
   // sources
   $('#sources').innerHTML=(D.notes?`<p>${esc(D.notes)}</p>`:'')+'<ul>'+(D.sources||[]).map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`:esc(s.label)}</li>`).join('')+'</ul>';
   $('#credit').textContent=(D.sources||[]).slice(0,2).map(s=>s.label).join(' · ');
-  overlays.forEach(o=>map.removeLayer(o));overlays=[];
+  overlays.forEach(o=>map.removeLayer(o));overlays=[];outl.forEach(o=>{map.removeLayer(o.g);o.lb&&map.removeLayer(o.lb)});outl=[];$('#toggles').innerHTML='';
+  for(const o of (D.outlines||[])){const g0=await loadBase(o.base,o.country);const ob={g:L.geoJSON(g0,{style:{fill:false,opacity:1,...o.style},interactive:false})};
+    if(o.labelField)ob.lb=L.layerGroup(g0.features.filter(f=>f.properties[o.labelField]).map(f=>{const p=f.properties,ll=p.ly!=null?[p.ly,p.lx]:L.geoJSON(f).getBounds().getCenter();
+      return L.marker(ll,{interactive:false,keyboard:false,icon:L.divIcon({className:'rlabel',html:`<span>${esc(p[o.labelField])}</span>`,iconSize:null})})}));
+    const on=v=>{if(v){ob.g.addTo(map);ob.lb&&ob.lb.addTo(map)}else{map.removeLayer(ob.g);ob.lb&&map.removeLayer(ob.lb)}};
+    const want=opt['o_'+o.base]!=null?opt['o_'+o.base]==='1':o.default!==false;on(want);ob.on=want;ob.base=o.base;outl.push(ob);
+    if(o.toggle){const lb=document.createElement('label');lb.className='chk';lb.innerHTML=`<input type="checkbox"${want?' checked':''}> ${esc(o.label)}`;
+      lb.firstChild.onchange=e=>{on(ob.on=e.target.checked);render()};$('#toggles').append(lb)}}
   for(const oid of (D.overlays||[])){const od=M.datasets.find(d=>d.id===oid);if(!od)continue;const ob=await loadBase(od.base,od.country),orows=await loadRows(od.file),oi=new Map(orows.map(r=>[String(r[od.key]),r])),of=od.fields[0];const oc=colorer(of,orows.map(r=>r[of.name]));
     const outline=oid==='regions13_outline';
     overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map))}
@@ -68,7 +75,9 @@ function render(){
   layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const o=feats.find?null:null;const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
       return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
     onEachFeature:(ft,l)=>l.bindPopup(()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})}))}).addTo(map);
-  overlays.forEach(o=>o.bringToFront());
+  overlays.forEach(o=>o.bringToFront());outl.forEach(o=>o.on&&o.g.bringToFront());
+  const sk=D.id+JSON.stringify(sel),zf=sk!==lastSel;lastSel=sk;
+  if(zf&&sel.length&&D.zoomOnFilter!==false&&feats.length&&feats.length<D._base.features.length*0.5)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:feats.map(o=>o.ft)}).getBounds(),{padding:[20,20],maxZoom:9});
   if(pts)map.removeLayer(pts);pts=null;
   if(D.points)loadRows(D.points.file).then(P=>{const mx=Math.max(...P.map(p=>p[D.points.size]||1));pts=L.layerGroup(P.map(p=>L.circleMarker([p[D.points.lat],p[D.points.lon]],{radius:4+14*Math.sqrt((p[D.points.size]||1)/mx),color:'#3A1407',weight:1,fillColor:'#fff',fillOpacity:.8}).bindPopup(popup({popup:D.points.popup,key:D.points.label},p)))).addTo(map)});
   // legend
@@ -76,7 +85,7 @@ function render(){
   C.items.filter(i=>i.n>0||f.type!=='category').forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');
     d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
   const nd=D._base.features.length-feats.length;lg.insertAdjacentHTML('beforeend',`<div class="row"><span class="sw" style="background:${NODATA}"></span><span>No data / filtered out <small>(${nd})</small></span></div><p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${feats.length} areas shown.</p>`);
-  const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
+  const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));outl.forEach(o=>h.set('o_'+o.base,o.on?'1':'0'));history.replaceState(null,'','#'+h)}
 
 // generic origin–destination lines layer (manifest "lines": {airports, from, to, size})
 function gcPts(a,b,n=64){const R=Math.PI/180,[p1,l1,p2,l2]=[a[0]*R,a[1]*R,b[0]*R,b[1]*R];const d=2*Math.asin(Math.sqrt(Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin((l2-l1)/2)**2));if(!d)return[a,b];const o=[];let prev=null;
@@ -110,6 +119,7 @@ async function admRefresh(){if(!$('#admchk').checked||map.getZoom()<5){admGroup.
     const g=await loadBase('adm',iso);admGroup.addLayer(L.geoJSON(g,{style:{color:'#3A1407',weight:.5,fill:false},interactive:false}))}}
 $('#admchk').onchange=()=>{admGroup.addTo(map);admRefresh()};map.on('moveend',admRefresh);
 window.atlasMap=map;
+const zc=()=>{const z=map.getZoom(),c=map.getContainer().classList;c.toggle('lowz',z<5);c.toggle('tinyz',z<3.5)};map.on('zoomend',zc);zc();
 // scale bar (mi + km)
 L.control.scale({position:'bottomleft',metric:true,imperial:true,maxWidth:130}).addTo(map);
 // place search: local index of base units only (no geocoder)

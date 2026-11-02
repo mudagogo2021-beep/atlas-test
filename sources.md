@@ -90,3 +90,8 @@
 - Wikipedia, List of Airbus A380 operators (fleet, June 2026): https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators
 - Wikipedia airline fleet tables (cabin layouts): Emirates/BA/SQ/QR/EY/LH/Korean Air/Asiana/ANA: https://en.wikipedia.org/wiki/List_of_Airbus_A380_operators
 - OurAirports airports.csv (public domain): https://ourairports.com/data/
+### Where does America actually commute? (`us_megaregions`)
+- Nelson, G.D. & Rae, A. (2016). An Economic Geography of the United States: From Commutes to Megaregions. PLOS ONE 11(11): e0166083 — https://doi.org/10.1371/journal.pone.0166083
+- Rae, A. & Nelson, G.D. United States Commutes and Megaregions data for GIS, v5, University of Sheffield (Figshare), doi:10.15131/shef.data.4110156.v5, CC BY 4.0 — mosaic-regions (detailed) tract-built regions; counties assigned by largest area share (/workspace/maps/megaregions/build.py, build2.py)
+### Where do America's Amish live? (by county) (`us_amish_2026`)
+- 2020 U.S. Religion Census, Group Detail Data by County, ASARB — https://www.usreligioncensus.org/interactive-tables (Amish Groups, undifferentiated)
