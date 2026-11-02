@@ -62,7 +62,7 @@ function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
 function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.flagField])}" style="height:14px;border:1px solid #0002;vertical-align:middle"> `:'';
   return `<b>${flag}${esc(fmt(p.name??p[d.key]))}</b><table>`+(d.popup||[]).filter(k=>k!=='name').map(k=>{let v=p[k];const s=typeof v==='string'&&/^https?:/.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener">link</a>`:esc(fmt(v));return `<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${s}</td></tr>`}).join('')+'</table>'}
-function render(){hideCard(true);
+function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove('darkmap');if(!D.lines||!D.lines.planes)Planes.set([]);
   if(D.lines)return renderLines();
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
@@ -92,19 +92,37 @@ function render(){hideCard(true);
 function gcPts(a,b,n=64){const R=Math.PI/180,[p1,l1,p2,l2]=[a[0]*R,a[1]*R,b[0]*R,b[1]*R];const d=2*Math.asin(Math.sqrt(Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin((l2-l1)/2)**2));if(!d)return[a,b];const o=[];let prev=null;
   for(let i=0;i<=n;i++){const f=i/n,A=Math.sin((1-f)*d)/Math.sin(d),B=Math.sin(f*d)/Math.sin(d),x=A*Math.cos(p1)*Math.cos(l1)+B*Math.cos(p2)*Math.cos(l2),y=A*Math.cos(p1)*Math.sin(l1)+B*Math.cos(p2)*Math.sin(l2),z=A*Math.sin(p1)+B*Math.sin(p2);
     let lon=Math.atan2(y,x)/R;if(prev!=null){while(lon-prev>180)lon-=360;while(lon-prev<-180)lon+=360}prev=lon;o.push([Math.atan2(z,Math.sqrt(x*x+y*y))/R,lon])}return o}
+
+// animated planes along great circles (manifest lines.planes: {perRoute, capDesktop, capPhone})
+const Planes=(()=>{let routes=[],pl=[],cv=null,raf=0;const red=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ensure(){if(cv)return;cv=document.createElement('canvas');cv.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:450';map.getContainer().appendChild(cv)}
+  function size(){const c=map.getContainer();cv.width=c.clientWidth*devicePixelRatio;cv.height=c.clientHeight*devicePixelRatio;cv.style.width=c.clientWidth+'px';cv.style.height=c.clientHeight+'px'}
+  function set(R){routes=R;if(!R.length||red){pl=[];if(cv){cv.getContext('2d').clearRect(0,0,cv.width,cv.height)}cancelAnimationFrame(raf);raf=0;return}
+    ensure();size();const P=D.lines.planes,cap=innerWidth<=760?(P.capPhone||300):(P.capDesktop||1500);const n=Math.min(cap,Math.max(1,Math.round(R.length*(P.perRoute||.1))));
+    while(pl.length>n)pl.pop();for(const p of pl)if(p.r>=R.length)p.r=Math.floor(Math.random()*R.length);
+    while(pl.length<n)pl.push({r:Math.floor(Math.random()*R.length),t:Math.random(),v:.08+Math.random()*.08});
+    if(!raf){let last=performance.now();const loop=now=>{const dt=Math.min(.1,(now-last)/1000);last=now;draw(dt);raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop)}}
+  function draw(dt){const x=cv.getContext('2d'),k=devicePixelRatio;x.setTransform(k,0,0,k,0,0);x.clearRect(0,0,cv.width,cv.height);x.fillStyle='#FFD21F';x.strokeStyle='#0F1420';x.lineWidth=.7;
+    for(const p of pl){p.t+=p.v*dt;if(p.t>=1){p.t=0;p.r=Math.floor(Math.random()*routes.length)}const g=routes[p.r];if(!g)continue;const f=p.t*(g.length-1),i=Math.min(g.length-2,Math.floor(f)),u=f-i;
+      const a=g[i],b=g[i+1],pt=map.latLngToContainerPoint([a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u]),pb=map.latLngToContainerPoint(b),pa=map.latLngToContainerPoint(a);
+      const ang=Math.atan2(pb.y-pa.y,pb.x-pa.x);x.save();x.translate(pt.x,pt.y);x.rotate(ang);x.beginPath();
+      x.moveTo(6,0);x.lineTo(1,-1.2);x.lineTo(-1,-5.5);x.lineTo(-2.5,-5.5);x.lineTo(-1.5,-1.2);x.lineTo(-4.5,-1.2);x.lineTo(-6,-3);x.lineTo(-6.8,-3);x.lineTo(-6,0);
+      x.lineTo(-6.8,3);x.lineTo(-6,3);x.lineTo(-4.5,1.2);x.lineTo(-1.5,1.2);x.lineTo(-2.5,5.5);x.lineTo(-1,5.5);x.lineTo(1,1.2);x.closePath();x.fill();x.stroke();x.restore()}}
+  addEventListener('resize',()=>cv&&size());return{set,count:()=>pl.length}})();window.__planes=Planes;
 let linesLayer=null;
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
   const FD=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):FD[s.f]&&FD[s.f].cumulative?(+r[s.f]<=+s.v&&!(r[FD[s.f].cumulative]!=null&&+r[FD[s.f].cumulative]<=+s.v)):String(r[s.f])===s.v));
   const C=colorer(f,rows.map(r=>r[f.name]));const vis=rows.filter(r=>!hidden.has(r[f.name]));
-  if(layer)map.removeLayer(layer);layer=L.geoJSON(D._base,{style:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
+  if(layer)map.removeLayer(layer);const dk=!!Lc.dark;map.getContainer().classList.toggle('darkmap',dk);layer=L.geoJSON(D._base,{style:dk?{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1}:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
   if(linesLayer)map.removeLayer(linesLayer);if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
-  const dep={},by={};
+  const dep={},by={};const PR=[];
   for(const r of vis){const a=AP.get(r[Lc.from]),b=AP.get(r[Lc.to]);if(!a||!b)continue;
     for(const c of[r[Lc.from],r[Lc.to]]){dep[c]=(dep[c]||0)+(+r[Lc.size]||0);(by[c]=by[c]||[]).push(r)}
-    const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);
-    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:col,weight:big?.7:2.2,opacity:big?.35:.75,renderer:rend}).bindPopup(()=>popup(D,r)).addTo(linesLayer)}
+    const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);PR.push(g);
+    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:col,weight:big?.7:2.2,opacity:big?(Lc.dark?.22:.35):.75,renderer:rend}).bindPopup(()=>popup(D,r)).addTo(linesLayer)}
+  Planes.set(Lc.planes?PR:[]);
   const mx=Math.max(1,...Object.values(dep));
   for(const c of Object.keys(by)){const a=AP.get(c),list=by[c];
     const html=`<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:'')+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>';
@@ -112,7 +130,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${vis.length.toLocaleString()} routes · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. Circle size = ${esc(Lc.sizeLabel||'size')}.</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():''));
+  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${vis.length.toLocaleString()} routes · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. Circle size = ${esc(Lc.sizeLabel||'size')}.</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();

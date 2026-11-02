@@ -98,3 +98,4 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
  #info{top:auto;bottom:40px;left:10px;right:10px;width:auto;max-height:45vh;z-index:1003}
  #hint{left:50%}
  body.open #fleg,body.open #tslider,body.open #info{display:none!important}}
+.leaflet-container.darkmap,#map.darkmap,.darkmap{background:#0F1420 !important}

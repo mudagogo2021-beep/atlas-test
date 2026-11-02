@@ -1863,9 +1863,9 @@
      "label": "Date type",
      "type": "category",
      "colors": {
-      "Milestone route": "#E4572E",
-      "2014 route: earliest possible year": "#1F5FBF",
-      "2014 route: start date unknown": "#8A8D8F"
+      "Milestone route": "#FF6B3D",
+      "2014 route: earliest possible year": "#4C8DFF",
+      "2014 route: start date unknown": "#8A93A6"
      }
     }
    ],
@@ -1965,12 +1965,19 @@
      "2013": "25,954 (sourced)",
      "2014": "26,653 (sourced)"
     },
-    "yearNoteLabel": "Airliners in service, world (ICAO >9 t; 1960 Skybrary)"
+    "yearNoteLabel": "Airliners in service, world (ICAO >9 t; 1960 Skybrary)",
+    "today": "≈105,704 scheduled commercial flights per day worldwide (OAG average, 29 Dec 2025–8 Nov 2026, one-way flights in schedules; OAG page, Oct 2026). Peak tracked day: 153,359 commercial flights on 23 Jul 2026 (Flightradar24, incl. cargo/charter).",
+    "planes": {
+     "perRoute": 0.08,
+     "capDesktop": 1500,
+     "capPhone": 300
+    },
+    "dark": true
    },
    "overlays": [],
    "points": null,
    "flagField": null,
-   "notes": "Counter = routes in this dataset, not world totals. Milestone routes (22) have confirmed launch dates (Wikipedia). The 18,763 airport pairs flown in June 2014 (OpenFlights) are placed backwards at the earliest possible year = latest of: origin airport opening/inception, destination airport opening/inception, and founding of the earliest-founded airline on the route (Wikidata P1619/P571 via IATA/ICAO codes; source item in each popup). 12,156 routes have this lower bound; 6,607 lack one or more dates and appear only in 2014. 0 of the 2014 pairs have a confirmed launch date. Lower bounds are usually far earlier than real launches, so the curve front-loads growth; routes that ended before 2014 are absent, so earlier decades are undercounted. Airliners counter: ICAO commercial transport fleet (>9,000 kg, active+parked) 1988 10,712, 1997 16,993 (ICAO Annual Report 1997), 2006–2014 (ICAO Annual Report 2015, Table 10); 1960 'under 3,000' incl. piston (Skybrary Global Aviation Safety Study); other years linear interpolation, labelled; none before 1960.",
+   "notes": "Counter = routes in this dataset, not world totals. Milestone routes (22) have confirmed launch dates (Wikipedia). The 18,763 airport pairs flown in June 2014 (OpenFlights) are placed backwards at the earliest possible year = latest of: origin airport opening/inception, destination airport opening/inception, and founding of the earliest-founded airline on the route (Wikidata P1619/P571 via IATA/ICAO codes; source item in each popup). 12,156 routes have this lower bound; 6,607 lack one or more dates and appear only in 2014. 0 of the 2014 pairs have a confirmed launch date. Lower bounds are usually far earlier than real launches, so the curve front-loads growth; routes that ended before 2014 are absent, so earlier decades are undercounted. Airliners counter: ICAO commercial transport fleet (>9,000 kg, active+parked) 1988 10,712, 1997 16,993 (ICAO Annual Report 1997), 2006–2014 (ICAO Annual Report 2015, Table 10); 1960 'under 3,000' incl. piston (Skybrary Global Aviation Safety Study); other years linear interpolation, labelled; none before 1960. Plane icons are illustrative: count = 8% of routes shown (cap 1,500 desktop / 300 phone), looping randomly over shown routes; not real flight positions or frequencies.",
    "sources": [
     {
      "label": "OpenFlights route & airline databases (June 2014 snapshot), ODbL (accessed 2 Nov 2026)",
@@ -1999,6 +2006,14 @@
     {
      "label": "Skybrary/Global Aviation Safety Study ('less than 3,000' in 1960)",
      "url": "https://skybrary.aero/sites/default/files/bookshelf/3297.pdf"
+    },
+    {
+     "label": "OAG, Airline Frequency and Capacity Statistics (Oct 2026: 33,296,706 scheduled flights 29 Dec 2025–8 Nov 2026 = 105,704/day), accessed 2 Nov 2026",
+     "url": "https://www.oag.com/airline-frequency-and-capacity-statistics"
+    },
+    {
+     "label": "Flightradar24 Blog, 'July 2026: a record setting month for flight tracking' (153,359 commercial flights on 23 Jul 2026), updated 2 Aug 2026",
+     "url": "https://www.flightradar24.com/blog/inside-flightradar24/july-2026-a-record-setting-month-for-flight-tracking/"
     }
    ]
   }
