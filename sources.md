@@ -101,3 +101,5 @@
 - 2014 network: OpenFlights routes.dat/airlines.dat (June 2014 snapshot, ODbL) https://openflights.org/data.php — 67,663 records → 18,763 undirected airport pairs; 1,460 records skipped (airport not matched).
 - Airport positions: OurAirports (public domain), incl. closed Croydon (GB-1268) and Kemayoran (ID-0231).
 - Gap: no open complete network for 1915–2013 or 2015–2026.
+- Update (backwards dating): every 2014 pair placed at its earliest possible year = max(both airports' Wikidata opening/inception, earliest Wikidata founding year among its airlines). 12,156 lower-bound dated, 6,607 undated (shown 2014 only), 0 confirmed; 22 milestones confirmed.
+- Airliners counter: ICAO Annual Report 2015 App. 1 Table 10 (2006–2014), ICAO Annual Report 1997 (1988, 1997), Skybrary Global Aviation Safety Study (1960 <3,000); other years 1961–2013 linearly interpolated and labelled.

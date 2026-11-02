@@ -1843,7 +1843,7 @@
    "category": "Aviation",
    "icon": "🛫",
    "region": "World",
-   "blurb": "Press ▶: milestone scheduled routes from the 1914 Tampa airboat to jet-age firsts, then the full 2014 OpenFlights network (~18.8k airport pairs). Early years are milestones only, not complete networks.",
+   "blurb": "Press ▶: 22 confirmed milestone launches, plus all ~18.8k routes flying in 2014 (OpenFlights), each placed at its EARLIEST POSSIBLE year (latest of both airports' opening and the airline's founding, Wikidata). Not actual launch dates.",
    "base": "world",
    "file": "data/airline_timeline_routes.json",
    "key": "id",
@@ -1860,24 +1860,25 @@
    "fields": [
     {
      "name": "era",
-     "label": "Layer",
+     "label": "Date type",
      "type": "category",
      "colors": {
       "Milestone route": "#E4572E",
-      "OpenFlights 2014 snapshot": "#1F5FBF"
+      "2014 route: earliest possible year": "#1F5FBF",
+      "2014 route: start date unknown": "#8A8D8F"
      }
     }
    ],
    "filters": [
     {
      "field": "year",
-     "label": "Year (routes open by)",
+     "label": "Year (routes in this dataset by)",
      "slider": true,
      "cumulative": "end_year"
     },
     {
      "field": "era",
-     "label": "Layer"
+     "label": "Date type"
     },
     {
      "field": "airport",
@@ -1890,6 +1891,8 @@
     "airline",
     "airlines_n",
     "year",
+    "date_type",
+    "bound_src",
     "end_year",
     "note",
     "source",
@@ -1904,12 +1907,70 @@
     "sizeLabel": "airlines on route",
     "noun": "route",
     "detail": "year",
-    "airlineList": "al"
+    "airlineList": "al",
+    "yearNote": {
+     "1960": "<3,000 (sourced; 1960 figure includes piston aircraft)",
+     "1961": "~3,280 (interpolated)",
+     "1962": "~3,550 (interpolated)",
+     "1963": "~3,830 (interpolated)",
+     "1964": "~4,100 (interpolated)",
+     "1965": "~4,380 (interpolated)",
+     "1966": "~4,650 (interpolated)",
+     "1967": "~4,930 (interpolated)",
+     "1968": "~5,200 (interpolated)",
+     "1969": "~5,480 (interpolated)",
+     "1970": "~5,750 (interpolated)",
+     "1971": "~6,030 (interpolated)",
+     "1972": "~6,310 (interpolated)",
+     "1973": "~6,580 (interpolated)",
+     "1974": "~6,860 (interpolated)",
+     "1975": "~7,130 (interpolated)",
+     "1976": "~7,410 (interpolated)",
+     "1977": "~7,680 (interpolated)",
+     "1978": "~7,960 (interpolated)",
+     "1979": "~8,230 (interpolated)",
+     "1980": "~8,510 (interpolated)",
+     "1981": "~8,780 (interpolated)",
+     "1982": "~9,060 (interpolated)",
+     "1983": "~9,330 (interpolated)",
+     "1984": "~9,610 (interpolated)",
+     "1985": "~9,890 (interpolated)",
+     "1986": "~10,160 (interpolated)",
+     "1987": "~10,440 (interpolated)",
+     "1988": "10,712 (sourced)",
+     "1989": "~11,410 (interpolated)",
+     "1990": "~12,110 (interpolated)",
+     "1991": "~12,810 (interpolated)",
+     "1992": "~13,500 (interpolated)",
+     "1993": "~14,200 (interpolated)",
+     "1994": "~14,900 (interpolated)",
+     "1995": "~15,600 (interpolated)",
+     "1996": "~16,300 (interpolated)",
+     "1997": "16,993 (sourced)",
+     "1998": "~17,440 (interpolated)",
+     "1999": "~17,890 (interpolated)",
+     "2000": "~18,340 (interpolated)",
+     "2001": "~18,790 (interpolated)",
+     "2002": "~19,240 (interpolated)",
+     "2003": "~19,690 (interpolated)",
+     "2004": "~20,140 (interpolated)",
+     "2005": "~20,590 (interpolated)",
+     "2006": "21,037 (sourced)",
+     "2007": "21,809 (sourced)",
+     "2008": "22,552 (sourced)",
+     "2009": "23,264 (sourced)",
+     "2010": "23,880 (sourced)",
+     "2011": "24,552 (sourced)",
+     "2012": "25,252 (sourced)",
+     "2013": "25,954 (sourced)",
+     "2014": "26,653 (sourced)"
+    },
+    "yearNoteLabel": "Airliners in service, world (ICAO >9 t; 1960 Skybrary)"
    },
    "overlays": [],
    "points": null,
    "flagField": null,
-   "notes": "Cumulative: a year shows every route opened by then that had not ended (Airboat Line 1914 only; Concorde to 2003). 1914–2013 = verified milestone routes only, NOT complete networks. 2014+ = OpenFlights route database (June 2014 snapshot, last update), deduplicated to undirected airport pairs; 1,460 route records with unmatched airports skipped. No 2026 complete network (no open source). Multi-stop historic services are drawn as one line; closed airports (Croydon, Kemayoran) from OurAirports. Counts are dataset counts, not world totals.",
+   "notes": "Counter = routes in this dataset, not world totals. Milestone routes (22) have confirmed launch dates (Wikipedia). The 18,763 airport pairs flown in June 2014 (OpenFlights) are placed backwards at the earliest possible year = latest of: origin airport opening/inception, destination airport opening/inception, and founding of the earliest-founded airline on the route (Wikidata P1619/P571 via IATA/ICAO codes; source item in each popup). 12,156 routes have this lower bound; 6,607 lack one or more dates and appear only in 2014. 0 of the 2014 pairs have a confirmed launch date. Lower bounds are usually far earlier than real launches, so the curve front-loads growth; routes that ended before 2014 are absent, so earlier decades are undercounted. Airliners counter: ICAO commercial transport fleet (>9,000 kg, active+parked) 1988 10,712, 1997 16,993 (ICAO Annual Report 1997), 2006–2014 (ICAO Annual Report 2015, Table 10); 1960 'under 3,000' incl. piston (Skybrary Global Aviation Safety Study); other years linear interpolation, labelled; none before 1960.",
    "sources": [
     {
      "label": "OpenFlights route & airline databases (June 2014 snapshot), ODbL (accessed 2 Nov 2026)",
@@ -1922,6 +1983,22 @@
     {
      "label": "Wikipedia articles cited per milestone route (St. Petersburg–Tampa Airboat Line, AT&T, KLM, Pan Am, Imperial Airways, China Clipper, Comet, 707, 747, Southwest, Concorde, Ryanair, Singapore Airlines), accessed 2 Nov 2026",
      "url": "https://en.wikipedia.org/wiki/St._Petersburg%E2%80%93Tampa_Airboat_Line"
+    },
+    {
+     "label": "Wikidata: airport opening (P1619)/inception (P571) by IATA (P238)/ICAO (P239); airline inception by IATA (P229)/ICAO (P230), CC0, queried 2 Nov 2026",
+     "url": "https://query.wikidata.org/"
+    },
+    {
+     "label": "ICAO Annual Report 2015, Appendix 1 Table 10 (commercial fleet 2006–2015)",
+     "url": "https://www.icao.int/sites/default/files/sp-files/annual-report-2015/Documents/Appendix_1_en.pdf"
+    },
+    {
+     "label": "ICAO Annual Report 1997 (fleet 1988 and 1997)",
+     "url": "https://www.icao.int/sites/default/files/sp-files/Documents/annual-reports/rp97_en.pdf"
+    },
+    {
+     "label": "Skybrary/Global Aviation Safety Study ('less than 3,000' in 1960)",
+     "url": "https://skybrary.aero/sites/default/files/bookshelf/3297.pdf"
     }
    ]
   }
