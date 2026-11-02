@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Atlas · @youngsirmuda</title>
+<link rel="stylesheet" href="lib/leaflet.css"><link rel="stylesheet" href="style.css"></head><body>
+<header id="bar"><h1 id="title">Atlas</h1><button id="toggle" aria-label="Show controls">☰</button></header>
+<div id="map"></div>
+<aside id="panel">
+ <label>Dataset<select id="ds"></select></label>
+ <label>Colour by<select id="field"></select></label>
+ <div id="filters"></div>
+ <label class="chk"><input type="checkbox" id="admchk"> Show admin units worldwide (ADM2, loads on zoom)</label>
+ <div id="legend"></div>
+ <details id="srcbox"><summary>Sources & notes</summary><div id="sources"></div></details>
+</aside>
+<footer id="foot">@youngsirmuda · <span id="credit"></span></footer>
+<script src="lib/leaflet.js"></script><script src="lib/topojson-client.min.js"></script><script src="app.js"></script></body></html>

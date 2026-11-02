@@ -1,0 +1,65 @@
+# Sources & credits
+
+## Base layers
+- World countries: Natural Earth 1:50m admin-0 (public domain), simplified.
+- US counties: U.S. Census Bureau cartographic boundary file cb_2023_us_county_5m (public domain), TopoJSON simplified.
+- US states / 13 Nations regions: dissolved from the same county file. Regions = the 13 groupings used on the 13 Nations posters.
+- Canada provinces; Malaysia & Indonesia ADM1: Natural Earth 1:10m admin-1 (public domain) / geoBoundaries gbOpen ADM1.
+- Worldwide admin units: geoBoundaries gbOpen (Runfola et al. 2020, PLoS ONE 15(4): e0231866; www.geoboundaries.org), ADM2 for 180 countries, ADM1 fallback for 21. Licences vary by country (listed per country in base/adm/index.json): Creative Commons Attribution 3.0 Intergovernmental Organisations (CC BY 3.0 IGO) (48); Open Data Commons Open Database License 1.0 (42); Public Domain (33); Creative Commons Attribution 4.0 International (CC BY 4.0) (26); Creative Commons Attribution 4.0 (CC BY 4.0) (13); Creative Commons Attribution-ShareAlike 2.0 (9); Creative Commons Attribution 3.0 License (7); Creative Commons Attribution-ShareAlike 3.0 Unported (6); CC0 1.0 Universal (CC0 1.0) Public Domain Dedication (5); Creative Commons Attribution 2.5 Generic (3); Open Government Canada 2.0 (1); Federal Office of Topography swisstopo License (1); Open Data Commons Public Domain Dedication and License (PDDL) v1.0 (1); Data license Germany - Attribution - Version 2.0 (1); National Institute of Statistics (INE) Data License (1); Etalab Open License 2.0 (1); Open Government Licence v3.0 (1); Other - Direct Permission (1); Singapore Open Data License Version 1.0 (1)
+- Flags: Wikimedia Commons national flags (public domain).
+- Libraries: Leaflet 1.9.4 (BSD-2), topojson-client 3.1.0 (ISC), vendored in lib/.
+
+## Datasets
+### After English & Spanish, what does each US county speak? (`us_county_language`)
+- U.S. Census Bureau ACS 2020-24 5-yr C16001 via Census Reporter — https://censusreporter.org/tables/C16001/
+- ACS 2009-13 detailed county language tables — https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html
+- Census 2000 STP 224 (language detail by county) — https://www.census.gov/data/tables/2000/dec/phc-t-37.html
+- Census cartographic boundary files 2023 (public domain) — https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html
+- Note: Language = county's leading ACS C16001 group after English & Spanish, named with the finest detail available. Small counties have large margins of error. Family groups: see palette.json family_note.
+### What is each country's second language? (`world_second_language`)
+- Compulsory-language rules per country (see proxy_v3_sources.csv URLs in each popup)
+- Eurostat educ_uoe_lang01 (ISCED 3) — https://ec.europa.eu/eurostat/databrowser/view/educ_uoe_lang01/default/table
+- American Councils K-12 Foreign Language Enrollment Survey 2017 — https://www.americancouncils.org/sites/default/files/FLE-report-June17.pdf
+- UNESCO UIS EA.3T8.AG25T99 — https://api.uis.unesco.org/
+- Natural Earth 1:50m (public domain) — https://www.naturalearthdata.com/
+- Note: Second language = compulsory or most-studied school language (world v8 rules). Grey = no source found. Canada is split: Quebec English, rest French (overlay).
+### Which official language is the second one in each Canadian province? (`canada_second_language`)
+- Statistics Canada, 2021 Census, The Daily 17 Aug 2022 — https://www150.statcan.gc.ca/n1/daily-quotidien/220817/dq220817a-eng.htm
+- Natural Earth admin-1 (public domain) — https://www.naturalearthdata.com/
+### Which of the 13 US regions is each state in? (`regions13_outline`)
+- Regions as used on the 13 Nations posters; state boundaries Census 2023
+### What share of each US county is Hispanic or Black? (`us_county_hispanic_black_2020`)
+- U.S. Census Bureau 2020 Census Redistricting Data (P.L. 94-171) — https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html
+- Note: Connecticut uses the 8 old counties in 2020 data, so CT's 2023 planning regions show no data.
+### How many private schools does each US county have? (`us_county_private_schools`)
+- NCES Private School Universe Survey 2023-24 (public-use file) — https://nces.ed.gov/surveys/pss/
+- Note: Weighted survey estimates; counties with no sampled school show no data.
+### What share of each state's private schools are religious? (`us_state_private_schools`)
+- NCES Private School Universe Survey 2023-24 — https://nces.ed.gov/surveys/pss/
+### Where do America's Amish live? (`us_amish_2026`)
+- Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026 — https://groups.etown.edu/amishstudies/amish-population-2026
+### What share of each Malaysian district is Chinese, Malay or Indian? (`mys_district_ethnicity`)
+- Department of Statistics Malaysia, population by district (OpenDOSM population_district) — https://open.dosm.gov.my/
+- Boundaries: geoBoundaries MYS ADM2 — https://www.geoboundaries.org/
+- Note: Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown.
+### How has each Malaysian state's ethnic mix changed since 1970? (`mys_state_ethnicity`)
+- Department of Statistics Malaysia, population by state (OpenDOSM population_state) — https://open.dosm.gov.my/
+- Boundaries: geoBoundaries MYS ADM1 — https://www.geoboundaries.org/
+### What share of each Singapore planning area is Chinese, Malay or Indian? (`sgp_planning_area_ethnicity`)
+- Singapore Department of Statistics, Census of Population 2020, resident population by planning area and ethnic group (data.gov.sg) — https://data.gov.sg/
+- Boundaries: geoBoundaries SGP ADM2 (URA planning areas) — https://www.geoboundaries.org/
+### What share of each Indonesian province was Chinese in 2010? (`idn_province_chinese_2010`)
+- BPS Population Census 2010 (SP2010 table L2.6); Arifin, Hasbullah & Pramono (2016); Ananta et al. (2015)
+- Boundaries: geoBoundaries IDN ADM1 — https://www.geoboundaries.org/
+- Note: North Kalimantan split from East Kalimantan in 2012; 2010 figure sits in East Kalimantan.
+### Which Indonesian cities had the most Chinese residents in 2010? (`idn_district_chinese_2010`)
+- Arifin et al. 2016 top-10 table (BPS Census 2010)
+- Note: Only the published top districts; all others show no data.
+### What share of pupils in each French département go to private school? (`fra_dept_private_school`)
+- MEN open data, pupils by sector 2025: écoles — https://data.education.gouv.fr/explore/dataset/fr-en-ecoles-effectifs-nb_classes/
+- collèges — https://data.education.gouv.fr/explore/dataset/fr-en-college-effectifs-niveau-sexe-lv/
+- lycées GT — https://data.education.gouv.fr/explore/dataset/fr-en-lycee_gt-effectifs-niveau-sexe-lv/
+- lycées pro — https://data.education.gouv.fr/explore/dataset/fr-en-lycee_pro-effectifs-niveau-sexe-lv/
+- Annuaire de l'éducation (school counts) — https://data.education.gouv.fr/explore/dataset/fr-en-annuaire-education/
+- Boundaries: geoBoundaries FRA ADM2 — https://www.geoboundaries.org/
+- Note: Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn.

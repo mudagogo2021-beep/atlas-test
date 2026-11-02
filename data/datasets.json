@@ -1,0 +1,1408 @@
+{
+ "version": 1,
+ "bases": {
+  "world": {
+   "label": "World countries",
+   "file": "base/world_countries.geojson",
+   "key": "iso3",
+   "name": "name"
+  },
+  "us_counties": {
+   "label": "US counties (2023)",
+   "file": "base/us_counties.topojson",
+   "object": "counties",
+   "key": "GEOID",
+   "name": "name"
+  },
+  "us_states": {
+   "label": "US states",
+   "file": "base/us_states.geojson",
+   "key": "state",
+   "name": "name"
+  },
+  "canada_provinces": {
+   "label": "Canada provinces",
+   "file": "base/canada_provinces.geojson",
+   "key": "code",
+   "name": "name"
+  },
+  "regions13": {
+   "label": "13 Nations regions (US)",
+   "file": "base/regions13.geojson",
+   "key": "region13",
+   "name": "region13"
+  },
+  "adm": {
+   "label": "Admin units worldwide (geoBoundaries ADM2, ADM1 fallback)",
+   "tiled": true,
+   "index": "base/adm/index.json",
+   "pattern": "base/adm/{iso3}.geojson",
+   "key": "name",
+   "name": "name",
+   "normalize": true
+  },
+  "adm1": {
+   "label": "Admin-1 (states/provinces) for selected countries",
+   "tiled": true,
+   "pattern": "base/adm1/{iso3}.geojson",
+   "key": "name",
+   "name": "name",
+   "normalize": true
+  }
+ },
+ "overlayOutlines": {
+  "regions13": "base/regions13.geojson"
+ },
+ "datasets": [
+  {
+   "id": "us_county_language",
+   "title": "After English & Spanish, what does each US county speak?",
+   "base": "us_counties",
+   "file": "data/us_county_language.json",
+   "key": "GEOID",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "family",
+     "label": "Language origin family",
+     "type": "category",
+     "colors": {
+      "European": "#2F6DB5",
+      "Asian": "#D7263D",
+      "American": "#2E9E4F",
+      "African": "#8B5A2B",
+      "Other (Pacific)": "#17A2A4",
+      "Other": "#8B6B4A",
+      "Not applicable": "#A3A6AD"
+     }
+    },
+    {
+     "name": "lead_lang",
+     "label": "Leading language",
+     "type": "category",
+     "colors": {
+      "German": "#8c3bff",
+      "French": "#018700",
+      "Italian": "#00acc6",
+      "Tagalog": "#97ff00",
+      "Chinese": "#ff7ed1",
+      "Vietnamese": "#6b004f",
+      "Arabic": "#ffa52f",
+      "Japanese": "#573b00",
+      "Korean": "#005659",
+      "Hindi": "#0000dd",
+      "Portuguese": "#00fdcf",
+      "Hmong": "#a17569",
+      "Dakota/Lakota": "#bcb6ff",
+      "Polish": "#95b577",
+      "Gujarati": "#bf03b8",
+      "Lao": "#645474",
+      "Greek": "#790000",
+      "Pennsylvania Dutch": "#0774d8",
+      "Russian": "#fdf490",
+      "Choctaw": "#004b00",
+      "Navajo": "#8e7900",
+      "Urdu": "#ff7266",
+      "Norwegian": "#edb8b8",
+      "Finnish": "#5d7e66",
+      "Swedish": "#9ae4ff",
+      "Czech": "#eb0077",
+      "Ojibwa": "#a57bb8",
+      "Cherokee": "#5900a3",
+      "Persian": "#03c600",
+      "Khmer": "#9e4b00",
+      "Cushitic (incl. Somali, Oromo)": "#9c3b4f",
+      "Dutch": "#cac300",
+      "Kru/Igbo/Yoruba": "#708297",
+      "Amharic": "#00af89",
+      "Haitian Creole": "#8287ff",
+      "Bengali": "#5d363b",
+      "Muskogee": "#380000",
+      "Danish": "#fdbfff",
+      "Punjabi": "#bde6bf",
+      "Ukrainian": "#db6d01",
+      "Serbo-Croatian": "#93b8b5",
+      "Hebrew": "#e452ff",
+      "Romanian": "#2f5282",
+      "Shoshoni": "#c36690",
+      "Yupik": "#54621f",
+      "Nez Perce": "#c49e72",
+      "Cheyenne": "#038287",
+      "Apache": "#69e680",
+      "Basque": "#802690",
+      "Inupiaq": "#6db3ff",
+      "Swahili": "#4d33ff",
+      "Salish": "#85a301",
+      "Hidatsa": "#fd03ca",
+      "Thai": "#c1a5c4",
+      "Yiddish": "#c45646",
+      "Tlingit": "#75573d",
+      "Kickapoo": "#016742",
+      "Potawatomi": "#00d6d4",
+      "Athapascan": "#dadfff",
+      "Kiowa": "#f9ff00",
+      "Ilocano": "#6967af",
+      "Kurdish": "#c39700",
+      "Albanian": "#e1cd9c",
+      "Marshallese": "#da95ff",
+      "Keres": "#ba03fd",
+      "Tiwa": "#915282",
+      "Pima": "#a00072",
+      "Irish Gaelic": "#569a54",
+      "Sahaptian": "#d38c8e",
+      "Hungarian": "#364426",
+      "Crow": "#97a5c3",
+      "Tewa": "#8e8c5e",
+      "Paiute": "#ff4600",
+      "Burmese": "#c8fff9",
+      "Walapai": "#ae6dff",
+      "Latvian": "#6ecfa7",
+      "Ponca": "#bfff8c",
+      "Palauan": "#8c54b1",
+      "Alabama": "#773618",
+      "Passamaquoddy": "#ffa079",
+      "American Indian": "#a8001f",
+      "Menomini": "#ff1c44",
+      "Fox": "#5e1123",
+      "Telugu": "#679793",
+      "Croatian": "#ff5e93",
+      "Delta River Yuman": "#4b6774",
+      "Omaha": "#5291cc",
+      "Tsimshian": "#aa7031",
+      "Cree": "#01cffd",
+      "India, n.e.c.": "#00c36b",
+      "Quapaw": "#60345d",
+      "Slovene": "#90d42f",
+      "French Cree": "#bfd47c",
+      "Washo": "#5044a1",
+      "Samoan": "#4d230c",
+      "Hawaiian": "#7c5900",
+      "Ute": "#ffcd44",
+      "Blackfoot": "#8201cf",
+      "Kuchin": "#4dfdff",
+      "Comanche": "#89003d",
+      "Chuukese": "#7b525b",
+      "Icelandic": "#00749c",
+      "Serbian": "#aa8297",
+      "Okanogan": "#80708e",
+      "Osage": "#6264fd",
+      "Mohawk": "#c33489",
+      "Mayan language": "#cd2846",
+      "Slovak": "#ff9ab5",
+      "Arapaho": "#c35dba",
+      "Pawnee": "#216701",
+      "Turkish": "#008e64",
+      "Spokane": "#628023"
+     },
+     "flagField": null
+    },
+    {
+     "name": "speakers",
+     "label": "Speakers of leading language",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "spanish_speakers",
+     "label": "Spanish speakers at home (ACS 2020-24)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "family",
+     "label": "Family"
+    },
+    {
+     "field": "lead_lang",
+     "label": "Language"
+    },
+    {
+     "field": "region13",
+     "label": "13 Nations region",
+     "from": "base"
+    },
+    {
+     "field": "state",
+     "label": "State",
+     "from": "base"
+    },
+    {
+     "field": "source_year",
+     "label": "Detail year"
+    }
+   ],
+   "popup": [
+    "name",
+    "state",
+    "region13",
+    "lead_lang",
+    "family",
+    "speakers",
+    "source",
+    "source_year",
+    "spanish_speakers",
+    "note"
+   ],
+   "overlays": [
+    "regions13_outline"
+   ],
+   "sources": [
+    {
+     "label": "U.S. Census Bureau ACS 2020-24 5-yr C16001 via Census Reporter",
+     "url": "https://censusreporter.org/tables/C16001/"
+    },
+    {
+     "label": "ACS 2009-13 detailed county language tables",
+     "url": "https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html"
+    },
+    {
+     "label": "Census 2000 STP 224 (language detail by county)",
+     "url": "https://www.census.gov/data/tables/2000/dec/phc-t-37.html"
+    },
+    {
+     "label": "Census cartographic boundary files 2023 (public domain)",
+     "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+    }
+   ],
+   "notes": "Language = county's leading ACS C16001 group after English & Spanish, named with the finest detail available. Small counties have large margins of error. Family groups: see palette.json family_note."
+  },
+  {
+   "id": "world_second_language",
+   "title": "What is each country's second language?",
+   "base": "world",
+   "file": "data/world_second_language.json",
+   "key": "iso3",
+   "view": [
+    [
+     -50,
+     -170
+    ],
+    [
+     75,
+     180
+    ]
+   ],
+   "fields": [
+    {
+     "name": "second_lang",
+     "label": "Second language",
+     "type": "category",
+     "colors": {
+      "English": "#2F6DB5",
+      "No source": "#B9BCC3",
+      "Russian": "#7B3FA0",
+      "Any foreign language": "#8B6B4A",
+      "French": "#E3B505",
+      "Swedish": "#8B6B4A",
+      "Irish": "#8B6B4A",
+      "Arabic": "#2E9E4F",
+      "Mandarin": "#D7263D",
+      "Spanish": "#F07F1A"
+     }
+    },
+    {
+     "name": "family",
+     "label": "Language family",
+     "type": "category",
+     "colors": {
+      "European": "#2F6DB5",
+      "Asian": "#D7263D",
+      "American": "#2E9E4F",
+      "African": "#8B5A2B",
+      "Other (Pacific)": "#17A2A4",
+      "Other": "#8B6B4A",
+      "Not applicable": "#A3A6AD"
+     }
+    },
+    {
+     "name": "pct_upper_sec_25plus",
+     "label": "% adults 25+ with upper-secondary education (UNESCO UIS)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "second_lang",
+     "label": "Second language"
+    },
+    {
+     "field": "family",
+     "label": "Family"
+    },
+    {
+     "field": "continent",
+     "label": "Continent",
+     "from": "base"
+    }
+   ],
+   "popup": [
+    "name",
+    "host_lang",
+    "second_lang",
+    "family",
+    "rule",
+    "rule_year",
+    "source",
+    "pct_upper_sec_25plus"
+   ],
+   "flagField": "flag_file",
+   "overlays": [
+    "canada_second_language"
+   ],
+   "sources": [
+    {
+     "label": "Compulsory-language rules per country (see proxy_v3_sources.csv URLs in each popup)",
+     "url": ""
+    },
+    {
+     "label": "Eurostat educ_uoe_lang01 (ISCED 3)",
+     "url": "https://ec.europa.eu/eurostat/databrowser/view/educ_uoe_lang01/default/table"
+    },
+    {
+     "label": "American Councils K-12 Foreign Language Enrollment Survey 2017",
+     "url": "https://www.americancouncils.org/sites/default/files/FLE-report-June17.pdf"
+    },
+    {
+     "label": "UNESCO UIS EA.3T8.AG25T99",
+     "url": "https://api.uis.unesco.org/"
+    },
+    {
+     "label": "Natural Earth 1:50m (public domain)",
+     "url": "https://www.naturalearthdata.com/"
+    }
+   ],
+   "notes": "Second language = compulsory or most-studied school language (world v8 rules). Grey = no source found. Canada is split: Quebec English, rest French (overlay)."
+  },
+  {
+   "id": "canada_second_language",
+   "title": "Which official language is the second one in each Canadian province?",
+   "base": "canada_provinces",
+   "file": "data/canada_second_language.json",
+   "key": "code",
+   "view": [
+    [
+     42,
+     -140
+    ],
+    [
+     70,
+     -52
+    ]
+   ],
+   "fields": [
+    {
+     "name": "second_lang",
+     "label": "Second official language",
+     "type": "category",
+     "colors": {
+      "English": "#2F6DB5",
+      "French": "#E3B505"
+     }
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "second_lang",
+    "rule",
+    "source"
+   ],
+   "flagField": "flag_file",
+   "sources": [
+    {
+     "label": "Statistics Canada, 2021 Census, The Daily 17 Aug 2022",
+     "url": "https://www150.statcan.gc.ca/n1/daily-quotidien/220817/dq220817a-eng.htm"
+    },
+    {
+     "label": "Natural Earth admin-1 (public domain)",
+     "url": "https://www.naturalearthdata.com/"
+    }
+   ]
+  },
+  {
+   "id": "regions13_outline",
+   "title": "Which of the 13 US regions is each state in?",
+   "base": "regions13",
+   "file": "data/regions13.json",
+   "key": "region13",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "region13",
+     "label": "Region",
+     "type": "category",
+     "colors": {
+      "New England": "#d60000",
+      "New York Metro": "#8c3bff",
+      "Mid-Atlantic": "#018700",
+      "Southeast": "#00acc6",
+      "Florida": "#97ff00",
+      "Midwest": "#ff7ed1",
+      "Great Plains": "#6b004f",
+      "South Central": "#ffa52f",
+      "Southwest": "#573b00",
+      "Mountain": "#005659",
+      "West Coast": "#0000dd",
+      "Alaska": "#00fdcf",
+      "Hawaii": "#a17569"
+     }
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "region13",
+    "number",
+    "states"
+   ],
+   "sources": [
+    {
+     "label": "Regions as used on the 13 Nations posters; state boundaries Census 2023",
+     "url": ""
+    }
+   ]
+  },
+  {
+   "id": "us_county_hispanic_black_2020",
+   "title": "What share of each US county is Hispanic or Black?",
+   "base": "us_counties",
+   "file": "data/us_county_pl2020.json",
+   "key": "GEOID",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "hispanic_pct",
+     "label": "Hispanic or Latino, % of population",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      5,
+      10,
+      20,
+      40
+     ]
+    },
+    {
+     "name": "black_alone_pct",
+     "label": "Black alone, % of population",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      2,
+      5,
+      15,
+      30
+     ]
+    },
+    {
+     "name": "black_aic_pct",
+     "label": "Black alone or in combination, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      2,
+      5,
+      15,
+      30
+     ]
+    },
+    {
+     "name": "total_pop",
+     "label": "Total population",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "region13",
+     "label": "13 Nations region",
+     "from": "base"
+    },
+    {
+     "field": "state",
+     "label": "State",
+     "from": "base"
+    }
+   ],
+   "popup": [
+    "name",
+    "state",
+    "total_pop",
+    "hispanic",
+    "hispanic_pct",
+    "black_alone",
+    "black_alone_pct",
+    "black_aic_pct"
+   ],
+   "sources": [
+    {
+     "label": "U.S. Census Bureau 2020 Census Redistricting Data (P.L. 94-171)",
+     "url": "https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html"
+    }
+   ],
+   "notes": "Connecticut uses the 8 old counties in 2020 data, so CT's 2023 planning regions show no data."
+  },
+  {
+   "id": "us_county_private_schools",
+   "title": "How many private schools does each US county have?",
+   "base": "us_counties",
+   "file": "data/us_county_private_schools.json",
+   "key": "GEOID",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "schools_weighted",
+     "label": "Private schools (weighted estimate)",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "students_weighted",
+     "label": "Private-school students (weighted)",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "region13",
+     "label": "13 Nations region",
+     "from": "base"
+    },
+    {
+     "field": "state",
+     "label": "State",
+     "from": "base"
+    }
+   ],
+   "popup": [
+    "name",
+    "state",
+    "schools_weighted",
+    "students_weighted",
+    "schools_sampled"
+   ],
+   "sources": [
+    {
+     "label": "NCES Private School Universe Survey 2023-24 (public-use file)",
+     "url": "https://nces.ed.gov/surveys/pss/"
+    }
+   ],
+   "notes": "Weighted survey estimates; counties with no sampled school show no data."
+  },
+  {
+   "id": "us_state_private_schools",
+   "title": "What share of each state's private schools are religious?",
+   "base": "us_states",
+   "file": "data/us_state_private_schools.json",
+   "key": "state",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "religious_share_pct",
+     "label": "Religious schools, % of private schools",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "catholic_share_pct",
+     "label": "Catholic schools, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "schools_weighted",
+     "label": "Private schools",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "schools_weighted",
+    "students_weighted",
+    "religious_share_pct",
+    "catholic_share_pct"
+   ],
+   "sources": [
+    {
+     "label": "NCES Private School Universe Survey 2023-24",
+     "url": "https://nces.ed.gov/surveys/pss/"
+    }
+   ]
+  },
+  {
+   "id": "us_amish_2026",
+   "title": "Where do America's Amish live?",
+   "base": "us_states",
+   "file": "data/us_state_amish_2026.json",
+   "key": "state",
+   "view": [
+    [
+     30,
+     -100
+    ],
+    [
+     47,
+     -70
+    ]
+   ],
+   "fields": [
+    {
+     "name": "amish",
+     "label": "Amish population (2026)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "share_of_us_amish_pct",
+     "label": "% of all US Amish",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "amish",
+    "share_of_us_amish_pct"
+   ],
+   "points": {
+    "file": "data/us_amish_settlements_2026.json",
+    "lat": "lat",
+    "lon": "lon",
+    "size": "pop",
+    "label": "name",
+    "popup": [
+     "name",
+     "state",
+     "pop",
+     "rank"
+    ]
+   },
+   "sources": [
+    {
+     "label": "Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026",
+     "url": "https://groups.etown.edu/amishstudies/amish-population-2026"
+    }
+   ]
+  },
+  {
+   "id": "mys_district_ethnicity",
+   "title": "What share of each Malaysian district is Chinese, Malay or Indian?",
+   "base": "adm",
+   "country": "MYS",
+   "file": "data/mys_district_ethnicity.json",
+   "key": "name",
+   "view": [
+    [
+     0.8,
+     99.5
+    ],
+    [
+     7.5,
+     119.5
+    ]
+   ],
+   "fields": [
+    {
+     "name": "chinese_pct",
+     "label": "Chinese, % of population",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": [
+      10,
+      20,
+      35,
+      50
+     ]
+    },
+    {
+     "name": "malay_pct",
+     "label": "Malay, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      25,
+      50,
+      70,
+      85
+     ]
+    },
+    {
+     "name": "other_bumi_pct",
+     "label": "Other Bumiputera, %",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      10,
+      25,
+      50,
+      75
+     ]
+    },
+    {
+     "name": "indian_pct",
+     "label": "Indian, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      3,
+      7,
+      12,
+      20
+     ]
+    },
+    {
+     "name": "noncitizen_pct",
+     "label": "Non-citizens, %",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "population_k",
+     "label": "Population (thousands)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year",
+     "default": 2025,
+     "noAll": true
+    },
+    {
+     "field": "state",
+     "label": "State"
+    }
+   ],
+   "popup": [
+    "district",
+    "state",
+    "year",
+    "population_k",
+    "chinese_pct",
+    "malay_pct",
+    "other_bumi_pct",
+    "indian_pct",
+    "other_citizen_pct",
+    "noncitizen_pct"
+   ],
+   "sources": [
+    {
+     "label": "Department of Statistics Malaysia, population by district (OpenDOSM population_district)",
+     "url": "https://open.dosm.gov.my/"
+    },
+    {
+     "label": "Boundaries: geoBoundaries MYS ADM2",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ],
+   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown."
+  },
+  {
+   "id": "mys_state_ethnicity",
+   "title": "How has each Malaysian state's ethnic mix changed since 1970?",
+   "base": "adm1",
+   "country": "MYS",
+   "file": "data/mys_state_ethnicity.json",
+   "key": "name",
+   "view": [
+    [
+     0.8,
+     99.5
+    ],
+    [
+     7.5,
+     119.5
+    ]
+   ],
+   "fields": [
+    {
+     "name": "chinese_pct",
+     "label": "Chinese, %",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": [
+      10,
+      20,
+      30,
+      45
+     ]
+    },
+    {
+     "name": "bumiputera_pct",
+     "label": "Bumiputera, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      50,
+      60,
+      70,
+      85
+     ]
+    },
+    {
+     "name": "indian_pct",
+     "label": "Indian, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      3,
+      7,
+      10,
+      15
+     ]
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year",
+     "default": 2025,
+     "noAll": true
+    }
+   ],
+   "popup": [
+    "name",
+    "year",
+    "population_k",
+    "chinese_pct",
+    "bumiputera_pct",
+    "malay_pct",
+    "indian_pct"
+   ],
+   "sources": [
+    {
+     "label": "Department of Statistics Malaysia, population by state (OpenDOSM population_state)",
+     "url": "https://open.dosm.gov.my/"
+    },
+    {
+     "label": "Boundaries: geoBoundaries MYS ADM1",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ]
+  },
+  {
+   "id": "sgp_planning_area_ethnicity",
+   "title": "What share of each Singapore planning area is Chinese, Malay or Indian?",
+   "base": "adm",
+   "country": "SGP",
+   "file": "data/sgp_planning_area_ethnicity.json",
+   "key": "name",
+   "view": [
+    [
+     1.2,
+     103.6
+    ],
+    [
+     1.48,
+     104.05
+    ]
+   ],
+   "fields": [
+    {
+     "name": "chinese_pct",
+     "label": "Chinese, % of residents",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": [
+      60,
+      70,
+      75,
+      80
+     ]
+    },
+    {
+     "name": "malay_pct",
+     "label": "Malay, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      5,
+      10,
+      15,
+      25
+     ]
+    },
+    {
+     "name": "indian_pct",
+     "label": "Indian, %",
+     "type": "number",
+     "scale": [
+      "#FCFBFD",
+      "#DADAEB",
+      "#9E9AC8",
+      "#6A51A3",
+      "#3F007D"
+     ],
+     "breaks": [
+      5,
+      8,
+      10,
+      15
+     ]
+    },
+    {
+     "name": "residents",
+     "label": "Residents",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "residents",
+    "chinese_pct",
+    "malay_pct",
+    "indian_pct",
+    "others_pct"
+   ],
+   "sources": [
+    {
+     "label": "Singapore Department of Statistics, Census of Population 2020, resident population by planning area and ethnic group (data.gov.sg)",
+     "url": "https://data.gov.sg/"
+    },
+    {
+     "label": "Boundaries: geoBoundaries SGP ADM2 (URA planning areas)",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ]
+  },
+  {
+   "id": "idn_province_chinese_2010",
+   "title": "What share of each Indonesian province was Chinese in 2010?",
+   "base": "adm1",
+   "country": "IDN",
+   "file": "data/idn_province_chinese_2010.json",
+   "key": "name",
+   "view": [
+    [
+     -11,
+     95
+    ],
+    [
+     6,
+     141
+    ]
+   ],
+   "fields": [
+    {
+     "name": "share_pct_2010",
+     "label": "Chinese, % of population (2010)",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": [
+      0.5,
+      1,
+      3,
+      6
+     ]
+    },
+    {
+     "name": "chinese_2010",
+     "label": "Chinese population (2010)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "province_2010",
+    "chinese_2010",
+    "share_pct_2010"
+   ],
+   "sources": [
+    {
+     "label": "BPS Population Census 2010 (SP2010 table L2.6); Arifin, Hasbullah & Pramono (2016); Ananta et al. (2015)",
+     "url": ""
+    },
+    {
+     "label": "Boundaries: geoBoundaries IDN ADM1",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ],
+   "notes": "North Kalimantan split from East Kalimantan in 2012; 2010 figure sits in East Kalimantan."
+  },
+  {
+   "id": "idn_district_chinese_2010",
+   "title": "Which Indonesian cities had the most Chinese residents in 2010?",
+   "base": "adm",
+   "country": "IDN",
+   "file": "data/idn_district_chinese_2010.json",
+   "key": "name",
+   "view": [
+    [
+     -8,
+     98
+    ],
+    [
+     4,
+     117
+    ]
+   ],
+   "fields": [
+    {
+     "name": "chinese_2010",
+     "label": "Chinese population (2010)",
+     "type": "number",
+     "scale": [
+      "#FFF5F0",
+      "#FCBBA1",
+      "#FB6A4A",
+      "#CB181D",
+      "#67000D"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "share_pct_2010",
+     "label": "Chinese, % (where published)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "district_2010",
+    "chinese_2010",
+    "share_pct_2010",
+    "note"
+   ],
+   "sources": [
+    {
+     "label": "Arifin et al. 2016 top-10 table (BPS Census 2010)",
+     "url": ""
+    }
+   ],
+   "notes": "Only the published top districts; all others show no data."
+  },
+  {
+   "id": "fra_dept_private_school",
+   "title": "What share of pupils in each French département go to private school?",
+   "base": "adm",
+   "country": "FRA",
+   "file": "data/fra_dept_private_school.json",
+   "key": "name",
+   "view": [
+    [
+     41,
+     -5.5
+    ],
+    [
+     51.5,
+     10
+    ]
+   ],
+   "fields": [
+    {
+     "name": "private_share_pct",
+     "label": "Private-school share of pupils, %",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "private_pupils",
+     "label": "Private-school pupils",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "dept",
+    "private_pupils",
+    "public_pupils",
+    "private_share_pct",
+    "private_secondary_schools",
+    "private_contract_schools"
+   ],
+   "sources": [
+    {
+     "label": "MEN open data, pupils by sector 2025: écoles",
+     "url": "https://data.education.gouv.fr/explore/dataset/fr-en-ecoles-effectifs-nb_classes/"
+    },
+    {
+     "label": "collèges",
+     "url": "https://data.education.gouv.fr/explore/dataset/fr-en-college-effectifs-niveau-sexe-lv/"
+    },
+    {
+     "label": "lycées GT",
+     "url": "https://data.education.gouv.fr/explore/dataset/fr-en-lycee_gt-effectifs-niveau-sexe-lv/"
+    },
+    {
+     "label": "lycées pro",
+     "url": "https://data.education.gouv.fr/explore/dataset/fr-en-lycee_pro-effectifs-niveau-sexe-lv/"
+    },
+    {
+     "label": "Annuaire de l'éducation (school counts)",
+     "url": "https://data.education.gouv.fr/explore/dataset/fr-en-annuaire-education/"
+    },
+    {
+     "label": "Boundaries: geoBoundaries FRA ADM2",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ],
+   "notes": "Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn."
+  }
+ ]
+}
