@@ -1,7 +1,19 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Atlas · @youngsirmuda</title>
-<link rel="stylesheet" href="lib/leaflet.css"><link rel="stylesheet" href="style.css"></head><body>
-<header id="bar"><h1 id="title">Atlas</h1><button id="toggle" aria-label="Show controls">☰</button></header>
+<title>Muda's Atlas · What would you like to explore? · @youngsirmuda</title>
+<meta name="description" content="An interactive, filterable atlas of languages, ethnicity, schools and communities — county by county, worldwide. Every figure sourced. By @youngsirmuda.">
+<meta name="theme-color" content="#1E2430">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Muda's Atlas">
+<meta property="og:title" content="Muda's Atlas — What would you like to explore?">
+<meta property="og:description" content="Interactive maps of languages, ethnicity, schools and communities, county by county. By @youngsirmuda.">
+<meta property="og:url" content="https://mudagogo2021-beep.github.io/atlas-test/">
+<meta property="og:image" content="https://mudagogo2021-beep.github.io/atlas-test/og.png">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@youngsirmuda">
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="icon" href="favicon.png" sizes="64x64"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/leaflet.css"><link rel="stylesheet" href="style.css"></head><body class="home">
+<header id="bar"><button id="homebtn" class="brand" aria-label="Back to start screen"><img src="favicon.svg" alt=""><span><b>Muda's Atlas</b><small>@youngsirmuda</small></span></button>
+ <h1 id="title"></h1><button id="explore" class="pill" aria-label="All maps">☷ <span>All maps</span></button><button id="toggle" class="pill" aria-label="Show controls">☰</button></header>
 <div id="map"></div>
 <aside id="panel">
  <label>Dataset<select id="ds"></select></label>
@@ -9,7 +21,14 @@
  <div id="filters"></div>
  <label class="chk"><input type="checkbox" id="admchk"> Show admin units worldwide (ADM2, loads on zoom)</label>
  <div id="legend"></div>
- <details id="srcbox"><summary>Sources & notes</summary><div id="sources"></div></details>
+ <details id="srcbox" open><summary>Sources &amp; notes</summary><div id="sources"></div></details>
 </aside>
-<footer id="foot">@youngsirmuda · <span id="credit"></span></footer>
+<section id="start" aria-label="Start screen"><div class="wrap">
+ <p class="kicker">Muda's Atlas · county by county</p>
+ <h2>What would you like to explore?</h2>
+ <p class="lede">Pick a map. Every figure is sourced; tap any area for details.</p>
+ <div id="cards"></div>
+ <p class="fine">Base maps: Natural Earth (public domain), US Census Bureau, geoBoundaries (CC BY 4.0). · Made by <b>@youngsirmuda</b></p>
+</div></section>
+<footer id="foot"><b>@youngsirmuda</b><span id="credit"></span></footer>
 <script src="lib/leaflet.js"></script><script src="lib/topojson-client.min.js"></script><script src="app.js"></script></body></html>

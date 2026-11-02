@@ -48,5 +48,22 @@ Everything on screen (dataset picker, "Colour by", filters, legend, popups, sour
 - New base layer: add it under `bases` (`file`, `key`, `name`; `object` for TopoJSON; `tiled`+`pattern` for per-country files).
 3. Reload. The URL hash (`#ds=…&field=…&f_year=…`) is shareable.
 
+## Start screen ("What would you like to explore?")
+The site opens on a start screen built entirely from the manifest: big **category tiles** (with icon, blurb and a live map count) → tap one to see its **map cards** → tap a card to load the map and zoom to its `view`. The ☷ *All maps* button or the logo in the title bar goes back. URLs: `#` (start), `#cat=Schools` (a category), `#ds=<id>` (a map).
+
+Optional dataset fields (in each `datasets[]` entry):
+| Field | Meaning |
+|---|---|
+| `category` | Theme the card is grouped under (e.g. `"Languages"`). New names create new tiles automatically; missing → "More maps". |
+| `blurb` | One-line description on the card. |
+| `icon` | Emoji, or a path to an image (`flags/France.png`, `.svg`, `.jpg`…). |
+| `region` | Small label above the title (`"USA"`, `"Malaysia"`). |
+
+Optional top-level fields:
+- `categories`: array giving tile order (unlisted categories are appended).
+- `categoryInfo`: `{"Languages":{"icon":"🗣️","color":"#2F6DB5","blurb":"…"}}` — tile icon (emoji or image path), background colour and blurb.
+
+`build_manifest.py` keeps these fields when it regenerates the manifest.
+
 ## Rebuild scripts (box only)
 `/workspace/maps/build_bundle.py` (bases + language data), `build_gb.py` (geoBoundaries per-country files), `build_datasets.py` (other datasets), `build_manifest.py` (manifest + palette).

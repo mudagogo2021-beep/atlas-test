@@ -289,7 +289,11 @@
      "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
     }
    ],
-   "notes": "Language = county's leading ACS C16001 group after English & Spanish, named with the finest detail available. Small counties have large margins of error. Family groups: see palette.json family_note."
+   "notes": "Language = county's leading ACS C16001 group after English & Spanish, named with the finest detail available. Small counties have large margins of error. Family groups: see palette.json family_note.",
+   "category": "Languages",
+   "icon": "🗣️",
+   "region": "USA",
+   "blurb": "Leading home language in each county after English & Spanish"
   },
   {
    "id": "world_second_language",
@@ -404,7 +408,11 @@
      "url": "https://www.naturalearthdata.com/"
     }
    ],
-   "notes": "Second language = compulsory or most-studied school language (world v8 rules). Grey = no source found. Canada is split: Quebec English, rest French (overlay)."
+   "notes": "Second language = compulsory or most-studied school language (world v8 rules). Grey = no source found. Canada is split: Quebec English, rest French (overlay).",
+   "category": "Languages",
+   "icon": "🌍",
+   "region": "World",
+   "blurb": "The most-spoken second language in every country"
   },
   {
    "id": "canada_second_language",
@@ -450,7 +458,11 @@
      "label": "Natural Earth admin-1 (public domain)",
      "url": "https://www.naturalearthdata.com/"
     }
-   ]
+   ],
+   "category": "Languages",
+   "icon": "🍁",
+   "region": "Canada",
+   "blurb": "English or French as the second official language, by province"
   },
   {
    "id": "regions13_outline",
@@ -501,7 +513,11 @@
      "label": "Regions as used on the 13 Nations posters; state boundaries Census 2023",
      "url": ""
     }
-   ]
+   ],
+   "category": "Regions",
+   "icon": "🧭",
+   "region": "USA",
+   "blurb": "The 13 Nations cultural regions of America, state by state"
   },
   {
    "id": "us_county_hispanic_black_2020",
@@ -616,7 +632,11 @@
      "url": "https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html"
     }
    ],
-   "notes": "Connecticut uses the 8 old counties in 2020 data, so CT's 2023 planning regions show no data."
+   "notes": "Connecticut uses the 8 old counties in 2020 data, so CT's 2023 planning regions show no data.",
+   "category": "Population & ethnicity",
+   "icon": "👥",
+   "region": "USA",
+   "blurb": "Hispanic and Black share of every county, 2020 Census"
   },
   {
    "id": "us_county_private_schools",
@@ -687,7 +707,11 @@
      "url": "https://nces.ed.gov/surveys/pss/"
     }
    ],
-   "notes": "Weighted survey estimates; counties with no sampled school show no data."
+   "notes": "Weighted survey estimates; counties with no sampled school show no data.",
+   "category": "Schools",
+   "icon": "🏫",
+   "region": "USA",
+   "blurb": "Number of private schools in each county"
   },
   {
    "id": "us_state_private_schools",
@@ -759,7 +783,11 @@
      "label": "NCES Private School Universe Survey 2023-24",
      "url": "https://nces.ed.gov/surveys/pss/"
     }
-   ]
+   ],
+   "category": "Schools",
+   "icon": "⛪",
+   "region": "USA",
+   "blurb": "Religious share of each state’s private schools"
   },
   {
    "id": "us_amish_2026",
@@ -829,7 +857,11 @@
      "label": "Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026",
      "url": "https://groups.etown.edu/amishstudies/amish-population-2026"
     }
-   ]
+   ],
+   "category": "Religion & communities",
+   "icon": "🐴",
+   "region": "USA",
+   "blurb": "Amish population and settlements, 2026"
   },
   {
    "id": "mys_district_ethnicity",
@@ -982,7 +1014,11 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
-   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown."
+   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown.",
+   "category": "Population & ethnicity",
+   "icon": "🌴",
+   "region": "Malaysia",
+   "blurb": "Chinese, Malay and Indian share of each district"
   },
   {
    "id": "mys_state_ethnicity",
@@ -1083,7 +1119,11 @@
      "label": "Boundaries: geoBoundaries MYS ADM1",
      "url": "https://www.geoboundaries.org/"
     }
-   ]
+   ],
+   "category": "Population & ethnicity",
+   "icon": "📈",
+   "region": "Malaysia",
+   "blurb": "How each state’s ethnic mix changed, 1970–2026"
   },
   {
    "id": "sgp_planning_area_ethnicity",
@@ -1189,7 +1229,11 @@
      "label": "Boundaries: geoBoundaries SGP ADM2 (URA planning areas)",
      "url": "https://www.geoboundaries.org/"
     }
-   ]
+   ],
+   "category": "Population & ethnicity",
+   "icon": "🏙️",
+   "region": "Singapore",
+   "blurb": "Ethnic mix of every planning area"
   },
   {
    "id": "idn_province_chinese_2010",
@@ -1258,7 +1302,11 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
-   "notes": "North Kalimantan split from East Kalimantan in 2012; 2010 figure sits in East Kalimantan."
+   "notes": "North Kalimantan split from East Kalimantan in 2012; 2010 figure sits in East Kalimantan.",
+   "category": "Population & ethnicity",
+   "icon": "🏝️",
+   "region": "Indonesia",
+   "blurb": "Chinese share of each province, 2010 Census"
   },
   {
    "id": "idn_district_chinese_2010",
@@ -1319,7 +1367,11 @@
      "url": ""
     }
    ],
-   "notes": "Only the published top districts; all others show no data."
+   "notes": "Only the published top districts; all others show no data.",
+   "category": "Population & ethnicity",
+   "icon": "🏘️",
+   "region": "Indonesia",
+   "blurb": "Cities and regencies with the most Chinese residents, 2010"
   },
   {
    "id": "fra_dept_private_school",
@@ -1402,7 +1454,45 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
-   "notes": "Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn."
+   "notes": "Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn.",
+   "category": "Schools",
+   "icon": "🎒",
+   "region": "France",
+   "blurb": "Share of pupils in private school, by département"
   }
- ]
+ ],
+ "categories": [
+  "Languages",
+  "Population & ethnicity",
+  "Schools",
+  "Religion & communities",
+  "Regions"
+ ],
+ "categoryInfo": {
+  "Languages": {
+   "icon": "🗣️",
+   "color": "#2F6DB5",
+   "blurb": "What people speak at home, county by county"
+  },
+  "Population & ethnicity": {
+   "icon": "👥",
+   "color": "#C8553D",
+   "blurb": "Who lives where, from US counties to Malaysian districts"
+  },
+  "Schools": {
+   "icon": "🏫",
+   "color": "#2E9E4F",
+   "blurb": "Private and religious schooling"
+  },
+  "Religion & communities": {
+   "icon": "⛪",
+   "color": "#7B3FA0",
+   "blurb": "Faith communities and where they settled"
+  },
+  "Regions": {
+   "icon": "🧭",
+   "color": "#F07F1A",
+   "blurb": "Cultural regions and borders"
+  }
+ }
 }

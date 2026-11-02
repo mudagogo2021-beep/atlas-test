@@ -30,7 +30,7 @@ function colorer(f,vals){
   const items=sc.slice(0,br.length+1).map((c,i)=>({key:i,color:c,label:i===0?`< ${fmt(br[0])}`:i===br.length?`≥ ${fmt(br[i-1])}`:`${fmt(br[i-1])} – ${fmt(br[i])}`,n:nums.filter(v=>cls(v)===i).length}));
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
-  D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+' · Atlas';
+  D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
   $('#field').innerHTML='';D.fields.forEach(f=>$('#field').add(new Option(f.label,f.name)));if(opt.field)$('#field').value=opt.field;
   const rows=await loadRows(D.file);const base=await loadBase(D.base,D.country);
   D._rows=rows;D._base=base;const bk=M.bases[D.base];D._bk=bk;
@@ -82,6 +82,25 @@ async function admRefresh(){if(!$('#admchk').checked||map.getZoom()<5){admGroup.
     const g=await loadBase('adm',iso);admGroup.addLayer(L.geoJSON(g,{style:{color:'#3A1407',weight:.5,fill:false},interactive:false}))}}
 $('#admchk').onchange=()=>{admGroup.addTo(map);admRefresh()};map.on('moveend',admRefresh);
 window.atlasMap=map;
-window.addEventListener('hashchange',()=>{const s=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));hidden.clear();show(s.ds,s)});
-await show(st.ds||M.datasets[0].id,st);
+// start screen: category tiles -> map cards, all from the manifest
+const CI=M.categoryInfo||{},autoC=['#2F6DB5','#C8553D','#2E9E4F','#7B3FA0','#F07F1A','#17A2A4'];
+const cats=[...new Set([...(M.categories||[]),...M.datasets.map(d=>d.category||'More maps')])].filter(c=>M.datasets.some(d=>(d.category||'More maps')===c));
+const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[c]||{})});
+const icon=v=>v&&/\.(png|svg|jpe?g|webp)$/i.test(v)?`<img src="${esc(v)}" alt="">`:esc(v||'🗺️');
+function home(cat){document.body.classList.add('home');document.body.classList.remove('open');$('#title').textContent='';
+  document.title=cat?cat+" · Muda's Atlas":"Muda's Atlas · What would you like to explore?";const box=$('#cards');$('#start').classList.toggle('incat',!!cat);
+  if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),n=M.datasets.filter(d=>(d.category||'More maps')===c).length;
+      return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} map${n>1?'s':''}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
+    box.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{location.hash='cat='+encodeURIComponent(b.dataset.c)})}
+  else{const i=cats.indexOf(cat),k=cinfo(cat,i);
+    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>(d.category||'More maps')===cat).map(d=>
+      `<button class="card" data-id="${esc(d.id)}" style="--c:${k.color}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>`).join('')+'</div>';
+    $('#backcats').onclick=()=>{location.hash=''};
+    box.querySelectorAll('.card').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id})}
+  $('#start').scrollTop=0}
+$('#homebtn').onclick=$('#explore').onclick=()=>{if(location.hash)location.hash='';else home()};
+function route(){const s=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));hidden.clear();
+  if(s.ds&&M.datasets.some(d=>d.id===s.ds))return show(s.ds,s);home(s.cat&&cats.includes(s.cat)?s.cat:null)}
+window.addEventListener('hashchange',route);
+await route();
 })().catch(e=>{document.body.insertAdjacentHTML('beforeend',`<pre style="position:fixed;top:60px;left:10px;background:#fff;color:#b00;z-index:9999">${e}</pre>`);console.error(e)});
