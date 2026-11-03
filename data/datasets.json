@@ -2187,6 +2187,60 @@
       "documented": "#2E9E4F",
       "inferred": "#E3B505"
      }
+    },
+    {
+     "name": "government",
+     "label": "Government today (CIA World Factbook)",
+     "type": "category",
+     "colors": {
+      "Presidential republic": "#2F6DB5",
+      "Parliamentary republic": "#6BAED6",
+      "Semi-presidential republic": "#17A2A4",
+      "Constitutional / parliamentary monarchy": "#7B3FA0",
+      "Absolute monarchy": "#D7263D",
+      "Communist / one-party state": "#8B1E1E",
+      "Theocracy": "#E3B505",
+      "Military / transitional": "#8B6B4A",
+      "Other": "#A3A6AD"
+     },
+     "noSlider": true
+    },
+    {
+     "name": "colonial_ruler",
+     "label": "Colonial / imperial ruler (ICOW)",
+     "type": "category",
+     "colors": {
+      "United Kingdom": "#C8102E",
+      "France": "#2F6DB5",
+      "Spain": "#E3B505",
+      "Portugal": "#2E9E4F",
+      "Netherlands": "#F07F1A",
+      "Ottoman Empire": "#7B3FA0",
+      "Russia": "#5A6270",
+      "Belgium": "#111111",
+      "Austria-Hungary": "#B07AA1",
+      "United States": "#17A2A4",
+      "Italy": "#8DB600",
+      "Japan": "#E86A92",
+      "Germany": "#8B6B4A",
+      "China": "#8B1E1E",
+      "Australia": "#9C6B30",
+      "New Zealand": "#4C4C9D",
+      "Never colonized (no colonial ruler in ICOW)": "#E8E3D3"
+     },
+     "noSlider": true
+    },
+    {
+     "name": "title_guaranteed_by",
+     "label": "Title guaranteed by",
+     "type": "category",
+     "colors": {
+      "State-guaranteed register": "#2E9E4F",
+      "Private title insurance": "#D7263D",
+      "Mixed": "#E3B505",
+      "No data": "#C9CCD2"
+     },
+     "noSlider": true
     }
    ],
    "filters": [
@@ -2204,10 +2258,21 @@
    ],
    "popup": [
     "year",
-    "era",
     "basis",
     "confidence",
-    "source"
+    "source",
+    "deeds_under_colonial_rule",
+    "first_deeds_issued_by",
+    "colonial_ruler",
+    "independence",
+    "colonial_note",
+    "colonial_source",
+    "government",
+    "government_detail",
+    "government_source",
+    "title_guaranteed_by",
+    "title_guarantee_basis",
+    "title_guarantee_source"
    ],
    "overlays": [
     "land_records_us_counties",
@@ -2215,7 +2280,7 @@
     "land_records_aus_states",
     "land_records_uk_nations"
    ],
-   "notes": "Definition: the year a public, state-run register of land ownership (a deeds registry, a title/Torrens register or an ownership cadastre) was set up for that country or unit. Tax surveys such as Domesday are excluded. Countries: dates found in the cited source this session ('documented'). US counties: the year the county was set up (Wikidata), used as a stand-in for when its recorder of deeds opened ('inferred'). Earlier deeds for that land sit with the parent county. Australian states and Canadian provinces without their own sourced date show the national value. Grey = no sourced date (No data).",
+   "notes": "Definition: the year a public, state-run register of land ownership (a deeds registry, a title/Torrens register or an ownership cadastre) was set up for that country or unit. Tax surveys such as Domesday are excluded. Countries: dates found in the cited source this session ('documented'). US counties: the year the county was set up (Wikidata), used as a stand-in for when its recorder of deeds opened ('inferred'). Earlier deeds for that land sit with the parent county. Australian states and Canadian provinces without their own sourced date show the national value. Grey = no sourced date (No data). Government: Factbook 'Government type' grouped into 9 classes (full text in popup). Colonial ruler: ICOW primary colonial/imperial ruler (includes Ottoman, Russian and Austro-Hungarian rule) and independence date. 'Deeds under colonial rule' compares the register year with ICOW independence and is inferred. Title guarantee: state register (Torrens/HM Land Registry) vs private title insurance (US), only where sourced. Year slider applies to the land-record fields only.",
    "sources": [
     {
      "label": "Wikipedia: Torrens title (AU, NZ, TH, TR, SG, SA, DO, LK, BC, NWT)",
@@ -2232,6 +2297,18 @@
     {
      "label": "Per-unit source URL in every popup",
      "url": ""
+    },
+    {
+     "label": "CIA World Factbook, Government type (factbook.json mirror, Sep 2026)",
+     "url": "https://github.com/factbook/factbook.json"
+    },
+    {
+     "label": "ICOW Colonial History Data Set v1.1 (Hensel)",
+     "url": "https://www.paulhensel.org/icowcol.html"
+    },
+    {
+     "label": "Title guarantee: Wikipedia Torrens title, HM Land Registry, Title insurance",
+     "url": "https://en.wikipedia.org/wiki/Title_insurance"
     },
     {
      "label": "geoBoundaries ADM1 (CC BY 4.0); Natural Earth 1:50m (public domain); US Census counties",
@@ -2283,7 +2360,12 @@
     "era",
     "basis",
     "confidence",
-    "source"
+    "source",
+    "deeds_under_colonial_rule",
+    "country_colonial_ruler",
+    "country_independence",
+    "country_government",
+    "title_guaranteed_by"
    ],
    "followMain": true,
    "category": "History & land",
@@ -2333,7 +2415,12 @@
     "era",
     "basis",
     "confidence",
-    "source"
+    "source",
+    "deeds_under_colonial_rule",
+    "country_colonial_ruler",
+    "country_independence",
+    "country_government",
+    "title_guaranteed_by"
    ],
    "followMain": true,
    "category": "History & land",
@@ -2383,7 +2470,12 @@
     "era",
     "basis",
     "confidence",
-    "source"
+    "source",
+    "deeds_under_colonial_rule",
+    "country_colonial_ruler",
+    "country_independence",
+    "country_government",
+    "title_guaranteed_by"
    ],
    "followMain": true,
    "category": "History & land",
@@ -2434,7 +2526,12 @@
     "era",
     "basis",
     "confidence",
-    "source"
+    "source",
+    "deeds_under_colonial_rule",
+    "country_colonial_ruler",
+    "country_independence",
+    "country_government",
+    "title_guaranteed_by"
    ],
    "followMain": true,
    "category": "History & land",

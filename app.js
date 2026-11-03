@@ -67,16 +67,16 @@ function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,base:!!s.dataset.from,v:s.value})).filter(s=>s.v!=='');
-  const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(r[s.f]!=null&&+r[s.f]<=+s.v):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);
+  const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(f.noSlider?true:(r[s.f]!=null&&+r[s.f]<=+s.v)):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);const idxAll=indexRows(D._rows);
   const feats=D._base.features.map(ft=>({ft,r:idx.get(keyOf(ft.properties[bk.key]))})).filter(o=>o.r&&sel.every(s=>!s.base||String(o.ft.properties[s.f])===s.v));
   const C=colorer(f,feats.map(o=>o.r[f.name]));const hk=v=>f.type==='category'?v:(typeof v==='number'?C.cls(v):null);
   if(layer)map.removeLayer(layer);
   const drawn=new Set(feats.map(o=>o.ft));
   layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const o=feats.find?null:null;const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
       return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
-    onEachFeature:(ft,l)=>{const P=()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})});l.bindPopup(P);
+    onEachFeature:(ft,l)=>{const P=()=>popup(D,{...ft.properties,...(idxAll.get(keyOf(ft.properties[bk.key]))||{})});l.bindPopup(P);
       l.on('mouseover',()=>{if(!matchMedia('(hover:hover)').matches)return;hov(l);if(!pinned)showCard(P(),false)});l.on('mouseout',()=>{unhov(l);if(!pinned)hideCard()})}}).addTo(map);
-  overlays.forEach(o=>{if(o._oi){const k=M.bases[o._od.base].key;o.setStyle(ft=>{const r=o._oi.get(String(ft.properties[k]));if(!r)return{fillOpacity:0,opacity:.35,color:'#fff',weight:.4};const ok=pass(r)&&!hidden.has(r[f.name]);return{color:'#fff',weight:.4,fillColor:ok?o._oc.fn(r[f.name]):NODATA,fillOpacity:ok?1:.55,opacity:1}})}o.bringToFront()});outl.forEach(o=>o.on&&o.g.bringToFront());
+  overlays.forEach(o=>{if(o._oi){if(f.noSlider){map.hasLayer(o)&&map.removeLayer(o);return}if(!map.hasLayer(o))o.addTo(map);const k=M.bases[o._od.base].key;o.setStyle(ft=>{const r=o._oi.get(String(ft.properties[k]));if(!r)return{fillOpacity:0,opacity:.35,color:'#fff',weight:.4};const ok=pass(r)&&!hidden.has(r[f.name]);return{color:'#fff',weight:.4,fillColor:ok?o._oc.fn(r[f.name]):NODATA,fillOpacity:ok?1:.55,opacity:1}})}o.bringToFront()});outl.forEach(o=>o.on&&o.g.bringToFront());
   const sk=D.id+JSON.stringify(sel),zf=sk!==lastSel;lastSel=sk;
   if(zf&&sel.length&&D.zoomOnFilter!==false&&feats.length&&feats.length<D._base.features.length*0.5)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:feats.map(o=>o.ft)}).getBounds(),{padding:[20,20],maxZoom:9});
   if(pts)map.removeLayer(pts);pts=null;
@@ -160,7 +160,7 @@ $('#flegbtn').onclick=()=>{$('#fleg').classList.toggle('min')};
 if(innerWidth<=760)$('#fleg').classList.add('min');
 // time slider: built from any numeric filter named year (or "slider":true)
 function buildSlider(){const ts=$('#tslider');ts.classList.remove('on');ts.innerHTML='';if(!D)return;
-  const fl=(D.filters||[]).find(f=>f.slider||f.field==='year');if(!fl)return;const sel=document.querySelector(`#filters select[data-f="${fl.field}"]`);if(!sel)return;
+  const fl=(D.filters||[]).find(f=>f.slider||f.field==='year');if(!fl)return;if((D.fields.find(x=>x.name===$('#field').value)||{}).noSlider)return;const sel=document.querySelector(`#filters select[data-f="${fl.field}"]`);if(!sel)return;
   const fn=$('#field').value,have=new Set(D._rows.filter(r=>r[fn]!=null).map(r=>String(r[fl.field])));
   let vals=[...sel.options].map(o=>o.value).filter(v=>v!==''&&!isNaN(+v));if(vals.some(v=>have.has(v)))vals=vals.filter(v=>have.has(v));vals=vals.map(Number).sort((a,b)=>a-b);if(fl.cumulative&&vals.length>1){const a=vals[0],b=Math.max(vals[vals.length-1],fl.max||0);vals=[];for(let y=a;y<=b;y++){vals.push(y);if(![...sel.options].some(o=>o.value===String(y))){const o=document.createElement('option');o.value=o.textContent=String(y);sel.append(o)}}}
   if(!vals.includes(+sel.value)){sel.value=String(vals[vals.length-1]);render()}if(vals.length<2)return;

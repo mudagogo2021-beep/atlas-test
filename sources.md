@@ -111,3 +111,4 @@
 - Australia (SA 1858, Vic 1862, NSW 1862) from Wikipedia Torrens title / Australian property law. UK nations: Registers of Scotland 1617, Registry of Deeds (Ireland) 1708, HM Land Registry 1862. Canada: BC 1861, AB/SK/NT 1886 (Torrens title).
 - Dropped as not confirmed in a source this session: AUT, CHE, IND, ZAF, BRA, RUS, Quebec, Ontario, Nova Scotia, New Brunswick, Queensland, Tasmania, Western Australia.
 - Boundaries: geoBoundaries ADM1 AUS/GBR (CC BY 4.0).
+- Added fields: government (CIA World Factbook "Government type", factbook.json mirror updated 11 Sep 2026; grouped into 9 classes), colonial/imperial ruler + independence (ICOW Colonial History v1.1, Hensel), title guarantee (Torrens title / HM Land Registry = state; US = private title insurance per Wikipedia Title insurance; Canada mixed). "Deeds under colonial rule" and "first deeds issued by" are inferred by comparing the register year with the ICOW independence year.
