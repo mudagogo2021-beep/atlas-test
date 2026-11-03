@@ -1,0 +1,273 @@
+[
+{
+"code": "XSP",
+"name": "St. Petersburg waterfront (airboat landing)",
+"city": "St. Petersburg, FL",
+"lat": 27.773,
+"lon": -82.632,
+"approx": true
+},
+{
+"code": "XTP",
+"name": "Tampa (Hillsborough River landing)",
+"city": "Tampa, FL",
+"lat": 27.947,
+"lon": -82.458,
+"approx": true
+},
+{
+"code": "XHH",
+"name": "Hounslow Heath Aerodrome",
+"city": "London",
+"lat": 51.46,
+"lon": -0.39,
+"approx": true
+},
+{
+"code": "XLB",
+"name": "Paris–Le Bourget",
+"city": "Paris",
+"lat": 48.969,
+"lon": 2.441,
+"approx": true
+},
+{
+"code": "XWF",
+"name": "Woodward Field",
+"city": "Salt Lake City",
+"lat": 40.77,
+"lon": -111.96,
+"approx": true
+},
+{
+"code": "XAF",
+"name": "Anderson Field",
+"city": "Las Vegas",
+"lat": 36.17,
+"lon": -115.14,
+"approx": true
+},
+{
+"code": "REC",
+"name": "Recife/Guararapes - Gilberto Freyre International Airport",
+"city": "Recife",
+"lat": -8.12747,
+"lon": -34.922961
+},
+{
+"code": "SLZ",
+"name": "Marechal Cunha Machado International Airport",
+"city": "São Luís",
+"lat": -2.586386,
+"lon": -44.235008
+},
+{
+"code": "XAL",
+"name": "Alameda (Pan Am base)",
+"city": "San Francisco Bay",
+"lat": 37.785,
+"lon": -122.31,
+"approx": true
+},
+{
+"code": "XFI",
+"name": "Pearl Harbor (Pan Am base)",
+"city": "Honolulu",
+"lat": 21.364,
+"lon": -157.96,
+"approx": true
+},
+{
+"code": "XDI",
+"name": "Darrell Island Marine Air Terminal",
+"city": "Bermuda",
+"lat": 32.276,
+"lon": -64.81,
+"approx": true
+},
+{
+"code": "XCR",
+"name": "Cabo Ruivo Seaplane Base",
+"city": "Lisbon",
+"lat": 38.763,
+"lon": -9.096,
+"approx": true
+},
+{
+"code": "XNL",
+"name": "Nedlands (Swan River)",
+"city": "Perth",
+"lat": -31.98,
+"lon": 115.82,
+"approx": true
+},
+{
+"code": "XKG",
+"name": "Koggala Lagoon",
+"city": "Ceylon (Sri Lanka)",
+"lat": 5.99,
+"lon": 80.32,
+"approx": true
+},
+{
+"code": "HND",
+"name": "Tokyo Haneda International Airport",
+"city": "Tokyo",
+"lat": 35.549678,
+"lon": 139.786958
+},
+{
+"code": "HNL",
+"name": "Daniel K. Inouye International Airport",
+"city": "Honolulu, Oahu",
+"lat": 21.318387,
+"lon": -157.92567
+},
+{
+"code": "LAX",
+"name": "Los Angeles International Airport",
+"city": "Los Angeles",
+"lat": 33.942501,
+"lon": -118.407997
+},
+{
+"code": "LHR",
+"name": "London Heathrow Airport",
+"city": "London",
+"lat": 51.470748,
+"lon": -0.459909
+},
+{
+"code": "SFO",
+"name": "San Francisco International Airport",
+"city": "San Francisco",
+"lat": 37.619806,
+"lon": -122.374821
+},
+{
+"code": "ORY",
+"name": "Paris-Orly Airport",
+"city": "Paris (Orly, Val-de-Marne)",
+"lat": 48.729499,
+"lon": 2.358963
+},
+{
+"code": "JFK",
+"name": "John F. Kennedy International Airport",
+"city": "New York",
+"lat": 40.639447,
+"lon": -73.779317
+},
+{
+"code": "TLV",
+"name": "Ben Gurion International Airport",
+"city": "Tel Aviv",
+"lat": 32.011398,
+"lon": 34.8867
+},
+{
+"code": "HAV",
+"name": "José Martí International Airport",
+"city": "Havana",
+"lat": 22.989200592041016,
+"lon": -82.40910339355469
+},
+{
+"code": "SVO",
+"name": "Sheremetyevo International Airport",
+"city": "Moscow",
+"lat": 55.977486,
+"lon": 37.386677
+},
+{
+"code": "MAD",
+"name": "Adolfo Suárez Madrid–Barajas Airport",
+"city": "Madrid",
+"lat": 40.493407,
+"lon": -3.572249
+},
+{
+"code": "EZE",
+"name": "Ezeiza International Airport - Ministro Pistarini",
+"city": "Buenos Aires (Ezeiza)",
+"lat": -34.8222,
+"lon": -58.5358
+},
+{
+"code": "SYD",
+"name": "Sydney Kingsford Smith International Airport",
+"city": "Sydney (Mascot)",
+"lat": -33.946098,
+"lon": 151.177002
+},
+{
+"code": "JNB",
+"name": "O.R. Tambo International Airport",
+"city": "Johannesburg",
+"lat": -26.140081,
+"lon": 28.246801
+},
+{
+"code": "ATL",
+"name": "Hartsfield Jackson Atlanta International Airport",
+"city": "Atlanta",
+"lat": 33.6367,
+"lon": -84.428101
+},
+{
+"code": "SIN",
+"name": "Singapore Changi Airport",
+"city": "Singapore",
+"lat": 1.35019,
+"lon": 103.994003
+},
+{
+"code": "EWR",
+"name": "Newark Liberty International Airport",
+"city": "Newark",
+"lat": 40.6894,
+"lon": -74.170545
+},
+{
+"code": "DFW",
+"name": "Dallas Fort Worth International Airport",
+"city": "Dallas-Fort Worth",
+"lat": 32.896801,
+"lon": -97.038002
+},
+{
+"code": "DXB",
+"name": "Dubai International Airport",
+"city": "Dubai",
+"lat": 25.24979,
+"lon": 55.370992
+},
+{
+"code": "AKL",
+"name": "Auckland International Airport",
+"city": "Auckland",
+"lat": -37.01199,
+"lon": 174.786331
+},
+{
+"code": "DOH",
+"name": "Hamad International Airport",
+"city": "Doha",
+"lat": 25.273056,
+"lon": 51.608056
+},
+{
+"code": "PPT",
+"name": "Fa'a'ā International Airport",
+"city": "Papeete",
+"lat": -17.553472,
+"lon": -149.606936
+},
+{
+"code": "CDG",
+"name": "Charles de Gaulle International Airport",
+"city": "Paris (Roissy-en-France, Val-d'Oise)",
+"lat": 49.00896,
+"lon": 2.554117
+}
+]

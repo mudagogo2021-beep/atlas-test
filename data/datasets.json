@@ -2059,6 +2059,90 @@
      "url": "https://doi.org/10.17026/dans-25g-gez3"
     }
    ]
+  },
+  {
+   "id": "longest_flights",
+   "title": "What was the world's longest flight each year?",
+   "category": "Aviation",
+   "icon": "🛫",
+   "region": "World",
+   "blurb": "Slide through 1914–2026: the record-holding longest scheduled non-stop passenger flight (great-circle distance). Bright = that year's holder, dashed grey = earlier holders.",
+   "base": "world",
+   "file": "data/longest_flights.json",
+   "key": "id",
+   "view": [
+    [
+     -45,
+     -160
+    ],
+    [
+     65,
+     175
+    ]
+   ],
+   "fields": [
+    {
+     "name": "status",
+     "label": "Holder",
+     "type": "category",
+     "colors": {
+      "Current record holder": "#FFC21A",
+      "Former holder": "#FF7A00"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year",
+     "slider": true,
+     "cumulative": "end_year",
+     "history": true
+    },
+    {
+     "field": "airline",
+     "label": "Airline"
+    },
+    {
+     "field": "airport",
+     "label": "Airport",
+     "from": "lines"
+    }
+   ],
+   "popup": [
+    "airline",
+    "aircraft",
+    "distance",
+    "duration",
+    "years_held",
+    "first_flight",
+    "certainty",
+    "note",
+    "source"
+   ],
+   "lines": {
+    "airports": "data/longest_flights_airports.json",
+    "code": "code",
+    "from": "from",
+    "to": "to",
+    "size": "size",
+    "sizeLabel": "record route",
+    "noun": "record route",
+    "detail": "years_held"
+   },
+   "overlays": [],
+   "points": null,
+   "flagField": null,
+   "sources": [
+    {
+     "label": "Wikipedia, \"Longest flights\" – History timeline and non-stop tables (accessed 2 Nov 2026)",
+     "url": "https://en.wikipedia.org/wiki/Longest_flights"
+    },
+    {
+     "label": "Airport coordinates: OurAirports (public domain); pre-1950 seaplane/field sites approximate",
+     "url": "https://ourairports.com/data/"
+    }
+   ]
   }
  ],
  "categories": [
