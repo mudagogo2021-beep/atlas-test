@@ -1843,7 +1843,7 @@
    "category": "Aviation",
    "icon": "🛫",
    "region": "World",
-   "blurb": "Press ▶: modelled growth paced by sourced fleet size. 1914 shows the single Tampa airboat route; confirmed milestones (orange) appear in their true year; the ~18.8k routes of 2014 (OpenFlights) are revealed so each year's count = airliners in service × 0.705 (the 2014 routes-per-aircraft ratio).",
+   "blurb": "Press ▶: modelled growth paced by sourced fleet size. 1914 shows the single Tampa airboat route; 22 dated milestone routes appear in their true year; the ~18.8k routes of 2014 (OpenFlights) are revealed so each year's count = airliners in service × 0.705 (the 2014 routes-per-aircraft ratio). All routes share one style.",
    "base": "world",
    "file": "data/airline_timeline_routes.json",
    "key": "id",
@@ -1863,7 +1863,7 @@
      "label": "Date type",
      "type": "category",
      "colors": {
-      "Milestone route": "#FF6B3D",
+      "Milestone route": "#4C8DFF",
       "Modelled growth (2014 route, paced by fleet)": "#4C8DFF"
      }
     }
@@ -1907,10 +1907,6 @@
     "noun": "route",
     "detail": "year",
     "today": "≈105,704 scheduled commercial flights per day worldwide (OAG average, 29 Dec 2025–8 Nov 2026, one-way flights in schedules; OAG page, Oct 2026). Peak tracked day: 153,359 commercial flights on 23 Jul 2026 (Flightradar24, incl. cargo/charter).",
-    "planes": {
-     "capDesktop": 1500,
-     "capPhone": 300
-    },
     "dark": true,
     "yearNote": {
      "1914": "0.00% (modelled with the routes; world pop. 1.82 bn, HYDE 3.2)",
