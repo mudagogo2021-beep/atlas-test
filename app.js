@@ -37,7 +37,7 @@ async function show(id,opt){
   // filters (auto from manifest)
   const fb=$('#filters');fb.innerHTML='';const idx=indexRows(rows);
   for(const fl of (D.filters||[])){const vals=new Set();
-    if(fl.from==='lines')rows.forEach(r=>{vals.add(r[D.lines.from]);vals.add(r[D.lines.to])});else if(fl.from==='base')base.features.forEach(ft=>{if(idx.has(keyOf(ft.properties[bk.key])))vals.add(ft.properties[fl.field])});else rows.forEach(r=>vals.add(r[fl.field]));if(fl.cumulative){const ns=[...vals].filter(v=>v!=null).map(Number);for(let y=Math.min(...ns);y<=Math.max(...ns);y++)vals.add(y)}
+    if(fl.from==='lines')rows.forEach(r=>{vals.add(r[D.lines.from]);vals.add(r[D.lines.to])});else if(fl.from==='base')base.features.forEach(ft=>{if(idx.has(keyOf(ft.properties[bk.key])))vals.add(ft.properties[fl.field])});else rows.forEach(r=>vals.add(r[fl.field]));if(fl.cumulative){const ns=[...vals].filter(v=>v!=null).map(Number);for(let y=Math.min(...ns);y<=Math.max(...ns,fl.max||0);y++)vals.add(y)}
     const s=document.createElement('select');s.dataset.f=fl.field;s.dataset.from=fl.from||'';if(!fl.noAll)s.add(new Option('All',''));
     [...vals].filter(v=>v!=null).sort((a,b)=>typeof a==='number'?b-a:String(a).localeCompare(b)).forEach(v=>s.add(new Option(v,v)));
     s.value=opt['f_'+fl.field]??(fl.default??'');if(s.selectedIndex<0)s.selectedIndex=0;s.onchange=render;

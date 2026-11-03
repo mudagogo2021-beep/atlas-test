@@ -2097,7 +2097,8 @@
      "label": "Year",
      "slider": true,
      "cumulative": "end_year",
-     "history": true
+     "history": true,
+     "max": 2026
     },
     {
      "field": "airline",
