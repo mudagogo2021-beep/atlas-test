@@ -14,7 +14,7 @@ async function loadRows(f){if(cache[f])return cache[f];let r;
 const world=await loadBase('world');L.geoJSON(world,{style:{color:'#fff',weight:.6,fillColor:'#EDEDEA',fillOpacity:1},interactive:false}).addTo(map);
 // UI
 const st=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
-M.datasets.forEach(d=>$('#ds').add(new Option(d.title,d.id)));
+M.datasets.filter(d=>!d.hidden).forEach(d=>$('#ds').add(new Option(d.title,d.id)));
 let lastSel='',D,layer,overlays=[],outl=[],pts,hidden=new Set();
 $('#toggle').onclick=()=>document.body.classList.toggle('open');
 $('#ds').onchange=()=>{hidden.clear();show($('#ds').value,{})};
@@ -55,7 +55,7 @@ async function show(id,opt){
       lb.firstChild.onchange=e=>{on(ob.on=e.target.checked);render()};$('#toggles').append(lb)}}
   for(const oid of (D.overlays||[])){const od=M.datasets.find(d=>d.id===oid);if(!od)continue;const ob=await loadBase(od.base,od.country),orows=await loadRows(od.file),oi=new Map(orows.map(r=>[String(r[od.key]),r])),of=od.fields[0];const oc=colorer(of,orows.map(r=>r[of.name]));
     const outline=oid==='regions13_outline';
-    overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map))}
+    overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&oi.has(String(ft.properties[M.bases[od.base].key]))&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map));if(od.followMain){const ly=overlays[overlays.length-1];ly._od=od;ly._oi=oi;ly._oc=oc}}
   if(D.view&&!opt.keepView)map.fitBounds(D.view);
   render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
 function keyOf(v){return D._bk.normalize?norm(v):String(v)}
@@ -67,7 +67,7 @@ function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,base:!!s.dataset.from,v:s.value})).filter(s=>s.v!=='');
-  const rows=D._rows.filter(r=>sel.every(s=>s.base||String(r[s.f])===s.v));const idx=indexRows(rows);
+  const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(r[s.f]!=null&&+r[s.f]<=+s.v):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);
   const feats=D._base.features.map(ft=>({ft,r:idx.get(keyOf(ft.properties[bk.key]))})).filter(o=>o.r&&sel.every(s=>!s.base||String(o.ft.properties[s.f])===s.v));
   const C=colorer(f,feats.map(o=>o.r[f.name]));const hk=v=>f.type==='category'?v:(typeof v==='number'?C.cls(v):null);
   if(layer)map.removeLayer(layer);
@@ -76,7 +76,7 @@ function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove
       return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
     onEachFeature:(ft,l)=>{const P=()=>popup(D,{...ft.properties,...(idx.get(keyOf(ft.properties[bk.key]))||{})});l.bindPopup(P);
       l.on('mouseover',()=>{if(!matchMedia('(hover:hover)').matches)return;hov(l);if(!pinned)showCard(P(),false)});l.on('mouseout',()=>{unhov(l);if(!pinned)hideCard()})}}).addTo(map);
-  overlays.forEach(o=>o.bringToFront());outl.forEach(o=>o.on&&o.g.bringToFront());
+  overlays.forEach(o=>{if(o._oi){const k=M.bases[o._od.base].key;o.setStyle(ft=>{const r=o._oi.get(String(ft.properties[k]));if(!r)return{fillOpacity:0,opacity:.35,color:'#fff',weight:.4};const ok=pass(r)&&!hidden.has(r[f.name]);return{color:'#fff',weight:.4,fillColor:ok?o._oc.fn(r[f.name]):NODATA,fillOpacity:ok?1:.55,opacity:1}})}o.bringToFront()});outl.forEach(o=>o.on&&o.g.bringToFront());
   const sk=D.id+JSON.stringify(sel),zf=sk!==lastSel;lastSel=sk;
   if(zf&&sel.length&&D.zoomOnFilter!==false&&feats.length&&feats.length<D._base.features.length*0.5)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:feats.map(o=>o.ft)}).getBounds(),{padding:[20,20],maxZoom:9});
   if(pts)map.removeLayer(pts);pts=null;
@@ -204,11 +204,11 @@ const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[
 const icon=v=>v&&/\.(png|svg|jpe?g|webp)$/i.test(v)?`<img src="${esc(v)}" alt="">`:esc(v||'🗺️');
 function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open');$('#title').textContent='';
   document.title=cat?cat+" · Muda's Atlas":"Muda's Atlas · What would you like to explore?";const box=$('#cards');$('#start').classList.toggle('incat',!!cat);
-  if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),n=M.datasets.filter(d=>(d.category||'More maps')===c).length;
+  if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),n=M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===c).length;
       return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} map${n>1?'s':''}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
     box.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{location.hash='cat='+encodeURIComponent(b.dataset.c)})}
   else{const i=cats.indexOf(cat),k=cinfo(cat,i);
-    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>(d.category||'More maps')===cat).map(d=>
+    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===cat).map(d=>
       `<button class="card" data-id="${esc(d.id)}" style="--c:${k.color}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>`).join('')+'</div>';
     $('#backcats').onclick=()=>{location.hash=''};
     box.querySelectorAll('.card').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id})}

@@ -103,3 +103,11 @@
 - Gap: no open complete network for 1915–2013 or 2015–2026.
 - Update (backwards dating): every 2014 pair placed at its earliest possible year = max(both airports' Wikidata opening/inception, earliest Wikidata founding year among its airlines). 12,156 lower-bound dated, 6,607 undated (shown 2014 only), 0 confirmed; 22 milestones confirmed.
 - Airliners counter: ICAO Annual Report 2015 App. 1 Table 10 (2006–2014), ICAO Annual Report 1997 (1988, 1997), Skybrary Global Aviation Safety Study (1960 <3,000); other years 1961–2013 linearly interpolated and labelled.
+
+## When did land ownership start being recorded? (land_records)
+- Definition: year a public, state-run register of land ownership (deeds registry, title/Torrens register or ownership cadastre) was set up. Tax surveys (e.g. Domesday 1086) excluded.
+- Countries (17 documented): each year was checked against the cited page text on 2 Nov 2026. URLs are in data/land_records_world.json. USA and Canada are national values taken from their sub-units ('inferred').
+- US counties (3,250 rows): Wikidata inception (P571) joined on FIPS (P882), CC0. County founding is used as a stand-in for when its recorder of deeds opened ('inferred').
+- Australia (SA 1858, Vic 1862, NSW 1862) from Wikipedia Torrens title / Australian property law. UK nations: Registers of Scotland 1617, Registry of Deeds (Ireland) 1708, HM Land Registry 1862. Canada: BC 1861, AB/SK/NT 1886 (Torrens title).
+- Dropped as not confirmed in a source this session: AUT, CHE, IND, ZAF, BRA, RUS, Quebec, Ontario, Nova Scotia, New Brunswick, Queensland, Tasmania, Western Australia.
+- Boundaries: geoBoundaries ADM1 AUS/GBR (CC BY 4.0).

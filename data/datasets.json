@@ -2144,6 +2144,302 @@
      "url": "https://ourairports.com/data/"
     }
    ]
+  },
+  {
+   "id": "land_records",
+   "title": "When did land ownership start being recorded?",
+   "category": "History & land",
+   "icon": "📜",
+   "region": "World",
+   "blurb": "Press ▶ to watch countries, states and US counties light up as public land registers open, from Scotland's 1617 Register of Sasines to Saudi Arabia's 2002 title register.",
+   "base": "world",
+   "file": "data/land_records_world.json",
+   "key": "iso3",
+   "view": [
+    [
+     -45,
+     -160
+    ],
+    [
+     70,
+     175
+    ]
+   ],
+   "fields": [
+    {
+     "name": "era",
+     "label": "Recording began",
+     "type": "category",
+     "colors": {
+      "Before 1700": "#5B1A18",
+      "1700–1799": "#9C2F1F",
+      "1800–1859": "#D2592A",
+      "1860–1899": "#EE9A3A",
+      "1900–1949": "#F4CF63",
+      "1950 or later": "#BFD8A0"
+     }
+    },
+    {
+     "name": "confidence",
+     "label": "Confidence",
+     "type": "category",
+     "colors": {
+      "documented": "#2E9E4F",
+      "inferred": "#E3B505"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Recorded by",
+     "slider": true,
+     "cumulative": true
+    },
+    {
+     "field": "continent",
+     "label": "Continent",
+     "from": "base"
+    }
+   ],
+   "popup": [
+    "year",
+    "era",
+    "basis",
+    "confidence",
+    "source"
+   ],
+   "overlays": [
+    "land_records_us_counties",
+    "land_records_canada",
+    "land_records_aus_states",
+    "land_records_uk_nations"
+   ],
+   "notes": "Definition: the year a public, state-run register of land ownership (a deeds registry, a title/Torrens register or an ownership cadastre) was set up for that country or unit. Tax surveys such as Domesday are excluded. Countries: dates found in the cited source this session ('documented'). US counties: the year the county was set up (Wikidata), used as a stand-in for when its recorder of deeds opened ('inferred'). Earlier deeds for that land sit with the parent county. Australian states and Canadian provinces without their own sourced date show the national value. Grey = no sourced date (No data).",
+   "sources": [
+    {
+     "label": "Wikipedia: Torrens title (AU, NZ, TH, TR, SG, SA, DO, LK, BC, NWT)",
+     "url": "https://en.wikipedia.org/wiki/Torrens_title"
+    },
+    {
+     "label": "Wikidata county inception (P571) + FIPS (P882), CC0",
+     "url": "https://www.wikidata.org/wiki/Property:P882"
+    },
+    {
+     "label": "Registers of Scotland (1617); HM Land Registry (1862); Irish Registry of Deeds (1708)",
+     "url": "https://en.wikipedia.org/wiki/Registers_of_Scotland"
+    },
+    {
+     "label": "Per-unit source URL in every popup",
+     "url": ""
+    },
+    {
+     "label": "geoBoundaries ADM1 (CC BY 4.0); Natural Earth 1:50m (public domain); US Census counties",
+     "url": "https://www.geoboundaries.org/"
+    }
+   ]
+  },
+  {
+   "id": "land_records_us_counties",
+   "title": "When did each US county start recording deeds?",
+   "base": "us_counties",
+   "file": "data/land_records_us_counties.json",
+   "key": "GEOID",
+   "fields": [
+    {
+     "name": "era",
+     "label": "Recording began",
+     "type": "category",
+     "colors": {
+      "Before 1700": "#5B1A18",
+      "1700–1799": "#9C2F1F",
+      "1800–1859": "#D2592A",
+      "1860–1899": "#EE9A3A",
+      "1900–1949": "#F4CF63",
+      "1950 or later": "#BFD8A0"
+     }
+    },
+    {
+     "name": "confidence",
+     "label": "Confidence",
+     "type": "category",
+     "colors": {
+      "documented": "#2E9E4F",
+      "inferred": "#E3B505"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Recorded by",
+     "slider": true,
+     "cumulative": true
+    }
+   ],
+   "popup": [
+    "county",
+    "year",
+    "era",
+    "basis",
+    "confidence",
+    "source"
+   ],
+   "followMain": true,
+   "category": "History & land",
+   "hidden": true
+  },
+  {
+   "id": "land_records_canada",
+   "title": "Land registers by Canadian province",
+   "base": "canada_provinces",
+   "file": "data/land_records_canada.json",
+   "key": "code",
+   "fields": [
+    {
+     "name": "era",
+     "label": "Recording began",
+     "type": "category",
+     "colors": {
+      "Before 1700": "#5B1A18",
+      "1700–1799": "#9C2F1F",
+      "1800–1859": "#D2592A",
+      "1860–1899": "#EE9A3A",
+      "1900–1949": "#F4CF63",
+      "1950 or later": "#BFD8A0"
+     }
+    },
+    {
+     "name": "confidence",
+     "label": "Confidence",
+     "type": "category",
+     "colors": {
+      "documented": "#2E9E4F",
+      "inferred": "#E3B505"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Recorded by",
+     "slider": true,
+     "cumulative": true
+    }
+   ],
+   "popup": [
+    "county",
+    "year",
+    "era",
+    "basis",
+    "confidence",
+    "source"
+   ],
+   "followMain": true,
+   "category": "History & land",
+   "hidden": true
+  },
+  {
+   "id": "land_records_aus_states",
+   "title": "Torrens title by Australian state",
+   "base": "adm1",
+   "file": "data/land_records_aus_states.json",
+   "key": "name",
+   "fields": [
+    {
+     "name": "era",
+     "label": "Recording began",
+     "type": "category",
+     "colors": {
+      "Before 1700": "#5B1A18",
+      "1700–1799": "#9C2F1F",
+      "1800–1859": "#D2592A",
+      "1860–1899": "#EE9A3A",
+      "1900–1949": "#F4CF63",
+      "1950 or later": "#BFD8A0"
+     }
+    },
+    {
+     "name": "confidence",
+     "label": "Confidence",
+     "type": "category",
+     "colors": {
+      "documented": "#2E9E4F",
+      "inferred": "#E3B505"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Recorded by",
+     "slider": true,
+     "cumulative": true
+    }
+   ],
+   "popup": [
+    "county",
+    "year",
+    "era",
+    "basis",
+    "confidence",
+    "source"
+   ],
+   "followMain": true,
+   "category": "History & land",
+   "hidden": true,
+   "country": "AUS"
+  },
+  {
+   "id": "land_records_uk_nations",
+   "title": "Land registers by UK nation",
+   "base": "adm1",
+   "file": "data/land_records_uk_nations.json",
+   "key": "name",
+   "fields": [
+    {
+     "name": "era",
+     "label": "Recording began",
+     "type": "category",
+     "colors": {
+      "Before 1700": "#5B1A18",
+      "1700–1799": "#9C2F1F",
+      "1800–1859": "#D2592A",
+      "1860–1899": "#EE9A3A",
+      "1900–1949": "#F4CF63",
+      "1950 or later": "#BFD8A0"
+     }
+    },
+    {
+     "name": "confidence",
+     "label": "Confidence",
+     "type": "category",
+     "colors": {
+      "documented": "#2E9E4F",
+      "inferred": "#E3B505"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Recorded by",
+     "slider": true,
+     "cumulative": true
+    }
+   ],
+   "popup": [
+    "county",
+    "year",
+    "era",
+    "basis",
+    "confidence",
+    "source"
+   ],
+   "followMain": true,
+   "category": "History & land",
+   "hidden": true,
+   "country": "GBR"
   }
  ],
  "categories": [
@@ -2151,7 +2447,8 @@
   "Population & ethnicity",
   "Schools",
   "Religion & communities",
-  "Regions"
+  "Regions",
+  "History & land"
  ],
  "categoryInfo": {
   "Languages": {
@@ -2178,6 +2475,11 @@
    "icon": "🧭",
    "color": "#F07F1A",
    "blurb": "Cultural regions and borders"
+  },
+  "History & land": {
+   "icon": "📜",
+   "color": "#9C2F1F",
+   "blurb": "Who owned what, and when it was first written down"
   }
  }
 }
