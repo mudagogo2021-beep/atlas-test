@@ -721,24 +721,6 @@
      ]
     },
     {
-     "name": "other_bumi_pct",
-     "label": "Other Bumiputera, %",
-     "type": "number",
-     "scale": [
-      "#FFF5EB",
-      "#FDD0A2",
-      "#FD8D3C",
-      "#D94801",
-      "#7F2704"
-     ],
-     "breaks": [
-      10,
-      25,
-      50,
-      75
-     ]
-    },
-    {
      "name": "indian_pct",
      "label": "Indian, %",
      "type": "number",
@@ -754,6 +736,24 @@
       7,
       12,
       20
+     ]
+    },
+    {
+     "name": "other_bumi_pct",
+     "label": "Other Bumiputera, %",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      10,
+      25,
+      50,
+      75
      ]
     },
     {
@@ -817,11 +817,12 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
-   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown.",
+   "notes": "Gedong, Lingga, Pantu, Sebuyau, Siburan, Membakut and Putrajaya have no matching boundary and are not shown. Chinese, Malay and Indian are colour choices on this one district map.",
    "category": "Population & ethnicity",
    "icon": "🌴",
    "region": "Malaysia",
-   "blurb": "Chinese share of all 150+ districts, with Malay and Indian views too"
+   "blurb": "One district map: choose Chinese, Malay or Indian",
+   "showChoices": true
   },
   {
    "id": "us_county_hispanic_black_2020",
@@ -1206,7 +1207,72 @@
    "icon": "🐴",
    "region": "USA",
    "blurb": "Amish church members in every county, with the biggest 2026 settlements",
-   "notes": "County colours use the 2020 U.S. Religion Census count of Amish adherents (members, their children and regular attenders) and congregations (church districts) for 'Amish Groups, undifferentiated' only; Amish-Mennonite and Beachy groups are excluded. The bundle's 2026 Young Center data has only state totals and the 12 largest settlements, so those settlements are drawn as dots and listed in the popup of the county their centre falls in; they are not used for county colours. 2020 Connecticut figures use the old 8 counties and cannot show on the 2023 planning regions (CT has no Amish settlements). Counties with no Amish congregations are grey."
+   "notes": "County colours use the 2020 U.S. Religion Census count of Amish adherents (members, their children and regular attenders) and congregations (church districts) for 'Amish Groups, undifferentiated' only; Amish-Mennonite and Beachy groups are excluded. The 12 largest 2026 Young Center settlements are drawn as dots and named in the popup of the county their published centre falls in; they are not used for county colours. 2020 Connecticut figures use the old 8 counties and cannot show on the 2023 planning regions (CT has no Amish settlements). Counties with no Amish congregations are grey."
+  },
+  {
+   "id": "us_state_amish_2026",
+   "title": "How many Amish live in each US state?",
+   "base": "us_states",
+   "file": "data/us_state_amish_2026.json",
+   "key": "state",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "fields": [
+    {
+     "name": "amish",
+     "label": "Estimated Amish population (2026)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [],
+   "popup": [
+    "name",
+    "amish"
+   ],
+   "points": {
+    "file": "data/us_amish_settlements_2026.json",
+    "lat": "lat",
+    "lon": "lon",
+    "size": "pop",
+    "label": "name",
+    "popup": [
+     "name",
+     "state",
+     "pop",
+     "rank"
+    ]
+   },
+   "sources": [
+    {
+     "label": "Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026 (state table)",
+     "url": "https://groups.etown.edu/amishstudies/amish-population-2026"
+    },
+    {
+     "label": "US state boundaries: Census Bureau cartographic boundaries 2023 (public domain)",
+     "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+    }
+   ],
+   "notes": "Horse-and-buggy Amish, adults and children, from the Young Center 2026 state table (Edsel Burdge Jr., with Joseph F. Donnermeyer and Adam Hershberger). Every state row in data/us_state_amish_2026.json matches that table; the US total is 414,545. States left off the table stay grey. The file's share_of_us_amish_pct column is not mapped: those figures are not each state's share of 414,545. Canada and Latin America rows on the same page are not in this file.",
+   "category": "Religion & communities",
+   "icon": "🐴",
+   "region": "USA",
+   "blurb": "Young Center 2026 estimate for every state in their table"
   },
   {
    "id": "mys_state_ethnicity",
@@ -1245,8 +1311,8 @@
      ]
     },
     {
-     "name": "bumiputera_pct",
-     "label": "Bumiputera, %",
+     "name": "malay_pct",
+     "label": "Malay, %",
      "type": "number",
      "scale": [
       "#F7FCF5",
@@ -1256,8 +1322,8 @@
       "#00441B"
      ],
      "breaks": [
+      25,
       50,
-      60,
       70,
       85
      ]
@@ -1278,6 +1344,24 @@
       7,
       10,
       15
+     ]
+    },
+    {
+     "name": "bumiputera_pct",
+     "label": "Bumiputera, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      50,
+      60,
+      70,
+      85
      ]
     }
    ],
@@ -1308,10 +1392,12 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
+   "notes": "One state series. Malay % is in the file from 1991; 1980 and 1990 publish Bumiputera instead, and 1970 has population only. Years without the selected figure stay grey.",
    "category": "Population & ethnicity",
    "icon": "📈",
    "region": "Malaysia",
-   "blurb": "How each state’s ethnic mix changed, 1970–2026"
+   "blurb": "One state series: choose Chinese, Malay, Indian or Bumiputera",
+   "showChoices": true
   },
   {
    "id": "sgp_planning_area_ethnicity",
@@ -1418,10 +1504,12 @@
      "url": "https://www.geoboundaries.org/"
     }
    ],
+   "notes": "Chinese, Malay and Indian are colour choices on this one planning-area map.",
    "category": "Population & ethnicity",
    "icon": "🏙️",
    "region": "Singapore",
-   "blurb": "Ethnic mix of every planning area"
+   "blurb": "One planning-area map: choose Chinese, Malay or Indian",
+   "showChoices": true
   },
   {
    "id": "idn_province_chinese_2010",
@@ -2545,7 +2633,8 @@
   "Schools",
   "Religion & communities",
   "Regions",
-  "History & land"
+  "History & land",
+  "Aviation"
  ],
  "categoryInfo": {
   "Languages": {
@@ -2577,6 +2666,11 @@
    "icon": "📜",
    "color": "#9C2F1F",
    "blurb": "Who owned what, and when it was first written down"
+  },
+  "Aviation": {
+   "icon": "✈️",
+   "color": "#17A2A4",
+   "blurb": "A380 routes, record flights, and how the network grew"
   }
  }
 }

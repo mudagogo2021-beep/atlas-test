@@ -45,6 +45,7 @@
 ### How has each Malaysian state's ethnic mix changed since 1970? (`mys_state_ethnicity`)
 - Department of Statistics Malaysia, population by state (OpenDOSM population_state) — https://open.dosm.gov.my/
 - Boundaries: geoBoundaries MYS ADM1 — https://www.geoboundaries.org/
+- Malay % is a colour choice on the same state map from 1991. 1980 and 1990 use Bumiputera. 1970 has population only.
 ### What share of each Singapore planning area is Chinese, Malay or Indian? (`sgp_planning_area_ethnicity`)
 - Singapore Department of Statistics, Census of Population 2020, resident population by planning area and ethnic group (data.gov.sg) — https://data.gov.sg/
 - Boundaries: geoBoundaries SGP ADM2 (URA planning areas) — https://www.geoboundaries.org/
@@ -95,6 +96,9 @@
 - Rae, A. & Nelson, G.D. United States Commutes and Megaregions data for GIS, v5, University of Sheffield (Figshare), doi:10.15131/shef.data.4110156.v5, CC BY 4.0 — mosaic-regions (detailed) tract-built regions; counties assigned by largest area share (/workspace/maps/megaregions/build.py, build2.py)
 ### Where do America's Amish live? (by county) (`us_amish_2026`)
 - 2020 U.S. Religion Census, Group Detail Data by County, ASARB — https://www.usreligioncensus.org/interactive-tables (Amish Groups, undifferentiated)
+- Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026 (12 largest settlements, drawn as dots) — https://groups.etown.edu/amishstudies/amish-population-2026
+### How many Amish live in each US state? (`us_state_amish_2026`)
+- Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026, United States state table (estimated population) and the same 12 settlement dots. Checked against that table on 8 Nov 2026: 33 states, total 414,545. The file's `share_of_us_amish_pct` column is not shown. Canada and Latin America rows on the same page are not in this file. — https://groups.etown.edu/amishstudies/amish-population-2026
 
 ## How did the world's airline network grow? (`airline_timeline`)
 - Milestone routes 1914–2018 (22 segments): each verified against its Wikipedia article (link in each route's popup), accessed 2 Nov 2026. Milestones only, not complete networks.

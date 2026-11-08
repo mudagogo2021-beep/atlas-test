@@ -18,7 +18,11 @@ M.datasets.filter(d=>!d.hidden).forEach(d=>$('#ds').add(new Option(d.title,d.id)
 let lastSel='',D,layer,overlays=[],outl=[],pts,hidden=new Set();
 $('#toggle').onclick=()=>document.body.classList.toggle('open');
 $('#ds').onchange=()=>{hidden.clear();show($('#ds').value,{})};
-$('#field').onchange=()=>{hidden.clear();si&&(si.value='');render();buildSlider();$('#flegt').textContent=$('#field').selectedOptions[0].text};
+$('#field').onchange=()=>{hidden.clear();si&&(si.value='');syncCby();render();buildSlider();$('#flegt').textContent=$('#field').selectedOptions[0].text};
+function choiceLabel(f){const i=f.label.indexOf(',');return (i>0?f.label.slice(0,i):f.label).trim()}
+function syncCby(){const cby=$('#cby');if(!D||!D.showChoices||D.fields.length<2){cby.hidden=true;cby.innerHTML='';return}
+  const cur=$('#field').value;cby.hidden=false;cby.innerHTML=`<span>Colour by</span>`+D.fields.map(f=>`<button type="button" data-field="${esc(f.name)}" class="${f.name===cur?'on':''}" aria-pressed="${f.name===cur}">${esc(choiceLabel(f))}</button>`).join('');
+  cby.querySelectorAll('button').forEach(b=>b.onclick=()=>{if($('#field').value===b.dataset.field)return;$('#field').value=b.dataset.field;$('#field').onchange()})}
 function fmt(v){return v==null||v===''?'—':typeof v==='number'?(Math.abs(v)>=1000?v.toLocaleString():+v.toFixed(2)+''):Array.isArray(v)?v.join(', '):v}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function colorer(f,vals){
@@ -57,7 +61,7 @@ async function show(id,opt){
     const outline=oid==='regions13_outline';
     overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&oi.has(String(ft.properties[M.bases[od.base].key]))&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map));if(od.followMain){const ly=overlays[overlays.length-1];ly._od=od;ly._oi=oi;ly._oc=oc}}
   if(D.view&&!opt.keepView)map.fitBounds(D.view);
-  render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
+  syncCby();render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
 function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
 function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.flagField])}" style="height:14px;border:1px solid #0002;vertical-align:middle"> `:'';
@@ -208,10 +212,12 @@ function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}d
       return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} map${n>1?'s':''}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
     box.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{location.hash='cat='+encodeURIComponent(b.dataset.c)})}
   else{const i=cats.indexOf(cat),k=cinfo(cat,i);
-    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===cat).map(d=>
-      `<button class="card" data-id="${esc(d.id)}" style="--c:${k.color}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>`).join('')+'</div>';
+    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===cat).map(d=>{
+      const choices=d.showChoices&&d.fields.length>1?`<div class="choices">`+d.fields.map(f=>`<button type="button" class="ch" data-id="${esc(d.id)}" data-field="${esc(f.name)}">${esc(choiceLabel(f))}</button>`).join('')+`</div>`:'';
+      return `<div class="card" style="--c:${k.color}"><button type="button" class="cardmain" data-id="${esc(d.id)}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>${choices}</div>`}).join('')+'</div>';
     $('#backcats').onclick=()=>{location.hash=''};
-    box.querySelectorAll('.card').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id})}
+    box.querySelectorAll('.cardmain').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id});
+    box.querySelectorAll('.ch').forEach(b=>b.onclick=()=>{location.hash='ds='+encodeURIComponent(b.dataset.id)+'&field='+encodeURIComponent(b.dataset.field)})}
   $('#start').scrollTop=0}
 $('#homebtn').onclick=$('#explore').onclick=()=>{if(location.hash)location.hash='';else home()};
 function route(){const s=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));hidden.clear();
