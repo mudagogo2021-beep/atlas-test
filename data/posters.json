@@ -1,0 +1,58 @@
+{
+ "posters": [
+  {
+   "id": "whales_v9",
+   "title": "Where do the world's whales live?",
+   "subtitle": "1,407,365 individual OBIS occurrence records plotted · 9 whale groups · one dot per record",
+   "category": "Oceans",
+   "icon": "🐋",
+   "region": "World",
+   "blurb": "Poster image of 1,407,365 OBIS records. Not a clickable map.",
+   "badge": "Poster image · not an interactive map",
+   "downloaded": "November 8, 2026",
+   "caveats": [
+    "These are records, not individual animals or population estimates. The same animal can be recorded repeatedly. Survey effort affects the pattern, and blank ocean does not mean no whales.",
+    "Records with identical coordinates overlap, so every record is plotted but not every dot is separately visible. No sampling, gridding, smoothing or coordinate jitter was used.",
+    "This covers nine groups — humpback, blue, fin, minke (common and Antarctic), sperm, gray, right whales (Eubalaena), bowhead and orca — not every whale species."
+   ],
+   "images": [
+    {"id": "1080", "label": "1080×1350", "file": "posters/whales/whales_all_v9.png", "width": 1080, "height": 1350},
+    {"id": "2160", "label": "2160×2700", "file": "posters/whales/whales_all_v9_2160.png", "width": 2160, "height": 2700},
+    {"id": "4320", "label": "4320×5400", "file": "posters/whales/whales_all_v9_4320.png", "width": 4320, "height": 5400}
+   ],
+   "groups": [
+    {"name": "Humpback", "records": 561185, "url": "https://api.obis.org/v3/occurrence?taxonid=137092"},
+    {"name": "Blue", "records": 24505, "url": "https://api.obis.org/v3/occurrence?taxonid=137090"},
+    {"name": "Fin", "records": 284192, "url": "https://api.obis.org/v3/occurrence?taxonid=137091"},
+    {"name": "Common and Antarctic minke", "records": 282657, "url": "https://api.obis.org/v3/occurrence?taxonid=137087,231405"},
+    {"name": "Sperm", "records": 118817, "url": "https://api.obis.org/v3/occurrence?taxonid=137119"},
+    {"name": "Gray", "records": 33171, "url": "https://api.obis.org/v3/occurrence?taxonid=137112"},
+    {"name": "Right whales (Eubalaena)", "records": 51965, "url": "https://api.obis.org/v3/occurrence?taxonid=159022"},
+    {"name": "Bowhead", "records": 12062, "url": "https://api.obis.org/v3/occurrence?taxonid=137086"},
+    {"name": "Orca", "records": 38811, "url": "https://api.obis.org/v3/occurrence?taxonid=137102"}
+   ],
+   "sources": [
+    {"label": "Ocean Biodiversity Information System (OBIS) occurrence API. Each group's downloaded count matched the API total on November 8, 2026. Contributing datasets keep their own CC-BY or CC0 licenses; those licenses were not audited one by one.", "url": "https://obis.org"},
+    {"label": "Natural Earth, public domain, Equal Earth projection", "url": "https://www.naturalearthdata.com"},
+    {"label": "PhyloPic silhouettes, CC0. Sperm whale silhouette by Margot Michaud.", "url": "https://www.phylopic.org"},
+    {"label": "NOAA Fisheries species pages for the length figures: blue whale", "url": "https://www.fisheries.noaa.gov/species/blue-whale"},
+    {"label": "Fin whale", "url": "https://www.fisheries.noaa.gov/species/fin-whale"},
+    {"label": "Humpback whale", "url": "https://www.fisheries.noaa.gov/species/humpback-whale"},
+    {"label": "Bowhead whale", "url": "https://www.fisheries.noaa.gov/species/bowhead-whale"},
+    {"label": "Sperm whale", "url": "https://www.fisheries.noaa.gov/species/sperm-whale"},
+    {"label": "North Atlantic right whale", "url": "https://www.fisheries.noaa.gov/species/north-atlantic-right-whale"},
+    {"label": "Gray whale", "url": "https://www.fisheries.noaa.gov/species/gray-whale"},
+    {"label": "Minke whale", "url": "https://www.fisheries.noaa.gov/species/minke-whale"},
+    {"label": "Killer whale (orca)", "url": "https://www.fisheries.noaa.gov/species/killer-whale"}
+   ],
+   "credit": "OBIS (CC-BY/CC0) · Natural Earth (public domain) · PhyloPic (CC0)"
+  }
+ ],
+ "categoryInfo": {
+  "Oceans": {
+   "icon": "🐋",
+   "color": "#1A4A6B",
+   "blurb": "Poster images. Dots are already drawn; nothing here is clickable by record."
+  }
+ }
+}

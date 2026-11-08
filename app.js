@@ -1,7 +1,8 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
 const $=s=>document.querySelector(s), J=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
-const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({}));
+const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]}));
+const posters=POST.posters||[];
 const NODATA=PAL.no_data||'#D9DBE0';
 const map=L.map('map',{zoomSnap:0.5,worldCopyJump:true,preferCanvas:true}).setView([30,0],2);
 const cache={}, norm=s=>String(s??'').normalize('NFKC').replace(/\s+/g,' ').trim().toLowerCase();
@@ -34,6 +35,7 @@ function colorer(f,vals){
   const items=sc.slice(0,br.length+1).map((c,i)=>({key:i,color:c,label:i===0?`< ${fmt(br[0])}`:i===br.length?`≥ ${fmt(br[i-1])}`:`${fmt(br[i-1])} – ${fmt(br[i])}`,n:nums.filter(v=>cls(v)===i).length}));
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
+  document.body.classList.remove('poster'); const pv=$('#poster'); if(pv) pv.hidden=true;
   D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
   $('#field').innerHTML='';D.fields.forEach(f=>$('#field').add(new Option(f.label,f.name)));if(opt.field)$('#field').value=opt.field;
   const rows=await loadRows(D.file);const base=await loadBase(D.base,D.country);
@@ -202,25 +204,53 @@ function go(h){sr.innerHTML='';si.value=h.n;si.blur();if(window.innerWidth<=760)
   const c=hl.getBounds().getCenter();setTimeout(()=>{if(tgt)tgt.openPopup(c);else L.popup().setLatLng(c).setContent(`<b>${esc(h.n)}</b><br><small>${esc(h.sub)}</small><br><small style="color:#5A6270">Not part of the current map's data. Pick a map that covers it.</small>`).openOn(map)},350)}
 map.on('click',()=>{sr.innerHTML=''});
 // start screen: category tiles -> map cards, all from the manifest
-const CI=M.categoryInfo||{},autoC=['#2F6DB5','#C8553D','#2E9E4F','#7B3FA0','#F07F1A','#17A2A4'];
-const cats=[...new Set([...(M.categories||[]),...M.datasets.map(d=>d.category||'More maps')])].filter(c=>M.datasets.some(d=>(d.category||'More maps')===c));
-const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[c]||{})});
+const CI=M.categoryInfo||{},PCI=POST.categoryInfo||{},autoC=['#2F6DB5','#C8553D','#2E9E4F','#7B3FA0','#F07F1A','#17A2A4'];
+const catOf=d=>d.category||'More maps';
+const cats=[...new Set([...(M.categories||[]),...M.datasets.map(catOf),...posters.map(catOf)])].filter(c=>M.datasets.some(d=>!d.hidden&&catOf(d)===c)||posters.some(p=>catOf(p)===c));
+const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[c]||{}),...(PCI[c]||{})});
 const icon=v=>v&&/\.(png|svg|jpe?g|webp)$/i.test(v)?`<img src="${esc(v)}" alt="">`:esc(v||'🗺️');
-function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open');$('#title').textContent='';
+function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open','poster');const pv=$('#poster');if(pv)pv.hidden=true;$('#title').textContent='';
   document.title=cat?cat+" · Muda's Atlas":"Muda's Atlas · What would you like to explore?";const box=$('#cards');$('#start').classList.toggle('incat',!!cat);
-  if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),n=M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===c).length;
-      return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} map${n>1?'s':''}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
+  if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),nM=M.datasets.filter(d=>!d.hidden&&catOf(d)===c).length,nP=posters.filter(p=>catOf(p)===c).length,n=nM+nP,unit=nP&&!nM?(n>1?'posters':'poster'):(n>1?'maps':'map');
+      return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} ${unit}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
     box.querySelectorAll('.cat').forEach(b=>b.onclick=()=>{location.hash='cat='+encodeURIComponent(b.dataset.c)})}
   else{const i=cats.indexOf(cat),k=cinfo(cat,i);
-    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">`+M.datasets.filter(d=>!d.hidden&&(d.category||'More maps')===cat).map(d=>{
+    const dsCards=M.datasets.filter(d=>!d.hidden&&catOf(d)===cat).map(d=>{
       const choices=d.showChoices&&d.fields.length>1?`<div class="choices">`+d.fields.map(f=>`<button type="button" class="ch" data-id="${esc(d.id)}" data-field="${esc(f.name)}">${esc(choiceLabel(f))}</button>`).join('')+`</div>`:'';
-      return `<div class="card" style="--c:${k.color}"><button type="button" class="cardmain" data-id="${esc(d.id)}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>${choices}</div>`}).join('')+'</div>';
+      return `<div class="card" style="--c:${k.color}"><button type="button" class="cardmain" data-id="${esc(d.id)}"><span class="ic">${icon(d.icon)}</span><span>${d.region?`<span class="rg">${esc(d.region)}</span>`:''}<b>${esc(d.title)}</b><small>${esc(d.blurb||'')}</small></span></button>${choices}</div>`}).join('');
+    const poCards=posters.filter(p=>catOf(p)===cat).map(p=>`<div class="card" style="--c:${k.color}"><button type="button" class="cardmain" data-poster="${esc(p.id)}"><span class="ic">${icon(p.icon)}</span><span><span class="rg">${esc(p.region||'Poster')} · poster image</span><b>${esc(p.title)}</b><small>${esc(p.blurb||'')}</small></span></button></div>`).join('');
+    box.innerHTML=`<div class="crumb"><button id="backcats">← All categories</button><h3>${icon(k.icon)} ${esc(cat)}</h3></div><div class="cards">${dsCards}${poCards}</div>`;
     $('#backcats').onclick=()=>{location.hash=''};
-    box.querySelectorAll('.cardmain').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id});
+    box.querySelectorAll('.cardmain[data-id]').forEach(b=>b.onclick=()=>{location.hash='ds='+b.dataset.id});
+    box.querySelectorAll('.cardmain[data-poster]').forEach(b=>b.onclick=()=>{location.hash='poster='+b.dataset.poster});
     box.querySelectorAll('.ch').forEach(b=>b.onclick=()=>{location.hash='ds='+encodeURIComponent(b.dataset.id)+'&field='+encodeURIComponent(b.dataset.field)})}
   $('#start').scrollTop=0}
+let pz=1,pCur=null;
+function showPoster(id){const P=posters.find(p=>p.id===id);if(!P)return home(null);
+  document.body.classList.remove('home','open');document.body.classList.add('poster');$('#poster').hidden=false;$('#title').textContent=P.title;document.title=P.title+" · Muda's Atlas";$('#credit').textContent=P.credit||'';
+  $('#pbadge').textContent=P.badge||'Poster image';$('#ptitle').textContent=P.title;$('#psub').textContent=P.subtitle||'';
+  const imgs=P.images||[];const dl=imgs.map(im=>`<a href="${esc(im.file)}" download="${esc(im.file.split('/').pop())}">Download ${esc(im.label)}</a>`).join('');
+  $('#ptools').innerHTML=`<button type="button" id="pfit">Fit width</button><button type="button" id="pzin" aria-label="Zoom in">Zoom in</button><button type="button" id="pzout" aria-label="Zoom out">Zoom out</button>${dl}`;
+  const img=$('#pimg');img.alt=P.title+'. '+((P.caveats||[])[0]||'')+' Poster image, not an interactive map.';
+  pCur=P;pz=1;layoutPoster();
+  $('#pfit').onclick=()=>{pz=1;layoutPoster()};
+  $('#pzin').onclick=()=>{pz=Math.min(4,pz*2);layoutPoster()};
+  $('#pzout').onclick=()=>{pz=Math.max(1,pz/2);layoutPoster()};
+  const rows=(P.groups||[]).map(g=>`<tr><td><a href="${esc(g.url)}" target="_blank" rel="noopener">${esc(g.name)}</a></td><td>${g.records.toLocaleString()}</td></tr>`).join('');
+  const sum=(P.groups||[]).reduce((a,g)=>a+g.records,0);
+  $('#pnotes').innerHTML=(P.caveats||[]).map(t=>`<p>${esc(t)}</p>`).join('')+
+    `<h3>Record counts, not whale counts</h3><p>Downloaded ${esc(P.downloaded||'')}. Each group's count matched the OBIS API total. Checks found no duplicate record IDs and no missing or out-of-range coordinates, so no downloaded record was dropped.</p><table><tbody>${rows}<tr><td>Total</td><td>${sum.toLocaleString()}</td></tr></tbody></table>`+
+    `<h3>Sources</h3><ul>`+(P.sources||[]).map(s=>`<li>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`:esc(s.label)}</li>`).join('')+'</ul>';
+  $('#poster').scrollTop=0}
+function layoutPoster(){if(!pCur)return;const stage=$('#pstage'),img=$('#pimg'),w=Math.max(280,stage.clientWidth||stage.getBoundingClientRect().width),dw=Math.round(w*pz);
+  const imgs=[...pCur.images].sort((a,b)=>a.width-b.width);let src=imgs[0];for(const im of imgs){src=im;if(im.width>=dw)break}
+  if(img.getAttribute('src')!==src.file){img.width=src.width;img.height=src.height;img.src=src.file}
+  img.style.width=dw+'px';
+  $('#ptools').querySelectorAll('button').forEach(b=>b.classList.toggle('on',(b.id==='pfit'&&pz===1)))}
+addEventListener('resize',()=>{if(document.body.classList.contains('poster'))layoutPoster()});
 $('#homebtn').onclick=$('#explore').onclick=()=>{if(location.hash)location.hash='';else home()};
 function route(){const s=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));hidden.clear();
+  if(s.poster&&posters.some(p=>p.id===s.poster))return showPoster(s.poster);
   if(s.ds&&M.datasets.some(d=>d.id===s.ds))return show(s.ds,s);home(s.cat&&cats.includes(s.cat)?s.cat:null)}
 window.addEventListener('hashchange',route);
 await route();
