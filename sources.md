@@ -100,6 +100,13 @@
 ### How many Amish live in each US state? (`us_state_amish_2026`)
 - Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026, United States state table (estimated population) and the same 12 settlement dots. Checked against that table on 8 Nov 2026: 33 states, total 414,545. The file's `share_of_us_amish_pct` column is not shown. Canada and Latin America rows on the same page are not in this file. — https://groups.etown.edu/amishstudies/amish-population-2026
 
+## Where do the world's whales live? (poster `whales_v9`, not an interactive layer)
+- Ocean Biodiversity Information System occurrence API, downloaded November 8, 2026. 1,407,365 records across 9 groups, one supplied coordinate per record, no sampling, gridding, smoothing or jitter. Records are not unique whales or abundance. — https://obis.org
+- Natural Earth, public domain, Equal Earth projection — https://www.naturalearthdata.com
+- PhyloPic silhouettes, CC0; sperm whale by Margot Michaud — https://www.phylopic.org
+- Length figures: NOAA Fisheries species pages linked from the poster view.
+- Images: `posters/whales/whales_all_v9.png` (1080×1350), `whales_all_v9_2160.png` (2160×2700), `whales_all_v9_4320.png` (4320×5400).
+
 ## How did the world's airline network grow? (`airline_timeline`)
 - Milestone routes 1914–2018 (22 segments): each verified against its Wikipedia article (link in each route's popup), accessed 2 Nov 2026. Milestones only, not complete networks.
 - 2014 network: OpenFlights routes.dat/airlines.dat (June 2014 snapshot, ODbL) https://openflights.org/data.php — 67,663 records → 18,763 undirected airport pairs; 1,460 records skipped (airport not matched).

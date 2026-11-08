@@ -107,3 +107,27 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
  #hint{left:50%}
  body.open #fleg,body.open #tslider,body.open #info{display:none!important}}
 .leaflet-container.darkmap,#map.darkmap,.darkmap{background:#0F1420 !important}
+body.poster #map,body.poster #panel,body.poster #toggle,body.poster #search,body.poster #fleg,body.poster #info,body.poster #tslider,body.poster #hint,body.poster #cby,body.poster #idea,body.poster #start{display:none!important}
+#poster{position:fixed;top:56px;bottom:28px;left:0;right:0;overflow:auto;background:var(--bg);z-index:1001;-webkit-overflow-scrolling:touch}
+#poster[hidden]{display:none!important}
+.pwrap{max-width:980px;margin:0 auto;padding:18px 16px 48px}
+.pbadge{display:inline-block;margin:0 0 8px;background:#1A4A6B;color:#fff;font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:5px 10px}
+#ptitle{margin:0 0 6px;font-size:clamp(22px,4vw,34px);line-height:1.15;letter-spacing:-.02em}
+.psub{margin:0 0 12px;color:var(--muted)}
+.ptools{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:2;background:#F5F6F8ee;padding:8px 0;margin-bottom:8px}
+.ptools button,.ptools a{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 12px;font-weight:700;font-size:13px;text-decoration:none}
+.ptools button.on,.ptools a.on{background:var(--bar);color:#fff;border-color:var(--bar)}
+#pstage{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:12px;max-height:none}
+#pimg{display:block;height:auto;max-width:none;background:#fff}
+#pnotes{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+#pnotes h3{margin:16px 0 6px;font-size:16px}#pnotes h3:first-child{margin-top:0}
+#pnotes p,#pnotes li{font-size:14.5px;line-height:1.45}
+#pnotes a{color:#1A4A6B}
+#pnotes table{width:100%;border-collapse:collapse;font-size:14px}
+#pnotes td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
+#pnotes td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+@media (max-width:760px){
+ .pwrap{padding:12px 12px 36px}
+ .ptools a,.ptools button{flex:1 1 calc(50% - 8px);text-align:center}
+ #pnotes td:last-child{white-space:nowrap}
+}
