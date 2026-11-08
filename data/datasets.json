@@ -2217,7 +2217,8 @@
     "size": "size",
     "sizeLabel": "record route",
     "noun": "record route",
-    "detail": "years_held"
+    "detail": "years_held",
+    "ends": true
    },
    "overlays": [],
    "points": null,
