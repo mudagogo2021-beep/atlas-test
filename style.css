@@ -107,6 +107,18 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
  #hint{left:50%}
  body.open #fleg,body.open #tslider,body.open #info{display:none!important}}
 .leaflet-container.darkmap,#map.darkmap,.darkmap{background:#0F1420 !important}
+.leaflet-marker-icon.aport{background:none;border:0}
+.aport span{position:absolute;display:block;max-width:168px;background:#fffffffa;color:#17202E;border:1px solid #1E2430;border-radius:8px;padding:4px 7px;box-shadow:0 2px 8px #0003;pointer-events:none}
+.aport b{display:block;font:800 11px/1.2 Inter,system-ui,sans-serif}
+.aport small{display:block;margin-top:1px;font:500 10.5px/1.25 Inter,system-ui,sans-serif;color:#3A4356}
+.aport.right span{left:12px;top:0;transform:translateY(-50%)}
+.aport.left span{right:12px;top:0;transform:translateY(-50%)}
+.aport.above span{left:50%;bottom:12px;transform:translateX(-50%)}
+.aport.below span{left:50%;top:12px;transform:translateX(-50%)}
+@media (max-width:760px){
+ .aport span{max-width:132px;padding:3px 6px}
+ .aport b{font-size:10.5px}.aport small{font-size:10px}
+}
 body.poster #map,body.poster #panel,body.poster #toggle,body.poster #search,body.poster #fleg,body.poster #info,body.poster #tslider,body.poster #hint,body.poster #cby,body.poster #idea,body.poster #start{display:none!important}
 #poster{position:fixed;top:56px;bottom:28px;left:0;right:0;overflow:auto;background:var(--bg);z-index:1001;-webkit-overflow-scrolling:touch}
 #poster[hidden]{display:none!important}

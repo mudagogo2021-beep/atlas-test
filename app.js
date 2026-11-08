@@ -70,7 +70,7 @@ function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.
   return `<b>${flag}${esc(fmt(p.name??p[d.key]))}</b><table>`+(d.popup||[]).filter(k=>k!=='name').map(k=>{let v=p[k];const s=typeof v==='string'&&/^https?:/.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener">link</a>`:esc(fmt(v));return `<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${s}</td></tr>`}).join('')+'</table>'}
 function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove('darkmap');if(!D.lines||!D.lines.planes)Planes.set([]);
   if(D.lines)return renderLines();
-  if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
+  if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}if(endLbl){map.removeLayer(endLbl);endLbl=null}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,base:!!s.dataset.from,v:s.value})).filter(s=>s.v!=='');
   const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(f.noSlider?true:(r[s.f]!=null&&+r[s.f]<=+s.v)):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);const idxAll=indexRows(D._rows);
@@ -114,28 +114,55 @@ const P_DUR=1;const Planes=(()=>{let routes=[],pl=[],cv=null,raf=0;const red=mat
       x.moveTo(6,0);x.lineTo(1,-1.2);x.lineTo(-1,-5.5);x.lineTo(-2.5,-5.5);x.lineTo(-1.5,-1.2);x.lineTo(-4.5,-1.2);x.lineTo(-6,-3);x.lineTo(-6.8,-3);x.lineTo(-6,0);
       x.lineTo(-6.8,3);x.lineTo(-6,3);x.lineTo(-4.5,1.2);x.lineTo(-1.5,1.2);x.lineTo(-2.5,5.5);x.lineTo(-1,5.5);x.lineTo(1,1.2);x.closePath();x.fill();x.stroke();x.restore()}pl=pl.filter(p=>!p.done)}
   addEventListener('resize',()=>cv&&size());return{set,count:()=>pl.length}})();window.__planes=Planes;
-let linesLayer=null;
+let linesLayer=null,endLbl=null,linePickId=null;
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
   const FD=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):FD[s.f]&&FD[s.f].cumulative?(+r[s.f]<=+s.v&&(FD[s.f].history||!(r[FD[s.f].cumulative]!=null&&+r[FD[s.f].cumulative]<=+s.v))):String(r[s.f])===s.v));
   const C=colorer(f,rows.map(r=>r[f.name]));const vis=rows.filter(r=>!hidden.has(r[f.name]));
   if(layer)map.removeLayer(layer);const dk=!!Lc.dark;map.getContainer().classList.toggle('darkmap',dk);layer=L.geoJSON(D._base,{style:dk?{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1}:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
-  if(linesLayer)map.removeLayer(linesLayer);if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
+  if(linesLayer)map.removeLayer(linesLayer);if(endLbl){map.removeLayer(endLbl);endLbl=null}if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
   const dep={},by={};const PR=[];
+  const hf=(D.filters||[]).find(x=>x.history),hv=hf&&sel.find(x=>x.f===hf.field);
+  const isOld=r=>!!(hv&&r[hf.cumulative]!=null&&+r[hf.cumulative]<=+hv.v);
+  linePickId=null;
   for(const r of vis){const a=AP.get(r[Lc.from]),b=AP.get(r[Lc.to]);if(!a||!b)continue;
     for(const c of[r[Lc.from],r[Lc.to]]){dep[c]=(dep[c]||0)+(+r[Lc.size]||0);(by[c]=by[c]||[]).push(r)}
     const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);{const ys=sel.find(x=>x.f==='year');if(!ys||String(r.year)===ys.v)PR.push(g)}
-    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),(()=>{const hf=(D.filters||[]).find(x=>x.history),hv=hf&&sel.find(x=>x.f===hf.field);const old=hv&&r[hf.cumulative]!=null&&+r[hf.cumulative]<=+hv.v;return old?{color:'#8A93A6',weight:1.2,opacity:.35,dashArray:'4 4',renderer:rend}:{color:col,weight:big?.7:(hv?4:2.2),opacity:big?(Lc.dark?.22:.35):(hv?1:.75),renderer:rend}})()).bindPopup(()=>popup(D,r)).addTo(linesLayer)}
+    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),(()=>{const old=isOld(r);return old?{color:'#8A93A6',weight:1.2,opacity:.35,dashArray:'4 4',renderer:rend}:{color:col,weight:big?.7:(hv?4:2.2),opacity:big?(Lc.dark?.22:.35):(hv?1:.75),renderer:rend}})()).bindPopup(()=>popup(D,r)).on('click',()=>{if(!Lc.ends)return;linePickId=r.id;drawEndLabels()}).addTo(linesLayer)}
   Planes.set(Lc.planes?PR:[]);
   const mx=Math.max(1,...Object.values(dep));
-  for(const c of Object.keys(by)){const a=AP.get(c),list=by[c];
-    const html=`<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:'')+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>';
-    for(const sh of(big?[0]:[-360,0,360]))L.circleMarker([a.lat,a.lon+sh],{renderer:rend,radius:(big?1.5:3)+(big?7:13)*Math.sqrt((dep[c]||0)/mx),color:'#111',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(html).bindTooltip(c).addTo(linesLayer)}
+  const apHtml=c=>{const a=AP.get(c),list=by[c];return `<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.ends?'':(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:''))+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>'};
+  function chosenRoutes(){if(linePickId){const r=vis.find(x=>x.id===linePickId);if(r)return [r]}const cur=vis.filter(r=>!isOld(r));if(cur.length)return cur;return vis.length?[vis.slice().sort((a,b)=>b.year-a.year)[0]]:[]}
+  function drawEndLabels(){if(endLbl){map.removeLayer(endLbl);endLbl=null}if(!Lc.ends)return;endLbl=L.layerGroup();
+    const phone=innerWidth<=760;
+    for(const r of chosenRoutes()){const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]);if(!A||!B)continue;
+      const pa=map.latLngToContainerPoint([A.lat,A.lon]),pb=map.latLngToContainerPoint([B.lat,B.lon]);
+      const near=Math.hypot(pb.x-pa.x,pb.y-pa.y)<(phone?120:90);
+      const vw=map.getSize().x;
+      [['from',A,B,'From'],['to',B,A,'To']].forEach(([role,me,other,word])=>{
+        const px=map.latLngToContainerPoint([me.lat,me.lon]).x;
+        const cls=near?(role==='from'?'above':'below'):(px>vw*0.62?'left':px<vw*0.38?'right':((other.lon-me.lon)>0?'left':'right'));
+        const code=!me.approx&&me.code?String(me.code):'';
+        const html=`<span><b>${esc(word)}${code?' · '+esc(code):''}</b>${me.name?`<small>${esc(me.name)}</small>`:''}</span>`;
+        for(const sh of(big?[0]:[-360,0,360])){
+          L.circleMarker([me.lat,me.lon+sh],{radius:phone?5:6,color:'#1E2430',weight:2,fillColor:role==='from'?'#FFC21A':'#fff',fillOpacity:1}).bindPopup(apHtml(me[Lc.code||'code'])).addTo(endLbl);
+          L.marker([me.lat,me.lon+sh],{interactive:false,keyboard:false,icon:L.divIcon({className:'aport '+cls,html,iconSize:[0,0],iconAnchor:[0,0]})}).addTo(endLbl);
+        }
+      });
+    }
+    endLbl.addTo(map)}
+  if(!map._endsBound){map._endsBound=1;map.on('zoomend',()=>{if(D&&D.lines&&D.lines.ends&&map._drawEnds)map._drawEnds()})}
+  map._drawEnds=drawEndLabels;
+  const labeled=new Set();if(Lc.ends)chosenRoutes().forEach(r=>{labeled.add(r[Lc.from]);labeled.add(r[Lc.to])});
+  for(const c of Object.keys(by)){if(Lc.ends&&labeled.has(c))continue;const a=AP.get(c);
+    const radius=Lc.ends?(innerWidth<=760?3:3.5):(big?1.5:3)+(big?7:13)*Math.sqrt((dep[c]||0)/mx);
+    for(const sh of(big?[0]:[-360,0,360]))L.circleMarker([a.lat,a.lon+sh],{renderer:rend,radius,color:'#1E2430',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(apHtml(c)).bindTooltip(a.name?`${c} · ${a.name}`:c,{sticky:true}).addTo(linesLayer)}
+  if(Lc.ends)drawEndLabels();
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. Circle size = ${esc(Lc.sizeLabel||'size')}.</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
+  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.ends?'Labels name the selected record’s departure and destination. Tap a line to label that route.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();
