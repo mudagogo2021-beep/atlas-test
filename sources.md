@@ -100,6 +100,10 @@
 ### How many Amish live in each US state? (`us_state_amish_2026`)
 - Young Center for Anabaptist and Pietist Studies, Elizabethtown College: Amish Population 2026, United States state table (estimated population) and the same 12 settlement dots. Checked against that table on 8 Nov 2026: 33 states, total 414,545. The file's `share_of_us_amish_pct` column is not shown. Canada and Latin America rows on the same page are not in this file. — https://groups.etown.edu/amishstudies/amish-population-2026
 
+## What was the world's longest flight each year? (`longest_flights`)
+- Route distance text is the `distance` field already in `data/longest_flights.json`. The 1919 London–Paris row is marked computed in that field and is shown as a calculated great-circle, not a flown path. Other rows are shown as written.
+- Present-day country of each airport site: OurAirports `iso_country` (public domain), checked 8 Nov 2026. A real IATA code is used only when that OurAirports row is within 2 km and every site within 5 km has the same country. Historical stand-in codes are not treated as IATA; those sites use the unanimous country of OurAirports records within 5 km of the stored coordinates. Flags are today's flags (Wikimedia Commons), labeled as present-day, not the flag of the flight year. — https://ourairports.com/data/
+
 ## Where do the world's whales live? (poster `whales_v9`, not an interactive layer)
 - Ocean Biodiversity Information System occurrence API, downloaded November 8, 2026. 1,407,365 records across 9 groups, one supplied coordinate per record, no sampling, gridding, smoothing or jitter. Records are not unique whales or abundance. — https://obis.org
 - Natural Earth, public domain, Equal Earth projection — https://www.naturalearthdata.com

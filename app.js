@@ -36,6 +36,7 @@ function colorer(f,vals){
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
   document.body.classList.remove('poster'); const pv=$('#poster'); if(pv) pv.hidden=true;
+  framedId=null; userHold=false;
   D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
   $('#field').innerHTML='';D.fields.forEach(f=>$('#field').add(new Option(f.label,f.name)));if(opt.field)$('#field').value=opt.field;
   const rows=await loadRows(D.file);const base=await loadBase(D.base,D.country);
@@ -62,7 +63,7 @@ async function show(id,opt){
   for(const oid of (D.overlays||[])){const od=M.datasets.find(d=>d.id===oid);if(!od)continue;const ob=await loadBase(od.base,od.country),orows=await loadRows(od.file),oi=new Map(orows.map(r=>[String(r[od.key]),r])),of=od.fields[0];const oc=colorer(of,orows.map(r=>r[of.name]));
     const outline=oid==='regions13_outline';
     overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&oi.has(String(ft.properties[M.bases[od.base].key]))&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map));if(od.followMain){const ly=overlays[overlays.length-1];ly._od=od;ly._oi=oi;ly._oc=oc}}
-  if(D.view&&!opt.keepView)map.fitBounds(D.view);
+  if(D.view&&!opt.keepView&&!(D.lines&&D.lines.ends))map.fitBounds(D.view);
   syncCby();render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
 function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
@@ -71,6 +72,7 @@ function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.
 function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove('darkmap');if(!D.lines||!D.lines.planes)Planes.set([]);
   if(D.lines)return renderLines();
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}if(endLbl){map.removeLayer(endLbl);endLbl=null}
+  const rd0=$('#rdist'); if(rd0){rd0.hidden=true;rd0.innerHTML=''}
   const f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0],bk=D._bk;
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,base:!!s.dataset.from,v:s.value})).filter(s=>s.v!=='');
   const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(f.noSlider?true:(r[s.f]!=null&&+r[s.f]<=+s.v)):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);const idxAll=indexRows(D._rows);
@@ -114,7 +116,7 @@ const P_DUR=1;const Planes=(()=>{let routes=[],pl=[],cv=null,raf=0;const red=mat
       x.moveTo(6,0);x.lineTo(1,-1.2);x.lineTo(-1,-5.5);x.lineTo(-2.5,-5.5);x.lineTo(-1.5,-1.2);x.lineTo(-4.5,-1.2);x.lineTo(-6,-3);x.lineTo(-6.8,-3);x.lineTo(-6,0);
       x.lineTo(-6.8,3);x.lineTo(-6,3);x.lineTo(-4.5,1.2);x.lineTo(-1.5,1.2);x.lineTo(-2.5,5.5);x.lineTo(-1,5.5);x.lineTo(1,1.2);x.closePath();x.fill();x.stroke();x.restore()}pl=pl.filter(p=>!p.done)}
   addEventListener('resize',()=>cv&&size());return{set,count:()=>pl.length}})();window.__planes=Planes;
-let linesLayer=null,endLbl=null,linePickId=null;
+let linesLayer=null,endLbl=null,linePickId=null,framedId=null,userHold=false,fitting=0;
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
@@ -129,7 +131,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   for(const r of vis){const a=AP.get(r[Lc.from]),b=AP.get(r[Lc.to]);if(!a||!b)continue;
     for(const c of[r[Lc.from],r[Lc.to]]){dep[c]=(dep[c]||0)+(+r[Lc.size]||0);(by[c]=by[c]||[]).push(r)}
     const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);{const ys=sel.find(x=>x.f==='year');if(!ys||String(r.year)===ys.v)PR.push(g)}
-    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),(()=>{const old=isOld(r);return old?{color:'#8A93A6',weight:1.2,opacity:.35,dashArray:'4 4',renderer:rend}:{color:col,weight:big?.7:(hv?4:2.2),opacity:big?(Lc.dark?.22:.35):(hv?1:.75),renderer:rend}})()).bindPopup(()=>popup(D,r)).on('click',()=>{if(!Lc.ends)return;linePickId=r.id;drawEndLabels()}).addTo(linesLayer)}
+    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),(()=>{const old=isOld(r);return old?{color:'#8A93A6',weight:1.2,opacity:.35,dashArray:'4 4',renderer:rend}:{color:col,weight:big?.7:(hv?4:2.2),opacity:big?(Lc.dark?.22:.35):(hv?1:.75),renderer:rend}})()).bindPopup(()=>popup(D,r)).on('click',()=>{if(!Lc.ends)return;linePickId=r.id;focusRoute(r)}).addTo(linesLayer)}
   Planes.set(Lc.planes?PR:[]);
   const mx=Math.max(1,...Object.values(dep));
   const apHtml=c=>{const a=AP.get(c),list=by[c];return `<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.ends?'':(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:''))+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>'};
@@ -142,9 +144,11 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
       const vw=map.getSize().x;
       [['from',A,B,'From'],['to',B,A,'To']].forEach(([role,me,other,word])=>{
         const px=map.latLngToContainerPoint([me.lat,me.lon]).x;
-        const cls=near?(role==='from'?'above':'below'):(px>vw*0.62?'left':px<vw*0.38?'right':((other.lon-me.lon)>0?'left':'right'));
+        const cls=(near&&phone)?(role==='from'?'left':'right'):near?(role==='from'?'above':'below'):(px>vw*0.62?'left':px<vw*0.38?'right':((other.lon-me.lon)>0?'left':'right'));
         const code=!me.approx&&me.code?String(me.code):'';
-        const html=`<span><b>${esc(word)}${code?' · '+esc(code):''}</b>${me.name?`<small>${esc(me.name)}</small>`:''}</span>`;
+        const today=me.country&&(me.approx||(r.year!=null&&+r.year<1992));
+        const flag=me.country&&me.country_flag?`<small class="cc" aria-label="Present-day country: ${esc(me.country)}"><img src="${esc(me.country_flag)}" alt="">${esc(me.country)}${today?' today':''}</small>`:'';
+        const html=`<span><b>${esc(word)}${code?' · '+esc(code):''}</b>${flag}${me.name?`<small>${esc(me.name)}</small>`:''}</span>`;
         for(const sh of(big?[0]:[-360,0,360])){
           L.circleMarker([me.lat,me.lon+sh],{radius:phone?5:6,color:'#1E2430',weight:2,fillColor:role==='from'?'#FFC21A':'#fff',fillOpacity:1}).bindPopup(apHtml(me[Lc.code||'code'])).addTo(endLbl);
           L.marker([me.lat,me.lon+sh],{interactive:false,keyboard:false,icon:L.divIcon({className:'aport '+cls,html,iconSize:[0,0],iconAnchor:[0,0]})}).addTo(endLbl);
@@ -152,13 +156,42 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
       });
     }
     endLbl.addTo(map)}
-  if(!map._endsBound){map._endsBound=1;map.on('zoomend',()=>{if(D&&D.lines&&D.lines.ends&&map._drawEnds)map._drawEnds()})}
+  function distInfo(r){const s=r.distance!=null?String(r.distance):'';
+    if(/computed|not in source/i.test(s)){const km=typeof r.km==='number'?r.km:null,mi=km!=null?Math.round(km*0.621371):null;
+      return {text:km!=null?`Calculated great-circle: ≈${km.toLocaleString()} km / ≈${mi.toLocaleString()} mi`:s, note:'Not the flown path. The source did not publish this distance.'}}
+    if(s) return {text:s, note:''};
+    return {text:'No distance in the dataset.', note:''}}
+  function frameRoute(r){const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]);if(!A||!B)return;
+    const pts=gcPts([A.lat,A.lon],[B.lat,B.lon],48);
+    let minLa=Infinity,maxLa=-Infinity,minLo=Infinity,maxLo=-Infinity;
+    for(const p of pts){minLa=Math.min(minLa,p[0]);maxLa=Math.max(maxLa,p[0]);minLo=Math.min(minLo,p[1]);maxLo=Math.max(maxLo,p[1])}
+    const km=typeof r.km==='number'?r.km:1e9, phone=innerWidth<=760;
+    const latPad=km<80?0.06:Math.max(0.35,(maxLa-minLa)*0.18), lonPad=km<80?0.06:Math.max(0.35,(maxLo-minLo)*0.12);
+    const maxZoom=km<80?(phone?12:11):km<150?10:km<800?8:km<2500?6:5;
+    fitting++; let done=false;
+    const fin=()=>{if(done)return; done=true; fitting=Math.max(0,fitting-1); drawEndLabels()};
+    map.once('moveend',fin);
+    map.fitBounds([[minLa-latPad,minLo-lonPad],[maxLa+latPad,maxLo+lonPad]],{paddingTopLeft:[phone?18:50,phone?72:60],paddingBottomRight:[phone?18:50,phone?130:100],maxZoom,animate:true});
+    setTimeout(fin,900)}
+  function focusRoute(r){drawEndLabels(); const el=$('#rdist');
+    if(!Lc.ends||!r){if(el){el.hidden=true;el.innerHTML=''}return}
+    const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]),d=distInfo(r),cave=[];
+    if(d.note)cave.push(d.note);
+    if((A&&A.approx)||(B&&B.approx))cave.push('Endpoint positions are approximate.');
+    if(((A&&A.approx)||(B&&B.approx)||(r.year!=null&&+r.year<1992))&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');
+    el.hidden=false; el.innerHTML=`<p class="rn">${esc(r.route||r.name||'')}</p><p class="rd">${esc(d.text)}</p>`+(cave.length?`<p class="rc">${esc(cave.join(' '))}</p>`:'');
+    if(framedId!==r.id){userHold=false; framedId=r.id; frameRoute(r)}}
+  if(!map._endsBound){map._endsBound=1;
+    map.on('zoomend',()=>{if(D&&D.lines&&D.lines.ends&&map._drawEnds)map._drawEnds()});
+    map.on('dragstart',()=>{if(!fitting)userHold=true});
+    map.on('zoomstart',()=>{if(!fitting)userHold=true});
+  }
   map._drawEnds=drawEndLabels;
   const labeled=new Set();if(Lc.ends)chosenRoutes().forEach(r=>{labeled.add(r[Lc.from]);labeled.add(r[Lc.to])});
   for(const c of Object.keys(by)){if(Lc.ends&&labeled.has(c))continue;const a=AP.get(c);
     const radius=Lc.ends?(innerWidth<=760?3:3.5):(big?1.5:3)+(big?7:13)*Math.sqrt((dep[c]||0)/mx);
     for(const sh of(big?[0]:[-360,0,360]))L.circleMarker([a.lat,a.lon+sh],{renderer:rend,radius,color:'#1E2430',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(apHtml(c)).bindTooltip(a.name?`${c} · ${a.name}`:c,{sticky:true}).addTo(linesLayer)}
-  if(Lc.ends)drawEndLabels();
+  if(Lc.ends)focusRoute(chosenRoutes()[0]); else {const el=$('#rdist'); if(el){el.hidden=true;el.innerHTML=''}}
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
@@ -236,7 +269,7 @@ const catOf=d=>d.category||'More maps';
 const cats=[...new Set([...(M.categories||[]),...M.datasets.map(catOf),...posters.map(catOf)])].filter(c=>M.datasets.some(d=>!d.hidden&&catOf(d)===c)||posters.some(p=>catOf(p)===c));
 const cinfo=(c,i)=>({icon:'🗺️',blurb:'',color:autoC[i%autoC.length],...(CI[c]||{}),...(PCI[c]||{})});
 const icon=v=>v&&/\.(png|svg|jpe?g|webp)$/i.test(v)?`<img src="${esc(v)}" alt="">`:esc(v||'🗺️');
-function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open','poster');const pv=$('#poster');if(pv)pv.hidden=true;$('#title').textContent='';
+function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}document.body.classList.add('home');document.body.classList.remove('open','poster');const pv=$('#poster');if(pv)pv.hidden=true;const rd=$('#rdist');if(rd){rd.hidden=true;rd.innerHTML=''};$('#title').textContent='';
   document.title=cat?cat+" · Muda's Atlas":"Muda's Atlas · What would you like to explore?";const box=$('#cards');$('#start').classList.toggle('incat',!!cat);
   if(!cat){box.innerHTML='<div class="cats">'+cats.map((c,i)=>{const k=cinfo(c,i),nM=M.datasets.filter(d=>!d.hidden&&catOf(d)===c).length,nP=posters.filter(p=>catOf(p)===c).length,n=nM+nP,unit=nP&&!nM?(n>1?'posters':'poster'):(n>1?'maps':'map');
       return `<button class="cat" data-c="${esc(c)}" style="background:linear-gradient(135deg,${k.color},${k.color}cc 60%,#1E2430)"><span class="n">${n} ${unit}</span><span class="big">${icon(k.icon)}</span><b>${esc(c)}</b><small>${esc(k.blurb)}</small></button>`}).join('')+'</div>';
@@ -253,7 +286,7 @@ function home(cat){hideCard&&hideCard(true);if(hl){map.removeLayer(hl);hl=null}d
     box.querySelectorAll('.ch').forEach(b=>b.onclick=()=>{location.hash='ds='+encodeURIComponent(b.dataset.id)+'&field='+encodeURIComponent(b.dataset.field)})}
   $('#start').scrollTop=0}
 let pz=1,pCur=null;
-function showPoster(id){const P=posters.find(p=>p.id===id);if(!P)return home(null);
+function showPoster(id){const P=posters.find(p=>p.id===id);if(!P)return home(null);const rd=$('#rdist');if(rd){rd.hidden=true;rd.innerHTML=''};
   document.body.classList.remove('home','open');document.body.classList.add('poster');$('#poster').hidden=false;$('#title').textContent=P.title;document.title=P.title+" · Muda's Atlas";$('#credit').textContent=P.credit||'';
   $('#pbadge').textContent=P.badge||'Poster image';$('#ptitle').textContent=P.title;$('#psub').textContent=P.subtitle||'';
   const imgs=P.images||[];const dl=imgs.map(im=>`<a href="${esc(im.file)}" download="${esc(im.file.split('/').pop())}">Download ${esc(im.label)}</a>`).join('');

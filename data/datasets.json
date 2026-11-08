@@ -2200,6 +2200,7 @@
    ],
    "popup": [
     "airline",
+    "distance",
     "aircraft",
     "distance",
     "duration",
