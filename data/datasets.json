@@ -2218,6 +2218,7 @@
     "sizeLabel": "airlines on route",
     "noun": "route",
     "detail": "year",
+    "network": true,
     "today": "≈105,704 scheduled commercial flights per day worldwide (OAG average, 29 Dec 2025–8 Nov 2026, one-way flights in schedules; OAG page, Oct 2026). Peak tracked day: 153,359 commercial flights on 23 Jul 2026 (Flightradar24, incl. cargo/charter).",
     "dark": true,
     "yearNote": {
