@@ -121,8 +121,7 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
  .aport span{max-width:132px;padding:3px 6px}
  .aport b{font-size:10.5px}.aport small{font-size:10px}
 }
-#rdock{position:fixed;z-index:1004;top:56px;left:0;right:340px;height:176px;overflow:hidden;background:#fffffffa;border-bottom:1px solid var(--line);box-shadow:0 2px 8px #00000014;padding:6px 12px 8px}
-#rdock.min{height:58px}
+#rdock{position:fixed;z-index:1004;top:56px;left:0;right:340px;background:#fffffffa;border-bottom:1px solid var(--line);box-shadow:0 2px 8px #00000014;padding:6px 12px 8px}
 #rdock[hidden]{display:none!important}
 .rdocktop{display:flex;align-items:center;gap:8px;min-height:22px}
 #rcount{margin:0;font-weight:800;font-size:13px;color:#17202E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -142,11 +141,10 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
 .rend .cc{display:flex;align-items:center;gap:4px;margin-top:1px;font:700 11px/1.2 Inter,system-ui,sans-serif;color:#17202E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rend .cc img{height:11px;width:auto;border:1px solid #0003;flex:none}
 .rend .an{display:block;margin-top:1px;font:500 11px/1.2 Inter,system-ui,sans-serif;color:#3A4356;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#rdock.min #rdist .rd,#rdock.min #rdist .rc,#rdock.min #rdist .ra,#rdock.min .rends{display:none}
+#rdock.min #rdist .rd,#rdock.min #rdist .rc,#rdock.min .rends{display:none}
 body.home #rdock,body.poster #rdock{display:none!important}
 @media (max-width:760px){
- #rdock{right:0;padding:5px 8px 6px;height:158px}
- #rdock.min{height:52px}
+ #rdock{right:0;padding:5px 8px 6px}
  #rdist .rn{font-size:12.5px}
  #rdist .rc{-webkit-line-clamp:1}
  .rends{gap:6px}
