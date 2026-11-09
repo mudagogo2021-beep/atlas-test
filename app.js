@@ -1,20 +1,19 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109x', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109w', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
 const NODATA=PAL.no_data||'#D9DBE0';
 const map=L.map('map',{zoomSnap:0.5,worldCopyJump:true,preferCanvas:true}).setView([30,0],2);
-const worldRend=L.canvas({padding:0.8}),lineRend=L.canvas({padding:0.8});
-let dockH=-1,pendingWorldFit=false,flushRouteAnim=()=>{},applyNetworkCam=()=>{},reapplyGhost=()=>{};
-let camUser=false,camSig='',camToken=0,camAuto=false,playSpeed=1,pre39Raf=0,pre39On=false,netAnchors=null,ghost=null;
+let dockH=-1,pendingWorldFit=false,flushRouteAnim=()=>{},applyNetworkCam=()=>{};
+let camUser=false,camSig='',camToken=0,camAuto=false,playSpeed=1,pre39Raf=0,pre39On=false,netAnchors=null;
 // One camera move before 1939: close on the 1914 St Petersburg–Tampa airport, then a single
 // eased zoom-out that arrives at the 1939 frame as that year opens. 1939 is already the
 // world frame (the previous keyframes reached it in 1926), so later years hold it.
 const PRE39=1939;
 function loadPlaySpeed(){const q=new URLSearchParams(location.hash.slice(1)).get('speed');const n=parseFloat(q);playSpeed=(n>=0.25&&n<=5)?n:1}
-function stopPre39(){pre39On=false;if(pre39Raf){cancelAnimationFrame(pre39Raf);pre39Raf=0}if(ghost){const g=ghost;ghost=null;map._camTick=1;map.setView(g.center,g.zoom,{animate:false});map._camTick=0}}
+function stopPre39(){pre39On=false;if(pre39Raf){cancelAnimationFrame(pre39Raf);pre39Raf=0}}
 function userTookNetworkCam(){if(!(D&&D.lines&&D.lines.network&&netPlay))return;camUser=true;camToken++;camAuto=false;stopPre39();map.stop()}
 function fitDock(){const dock=$('#rdock');const h=(!dock||dock.hidden)?0:Math.ceil(dock.getBoundingClientRect().height);if(h===dockH)return;dockH=h;netAnchors=null;document.documentElement.style.setProperty('--dock',h+'px');if(!pre39On)map.invalidateSize({animate:false,pan:false})}
 function hideRouteDock(){const dock=$('#rdock');if(dock)dock.hidden=true;const el=$('#rdist');if(el){el.hidden=true;el.innerHTML=''}const c=$('#rcount');if(c)c.hidden=true;const b=$('#rdockx');if(b)b.hidden=true;dockH=-1;fitDock()}
@@ -26,12 +25,7 @@ async function loadBase(id,iso){const b=M.bases[id];const k=id+(iso||'');if(cach
 async function loadRows(f){if(cache[f])return cache[f];let r;
   if(f.endsWith('.csv')){const t=await fetch(bust(f)).then(r=>r.text());const[h,...ls]=t.trim().split(/\r?\n/).map(l=>l.split(','));r=ls.map(l=>Object.fromEntries(h.map((k,i)=>[k,isNaN(+l[i])||l[i]===''?l[i]:+l[i]])))}else r=await J(f);return cache[f]=r}
 // background world
-const world=await loadBase('world');
-const bgWorld=L.geoJSON(world,{style:{color:'#fff',weight:.6,fillColor:'#EDEDEA',fillOpacity:1},interactive:false}).addTo(map);
-let worldSimple=null;
-function thinRing(ring){if(ring.length<12)return ring;const o=[ring[0]];for(let i=3;i<ring.length-1;i+=3)o.push(ring[i]);o.push(ring[ring.length-1]);return o}
-function thinCoords(c){if(!c||!c.length||typeof c[0]==='number')return c;if(typeof c[0][0]==='number')return thinRing(c);return c.map(thinCoords)}
-function simpleWorld(g){if(worldSimple)return worldSimple;worldSimple={type:'FeatureCollection',features:(g.features||[]).map(f=>({type:'Feature',properties:f.properties,geometry:f.geometry?{type:f.geometry.type,coordinates:thinCoords(f.geometry.coordinates)}:null}))};return worldSimple}
+const world=await loadBase('world');L.geoJSON(world,{style:{color:'#fff',weight:.6,fillColor:'#EDEDEA',fillOpacity:1},interactive:false}).addTo(map);
 // UI
 const st=Object.fromEntries(new URLSearchParams(location.hash.slice(1)));
 M.datasets.filter(d=>!d.hidden).forEach(d=>$('#ds').add(new Option(d.title,d.id)));
@@ -89,7 +83,7 @@ function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
 function popup(d,p){const flag=d.flagField&&p[d.flagField]?`<img src="${esc(p[d.flagField])}" style="height:14px;border:1px solid #0002;vertical-align:middle"> `:'';
   return `<b>${flag}${esc(fmt(p.name??p[d.key]))}</b><table>`+(d.popup||[]).filter(k=>k!=='name').map(k=>{let v=p[k];const s=typeof v==='string'&&/^https?:/.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener">link</a>`:esc(fmt(v));return `<tr><td>${esc(k.replace(/_/g,' '))}</td><td>${s}</td></tr>`}).join('')+'</table>'}
-function render(){hideCard(true);if(!D.lines){map.getContainer().classList.remove('darkmap');if(bgWorld&&!map.hasLayer(bgWorld))bgWorld.addTo(map)}if(!D.lines||!D.lines.planes)Planes.set([]);
+function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove('darkmap');if(!D.lines||!D.lines.planes)Planes.set([]);
   if(D.lines)return renderLines();
   if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}if(endLbl){map.removeLayer(endLbl);endLbl=null}
   hideRouteDock();
@@ -142,15 +136,13 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
   const FD=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):FD[s.f]&&FD[s.f].cumulative?(+r[s.f]<=+s.v&&(FD[s.f].history||!(r[FD[s.f].cumulative]!=null&&+r[FD[s.f].cumulative]<=+s.v))):String(r[s.f])===s.v));
   const C=colorer(f,rows.map(r=>r[f.name]));const vis=rows.filter(r=>!hidden.has(r[f.name]));
-  const thin=!!Lc.network;
-  if(bgWorld&&map.hasLayer(bgWorld))map.removeLayer(bgWorld);
-  const dk=!!Lc.dark;map.getContainer().classList.toggle('darkmap',dk);
-  if(!(thin&&layer&&layer._netId===D.id)){if(layer)map.removeLayer(layer);layer=L.geoJSON(thin?simpleWorld(D._base):D._base,{style:dk?{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1}:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false,renderer:thin?worldRend:undefined}).addTo(map);if(thin)layer._netId=D.id}
-  if(linesLayer)map.removeLayer(linesLayer);if(endLbl){map.removeLayer(endLbl);endLbl=null}if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=thin?lineRend:(big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined);
+  if(layer)map.removeLayer(layer);const dk=!!Lc.dark;map.getContainer().classList.toggle('darkmap',dk);layer=L.geoJSON(D._base,{style:dk?{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1}:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
+  if(linesLayer)map.removeLayer(linesLayer);if(endLbl){map.removeLayer(endLbl);endLbl=null}if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
   const dep={},by={};const PR=[];
   const hf=(D.filters||[]).find(x=>x.history),hv=hf&&sel.find(x=>x.f===hf.field);
   const isOld=r=>!!(hv&&r[hf.cumulative]!=null&&+r[hf.cumulative]<=+hv.v);
   const yNowSel=sel.find(s=>s.f==='year'),yNow=yNowSel?+yNowSel.v:null;
+  const thin=!!Lc.network;
   const shownIds=new Set();
   let activeR=null,destReady=true;
   const routes=[];
@@ -225,7 +217,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     const op=big?(Lc.dark?.22:.35):(Lc.dark?.95:.85),base={color:col,weight:.7,opacity:op},shifts=big?[0]:[-360,0,360];
     const lns=shifts.map(sh=>{const ln=L.polyline([[g[0][0],g[0][1]+sh]],{color:'#F2A541',weight:1.15,opacity:1});
       ln._rid=r.id;ln._base=base;ln._full=g.map(p=>[p[0],p[1]+sh]);onLine(ln,r);ln.addTo(linesLayer);return ln});
-    const apply=n=>{const slice=g.slice(0,Math.max(2,n));lns.forEach((ln,i)=>ln.setLatLngs(slice.map(p=>[p[0],p[1]+shifts[i]])));reapplyGhost()};
+    const apply=n=>{const slice=g.slice(0,Math.max(2,n));lns.forEach((ln,i)=>ln.setLatLngs(slice.map(p=>[p[0],p[1]+shifts[i]])))};
     if(matchMedia('(prefers-reduced-motion: reduce)').matches){apply(g.length);done();return}
     const t0=performance.now(),dur=Math.max(40,1300/playSpeed);
     const step=now=>{if(gen!==cycleGen)return;const p=Math.min(1,(now-t0)/dur);apply(Math.round(1+p*(g.length-1)));if(p<1)requestAnimationFrame(step);else done()};
@@ -291,10 +283,11 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   if(Lc.ends){const r0=chosenRoutes()[0];focusRoute(r0)}
   else if(thin)presentNewRoutes();
   else hideRouteDock();
+  function camPad(){const phone=innerWidth<=760;return {paddingTopLeft:[phone?20:36,phone?16:28],paddingBottomRight:[phone?20:36,phone?72:64]}}
   function floridaBounds(){const pts=[];
     for(const r of D._rows){if(+r.year!==1914)continue;
       for(const code of [r[Lc.from],r[Lc.to]]){const a=AP.get(code);if(a&&typeof a.lat==='number')pts.push(a)}}
-    if(pts.length<2)return L.latLngBounds([[27.6,-82.8],[28.1,-82.3]]);
+    if(pts.length<2)return L.latLngBounds(NETWORK_CAM.approach);
     let s=90,n=-90,w=180,e=-180;
     for(const p of pts){s=Math.min(s,p.lat);n=Math.max(n,p.lat);w=Math.min(w,p.lon);e=Math.max(e,p.lon)}
     return L.latLngBounds([[s-0.18,w-0.22],[n+0.18,e+0.22]])}
@@ -305,19 +298,15 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   function spanBefore(year){let ms=0;for(let i=1914;i<year&&i<PRE39;i++)ms+=yearDwell(i);return ms}
   function ease(t){return t<=0?0:t>=1?1:1-(1-t)*(1-t)}
   function poseAt(p){const e=ease(p),a=anchors().a,b=anchors().b;return {lat:a.lat+(b.lat-a.lat)*e,lng:a.lng+(b.lng-a.lng)*e,zoom:a.zoom+(b.zoom-a.zoom)*e}}
-  function putPose(p,force){const center=L.latLng(p.lat,p.lng);map.options.zoomSnap=0;
-    const base=ghost?ghost.base:null,dz=base==null?Infinity:Math.abs(p.zoom-base);
-    if(force||dz>=0.7){map._camTick=1;map.setView(center,p.zoom,{animate:false});map._camTick=0;ghost={center,zoom:p.zoom,base:p.zoom};return}
-    ghost={center,zoom:p.zoom,base};map.fire('zoomanim',{center,zoom:p.zoom})}
-  reapplyGhost=()=>{if(ghost&&pre39On)map.fire('zoomanim',{center:ghost.center,zoom:ghost.zoom})};
+  function putPose(p){map.options.zoomSnap=0;map.options.zoomAnimation=false;map._camTick=1;map.setView([p.lat,p.lng],p.zoom,{animate:false});map._camTick=0}
   function beginZoomOut(year){if(pre39On||camUser)return;const total=spanBefore(PRE39)||1,p0=Math.min(1,spanBefore(year)/total),dur=Math.max(1,(total-spanBefore(year)));
     pre39On=true;const t0=performance.now();
-    const tick=now=>{if(!pre39On||camUser||!netPlay){pre39Raf=0;return}const u=Math.min(1,(now-t0)/dur);putPose(poseAt(p0+(1-p0)*u),u>=1);
-      if(u<1)pre39Raf=requestAnimationFrame(tick);else{pre39On=false;pre39Raf=0;ghost=null;camSig='y1939'}};
+    const tick=now=>{if(!pre39On||camUser||!netPlay){pre39On=false;return}const u=Math.min(1,(now-t0)/dur),p=p0+(1-p0)*u;putPose(poseAt(p));
+      if(u<1)pre39Raf=requestAnimationFrame(tick);else{pre39On=false;pre39Raf=0;camSig='y1939'}};
     pre39Raf=requestAnimationFrame(tick)}
   applyNetworkCam=animate=>{
     if(!thin||camUser||!yNow)return;
-    map.options.zoomSnap=0;
+    map.options.zoomSnap=0;map.options.zoomAnimation=false;
     if(yNow<PRE39){
       if(animate&&netPlay){beginZoomOut(yNow);return}
       stopPre39();putPose(poseAt(spanBefore(yNow)/(spanBefore(PRE39)||1)));camSig='pre'+yNow;return}
@@ -328,14 +317,11 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   fitDock();
   if(pendingWorldFit&&thin)pendingWorldFit=false;
   if(thin)applyNetworkCam(!!netPlay&&!camUser);
-  if(pre39On)reapplyGhost();
   if(Lc.ends){const r0=chosenRoutes()[0];if(r0&&framedId!==r0.id){userHold=false;framedId=r0.id;frameRoute(r0)}}
-  const lg=$('#legend');
-  if(!(thin&&netPlay&&lg.dataset.ds===D.id)){const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
-  lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
+  const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
+  const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
   lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.network?'Small dots are airports. A new route draws on in yellow. From and To sit above the map. Playback opens on the 1914 airport and slowly zooms out to the 1939 view, then stays there. Tap a line for its card.':Lc.ends?'From and To sit above the map. Tap a line to choose that record.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
-  lg.dataset.ds=D.id}
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();
