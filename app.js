@@ -1,6 +1,6 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109n', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109q', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
@@ -37,7 +37,7 @@ function colorer(f,vals){
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
   document.body.classList.remove('poster'); const pv=$('#poster'); if(pv) pv.hidden=true;
-  framedId=null; userHold=false;
+  netPlay=false; cycleGen++; yearWait=null; framedId=null; userHold=false;
   D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
   $('#field').innerHTML='';D.fields.forEach(f=>$('#field').add(new Option(f.label,f.name)));if(opt.field)$('#field').value=opt.field;
   const rows=await loadRows(D.file);const base=await loadBase(D.base,D.country);
@@ -117,7 +117,7 @@ const P_DUR=1;const Planes=(()=>{let routes=[],pl=[],cv=null,raf=0;const red=mat
       x.moveTo(6,0);x.lineTo(1,-1.2);x.lineTo(-1,-5.5);x.lineTo(-2.5,-5.5);x.lineTo(-1.5,-1.2);x.lineTo(-4.5,-1.2);x.lineTo(-6,-3);x.lineTo(-6.8,-3);x.lineTo(-6,0);
       x.lineTo(-6.8,3);x.lineTo(-6,3);x.lineTo(-4.5,1.2);x.lineTo(-1.5,1.2);x.lineTo(-2.5,5.5);x.lineTo(-1,5.5);x.lineTo(1,1.2);x.closePath();x.fill();x.stroke();x.restore()}pl=pl.filter(p=>!p.done)}
   addEventListener('resize',()=>cv&&size());return{set,count:()=>pl.length}})();window.__planes=Planes;
-let linesLayer=null,endLbl=null,linePickId=null,framedId=null,userHold=false,fitting=0;
+let linesLayer=null,endLbl=null,linePickId=null,framedId=null,userHold=false,fitting=0,cycleGen=0,netPlay=false,yearWait=null,sliderVals=[];
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
@@ -134,7 +134,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);{const ys=sel.find(x=>x.f==='year');if(!ys||String(r.year)===ys.v)PR.push(g)}
     const thin=!!Lc.network;
     for(const sh of(big?[0]:[-360,0,360])){const old=isOld(r);const w=thin?0.7:(old?1.2:(big?.7:(hv?4:2.2)));const op=thin?(big?(Lc.dark?.22:.35):(Lc.dark?.95:.85)):(old?.35:(big?(Lc.dark?.22:.35):(hv?1:.75)));const ln=L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:old&&!thin?'#8A93A6':col,weight:w,opacity:op,dashArray:old&&!thin?'4 4':null,renderer:rend}).bindPopup(()=>popup(D,r));
-      ln.on('click',()=>{if(!(Lc.ends||Lc.network))return;linePickId=r.id;Lc.network?focusNetwork():focusRoute(r)});
+      ln.on('click',()=>{if(!(Lc.ends||Lc.network))return;if(Lc.network){cycleGen++;netPlay=false;yearWait=null;const b=document.querySelector('#tslider .pl');if(b)b.textContent='▶'}linePickId=r.id;Lc.network?focusNetwork():focusRoute(r)});
       if(thin){ln.on('mouseover',()=>ln.setStyle({weight:1.05,color:'#F2A541'}));ln.on('mouseout',()=>ln.setStyle({weight:0.7,color:col}))}
       ln.addTo(linesLayer)}}
   Planes.set(Lc.planes?PR:[]);
@@ -183,7 +183,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     fitting++; let done=false;
     const fin=()=>{if(done)return; done=true; fitting=Math.max(0,fitting-1); drawEndLabels()};
     map.once('moveend',fin);
-    map.fitBounds([[minLa-latPad,minLo-lonPad],[maxLa+latPad,maxLo+lonPad]],{paddingTopLeft:[phone?28:50,phone?(km<800?210:80):60],paddingBottomRight:[phone?28:50,phone?120:100],maxZoom,animate:true});
+    map.fitBounds([[minLa-latPad,minLo-lonPad],[maxLa+latPad,maxLo+lonPad]],{paddingTopLeft:[phone?36:50,phone?(Lc.network?240:(km<800?210:80)):64],paddingBottomRight:[phone?36:50,phone?110:100],maxZoom,animate:true});
     setTimeout(fin,900)}
   function focusRoute(r){drawEndLabels(); const el=$('#rdist');
     if(!Lc.ends||!r){if(el){el.hidden=true;el.innerHTML=''}return}
@@ -204,6 +204,12 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
       el.hidden=false; el.innerHTML=`<p class="rn">${esc(r.route||(A&&B?(A.name+' – '+B.name):'')||'')}</p><p class="rd">${esc(d.text)}</p>`+(cave.length?`<p class="rc">${esc(cave.join(' '))}</p>`:'')}
     if(framedId===key)return; userHold=false; framedId=key;
     if(linePickId&&r)frameRoute(r); else if(short&&r)frameRoute(r); else if(short)frameRoute(vis[0]); else fitWorld()}
+  function presentNewRoutes(){const gen=++cycleGen; const ySel=sel.find(s=>s.f==='year'); const y=ySel?+ySel.v:null;
+    const opened=y==null?[]:vis.filter(r=>+r.year===y); const list=(!netPlay&&opened.length>8)?opened.slice(-1):opened;
+    const done=()=>{if(gen!==cycleGen)return; const cb=yearWait; yearWait=null; if(cb)cb()};
+    const show=(i)=>{if(gen!==cycleGen)return; if(!list.length){linePickId=null; focusNetwork(); setTimeout(done, netPlay?700:0); return}
+      linePickId=list[i].id; focusNetwork(); if(i+1<list.length)setTimeout(()=>show(i+1),1700); else setTimeout(done,1700)};
+    show(0)}
   if(!map._endsBound){map._endsBound=1;
     map.on('zoomend',()=>{if(D&&D.lines&&(D.lines.ends||D.lines.network)&&map._drawEnds)map._drawEnds()});
     map.on('dragstart',()=>{if(!fitting)userHold=true});
@@ -214,7 +220,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   for(const c of Object.keys(by)){if((Lc.ends||Lc.network)&&labeled.has(c))continue;const a=AP.get(c);
     const radius=(Lc.ends||Lc.network)?(big?2.2:(innerWidth<=760?3:3.5)):(big?1.5:3)+(big?7:13)*Math.sqrt((dep[c]||0)/mx);
     for(const sh of(big?[0]:[-360,0,360]))L.circleMarker([a.lat,a.lon+sh],{renderer:rend,radius,color:'#1E2430',weight:1,fillColor:'#fff',fillOpacity:.95}).bindPopup(apHtml(c)).bindTooltip(a.name?`${c} · ${a.name}`:c,{sticky:true}).addTo(linesLayer)}
-  if(Lc.ends)focusRoute(chosenRoutes()[0]); else if(Lc.network)focusNetwork(); else {const el=$('#rdist'); if(el){el.hidden=true;el.innerHTML=''}}
+  if(Lc.ends)focusRoute(chosenRoutes()[0]); else if(Lc.network)presentNewRoutes(); else {const el=$('#rdist'); if(el){el.hidden=true;el.innerHTML=''}}
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
@@ -254,10 +260,18 @@ function buildSlider(){const ts=$('#tslider');ts.classList.remove('on');ts.inner
   let vals=[...sel.options].map(o=>o.value).filter(v=>v!==''&&!isNaN(+v));if(vals.some(v=>have.has(v)))vals=vals.filter(v=>have.has(v));vals=vals.map(Number).sort((a,b)=>a-b);if(fl.cumulative&&vals.length>1){const a=vals[0],b=Math.max(vals[vals.length-1],fl.max||0);vals=[];for(let y=a;y<=b;y++){vals.push(y);if(![...sel.options].some(o=>o.value===String(y))){const o=document.createElement('option');o.value=o.textContent=String(y);sel.append(o)}}}
   if(!vals.includes(+sel.value)){sel.value=String(vals[vals.length-1]);render()}if(vals.length<2)return;
   ts.innerHTML=`<span class="lab">${esc(fl.label)}</span><button class="pl" aria-label="Play">▶</button><input type="range" min="0" max="${vals.length-1}" step="1" aria-label="${esc(fl.label)}"><b class="val"></b>`;
-  const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl');let tm=null;
+  sliderVals=vals.slice();
+  const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl');
   const set=i=>{r.value=i;v.textContent=vals[i];sel.value=String(vals[i]);render()};
-  r.value=Math.max(0,vals.indexOf(+sel.value));v.textContent=vals[+r.value];r.oninput=()=>set(+r.value);
-  pl.onclick=()=>{if(tm){clearInterval(tm);tm=null;pl.textContent='▶';return}pl.textContent='❚❚';if(+r.value>=vals.length-1)set(0);tm=setInterval(()=>{const i=+r.value+1;if(i>=vals.length){clearInterval(tm);tm=null;pl.textContent='▶';return}set(i)},1100)};
+  r.value=Math.max(0,vals.indexOf(+sel.value));v.textContent=vals[+r.value];
+  r.oninput=()=>{if(netPlay){netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶'}set(+r.value)};
+  if(netPlay)pl.textContent='❚❚';
+  pl.onclick=()=>{if(netPlay){netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶';return}
+    netPlay=true; pl.textContent='❚❚';
+    const go=()=>{if(!netPlay)return; const selNow=document.querySelector('#filters select[data-f="year"]'); const slider=document.querySelector('#tslider input'); const lab=document.querySelector('#tslider .val'); const btn=document.querySelector('#tslider .pl');
+      if(!selNow||!slider||!sliderVals.length){netPlay=false;return} const cur=sliderVals.indexOf(+selNow.value); if(cur<0||cur>=sliderVals.length-1){netPlay=false; if(btn)btn.textContent='▶'; return}
+      const next=cur+1; slider.value=String(next); if(lab)lab.textContent=String(sliderVals[next]); selNow.value=String(sliderVals[next]); if(btn)btn.textContent='❚❚'; yearWait=go; render()};
+    go()};
   sel.addEventListener('change',()=>{const i=vals.indexOf(+sel.value);if(i>=0){r.value=i;v.textContent=vals[i]}});ts.classList.add('on')}
 
 const zc=()=>{const z=map.getZoom(),c=map.getContainer().classList;c.toggle('lowz',z<5);c.toggle('tinyz',z<3.5)};map.on('zoomend',zc);zc();
