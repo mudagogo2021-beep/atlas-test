@@ -54,6 +54,18 @@
    "file": "base/megaregions.geojson",
    "key": "megaregion",
    "name": "megaregion"
+  },
+  "uk_lad2021": {
+   "label": "UK local authority districts (Dec 2021)",
+   "file": "base/uk_lad2021.geojson",
+   "key": "code",
+   "name": "name"
+  },
+  "poland_powiaty": {
+   "label": "Poland powiats (current PRG)",
+   "file": "base/poland_powiaty.geojson",
+   "key": "code",
+   "name": "name"
   }
  },
  "overlayOutlines": {
@@ -469,6 +481,218 @@
    "icon": "🍁",
    "region": "Canada",
    "blurb": "English or French as the second official language, by province"
+  },
+  {
+   "id": "uk_district_language",
+   "title": "What's the UK's most spoken language after English?",
+   "base": "uk_lad2021",
+   "file": "data/uk_district_language.json",
+   "key": "code",
+   "view": [
+    [
+     49.8,
+     -8.7
+    ],
+    [
+     60.9,
+     2.0
+    ]
+   ],
+   "fields": [
+    {
+     "name": "language",
+     "label": "Leading language (after English*)",
+     "type": "category",
+     "colors": {
+      "Polish": "#d7652b",
+      "Romanian": "#277da8",
+      "Other languages (pooled)": "#b9bec4",
+      "Panjabi": "#a0447f",
+      "Urdu": "#3f9369",
+      "Nepalese": "#d6a528",
+      "Spanish": "#6860aa",
+      "Arabic": "#d94047",
+      "Gujarati": "#71b4b0",
+      "Bengali (with Sylheti and Chatgaya)": "#998132",
+      "Turkish": "#df8ab0",
+      "Portuguese": "#397545",
+      "Lithuanian": "#90a344",
+      "French": "#6b919c",
+      "Tamil": "#ad654c",
+      "All other Chinese (pooled)": "#738391",
+      "Tagalog or Filipino": "#563979",
+      "Yiddish": "#e0a281",
+      "Bulgarian": "#6289cf",
+      "Hungarian": "#383d41",
+      "Gaelic": "#8b762b"
+     }
+    },
+    {
+     "name": "share_pct",
+     "label": "Share of residents aged 3+, %",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "speakers",
+     "label": "Speakers (lead category)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "nation",
+     "label": "Nation"
+    },
+    {
+     "field": "language",
+     "label": "Language"
+    }
+   ],
+   "popup": [
+    "name",
+    "nation",
+    "language",
+    "speakers",
+    "share_pct",
+    "year",
+    "measure",
+    "category_status",
+    "note"
+   ],
+   "sources": [
+    {
+     "label": "ONS Census 2021 TS024 Main language (England & Wales)",
+     "url": "https://www.nomisweb.co.uk/datasets/c2021ts024"
+    },
+    {
+     "label": "NRS Scotland's Census 2022 UV212 Main language (OA bulk, aggregated to councils)",
+     "url": "https://www.scotlandscensus.gov.uk/"
+    },
+    {
+     "label": "NISRA Census 2021 MS-B12 Main language (Northern Ireland)",
+     "url": "https://www.nisra.gov.uk/publications/census-2021-main-statistics-language-tables"
+    },
+    {
+     "label": "Boundaries: ONS Local Authority Districts Dec 2021 UK BGC (OGL v3; contains OS data © Crown copyright)",
+     "url": "https://www.data.gov.uk/dataset/5ca638fa-79d9-4d1f-a9ce-12ac929c8753/local-authority-districts-december-2021-boundaries-uk-bgc"
+    }
+   ],
+   "notes": "Colour = largest published main-language category other than English (Wales: other than English OR Welsh, because TS024 combines them). Scotland: 31 councils show 'Other languages (pooled)' — UV212 does not name Polish etc. within Other; only Na h-Eileanan Siar has a named individual winner (Gaelic). York = 'All other Chinese (pooled)'; Belfast and Ards & North Down = 'Other languages (pooled)'. Scotland council figures are sums of perturbed output-area cells, not a direct council table. Share denominator = usual residents aged 3+. Not proficiency, nationality or ability.",
+   "category": "Languages",
+   "icon": "🗣️",
+   "region": "United Kingdom",
+   "blurb": "Leading main language after English in every UK district (2021/2022)"
+  },
+  {
+   "id": "poland_home_language",
+   "title": "What's Poland's most spoken home language after Polish?",
+   "base": "poland_powiaty",
+   "file": "data/poland_home_language.json",
+   "key": "code",
+   "view": [
+    [
+     49.0,
+     14.0
+    ],
+    [
+     55.0,
+     24.3
+    ]
+   ],
+   "fields": [
+    {
+     "name": "language",
+     "label": "Leading home language (after Polish)",
+     "type": "category",
+     "colors": {
+      "English": "#d86529",
+      "Silesian": "#87569d",
+      "German": "#3d8f71",
+      "Kashubian": "#287ba7",
+      "Belarusian": "#c54251",
+      "Ukrainian": "#e4bc3b",
+      "Lithuanian": "#739640",
+      "French": "#5c669e"
+     }
+    },
+    {
+     "name": "share_pct",
+     "label": "Share of all residents, %",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "speakers",
+     "label": "People reporting the language",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "voivodeship",
+     "label": "Voivodeship"
+    },
+    {
+     "field": "language",
+     "label": "Language"
+    }
+   ],
+   "popup": [
+    "name",
+    "voivodeship",
+    "language",
+    "language_pl",
+    "speakers",
+    "share_pct",
+    "year",
+    "note"
+   ],
+   "sources": [
+    {
+     "label": "GUS NSP2021 Table 4 — home language by powiat",
+     "url": "https://stat.gov.pl/spisy-powszechne/nsp-2021/nsp-2021-wyniki-ostateczne/tablice-z-ostatecznymi-danymi-w-zakresie-przynaleznosci-narodowo-etnicznej-jezyka-uzywanego-w-domu-oraz-przynaleznosci-do-wyznania-religijnego,10,1.html"
+    },
+    {
+     "label": "Boundaries: GUGiK PRG GranicaPowiatu (free for any purpose); current outlines retrieved 2026-11-08, not claimed 2021 geometry",
+     "url": "https://www.geoportal.gov.pl/en/data/national-register-of-boundaries/"
+    }
+   ],
+   "notes": "Largest reported home-language category other than Polish in each of 380 powiats. Respondents could name more than one language (including Polish + another); shares use all residents as the denominator and need not sum to 100%. Only languages reported by ≥3 people in a powiat are published; every winner has ≥235, so unpublished 1–2 counts cannot overtake. Winners: English 328, Silesian 32, German 7, Kashubian 7, Belarusian 2, Ukrainian 2, Lithuanian 1, French 1. Boundaries are current PRG (retrieved 2026-11-08); census counts remain 2021 by TERYT code.",
+   "category": "Languages",
+   "icon": "🗣️",
+   "region": "Poland",
+   "blurb": "Leading home language after Polish in every powiat (NSP 2021)"
   },
   {
    "id": "us_megaregions",

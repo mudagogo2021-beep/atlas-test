@@ -65,6 +65,18 @@
 - Boundaries: geoBoundaries FRA ADM2 — https://www.geoboundaries.org/
 - Note: Overseas départements are not in the geoBoundaries FRA ADM2 file and are not drawn.
 
+### What's the UK's most spoken language after English? (`uk_district_language`)
+- ONS Census 2021 TS024 Main language (England & Wales) — https://www.nomisweb.co.uk/datasets/c2021ts024
+- NRS Scotland's Census 2022 UV212 Main language (OA bulk aggregated to councils) — https://www.scotlandscensus.gov.uk/
+- NISRA Census 2021 MS-B12 Main language (Northern Ireland) — https://www.nisra.gov.uk/publications/census-2021-main-statistics-language-tables
+- Boundaries: ONS Local Authority Districts December 2021 UK BGC (OGL v3; Contains OS data © Crown copyright and database right 2026) — https://www.data.gov.uk/dataset/5ca638fa-79d9-4d1f-a9ce-12ac929c8753/local-authority-districts-december-2021-boundaries-uk-bgc
+- Note: Wales excludes English AND Welsh (TS024 combines them). Scotland UV212 pools most non-English languages as Other; only Gaelic has a named council winner. York / Belfast / Ards & North Down show residual pools. Scotland figures are OA-cell sums, not a direct council table.
+
+### What's Poland's most spoken home language after Polish? (`poland_home_language`)
+- GUS NSP2021 Table 4 — home language by powiat — https://stat.gov.pl/spisy-powszechne/nsp-2021/nsp-2021-wyniki-ostateczne/tablice-z-ostatecznymi-danymi-w-zakresie-przynaleznosci-narodowo-etnicznej-jezyka-uzywanego-w-domu-oraz-przynaleznosci-do-wyznania-religijnego,10,1.html
+- Boundaries: GUGiK PRG GranicaPowiatu (free for any purpose); current outlines retrieved 2026-11-08, not claimed 2021 geometry — https://www.geoportal.gov.pl/en/data/national-register-of-boundaries/
+- Note: Multiple responses permitted; share is of all residents. Winners English 328 / Silesian 32 / German 7 / Kashubian 7 / Belarusian 2 / Ukrainian 2 / Lithuanian 1 / French 1.
+
 ## Aviation — "Where does the A380 still fly?" (data/a380_routes_nw26.json, data/a380_airports.json), accessed 2 Nov 2026
 - Business Insider / Cirium, "Where you can still fly the A380" (Nov 2026 schedule), 20 Sep 2026: https://www.businessinsider.com/airbus-a380-routes-destinations-airlines-2026-9
 - Flightradar24 Blog, "Emirates A380 routes in 2026" (Jan 2026 flight list; used as frequency reference only): https://www.flightradar24.com/blog/aviation-news/airline-news/airline-routes/emirates-a380-routes-in-2026-where-the-superjumbo-flies/
