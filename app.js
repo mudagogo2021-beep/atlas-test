@@ -1,6 +1,6 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109t', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109v', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
@@ -206,7 +206,12 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     if(((A&&A.approx)||(B&&B.approx)||(r.year!=null&&+r.year<1992))&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');
     const title=r.route||r.name||(A&&B?(A.name+' – '+B.name):'');
     const note=cave.join(' ');
-    el.hidden=false;el.innerHTML=`<p class="rn" title="${esc(title)}">${esc(title)}</p><p class="rd">${esc(d.text)}</p>`+(note?`<p class="rc" title="${esc(note)}">${esc(note)}</p>`:'')+`<div class="rends">${endBit('From',A,r)}${endBit('To',B,r)}</div>`;
+    const acName=r.aircraft!=null?String(r.aircraft).trim():'';
+    const acOk=acName&&!/unknown/i.test(acName)&&(r.aircraft_basis==='flight'||r.aircraft_basis==='typical');
+    const acSrc=r.aircraft_source_label||'';
+    const acLabel=r.aircraft_basis==='flight'?'Aircraft on this flight':('Typical type on route'+(acSrc?` (${acSrc})`:''));
+    const ac=acOk?`<p class="ra" title="${esc(r.aircraft_source||acSrc)}"><b>${esc(acLabel)}:</b> ${esc(acName)}</p>`:'';
+    el.hidden=false;el.innerHTML=`<p class="rn" title="${esc(title)}">${esc(title)}</p><p class="rd">${esc(d.text)}</p>`+(note?`<p class="rc" title="${esc(note)}">${esc(note)}</p>`:'')+ac+`<div class="rends">${endBit('From',A,r)}${endBit('To',B,r)}</div>`;
     if(dock)dock.hidden=false;if(btn)btn.hidden=false}
   function drawEndLabels(){if(endLbl){map.removeLayer(endLbl);endLbl=null}if(!(Lc.ends||thin))return;endLbl=L.layerGroup();
     const phone=innerWidth<=760,shifts=big?[0]:[-360,0,360];
