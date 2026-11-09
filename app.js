@@ -1,6 +1,6 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109s', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109aa', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
@@ -40,6 +40,7 @@ function colorer(f,vals){
   const items=sc.slice(0,br.length+1).map((c,i)=>({key:i,color:c,label:i===0?`< ${fmt(br[0])}`:i===br.length?`≥ ${fmt(br[i-1])}`:`${fmt(br[i-1])} – ${fmt(br[i])}`,n:nums.filter(v=>cls(v)===i).length}));
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
+  destroyNet(); document.body.classList.remove('lines-network');
   document.body.classList.remove('poster'); const pv=$('#poster'); if(pv) pv.hidden=true;
   netPlay=false; cycleGen++; yearWait=null; framedId=null; userHold=false;
   D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
@@ -123,11 +124,93 @@ const P_DUR=1;const Planes=(()=>{let routes=[],pl=[],cv=null,raf=0;const red=mat
       x.lineTo(-6.8,3);x.lineTo(-6,3);x.lineTo(-4.5,1.2);x.lineTo(-1.5,1.2);x.lineTo(-2.5,5.5);x.lineTo(-1,5.5);x.lineTo(1,1.2);x.closePath();x.fill();x.stroke();x.restore()}pl=pl.filter(p=>!p.done)}
   addEventListener('resize',()=>cv&&size());return{set,count:()=>pl.length}})();window.__planes=Planes;
 let linesLayer=null,endLbl=null,linePickId=null,framedId=null,userHold=false,fitting=0,cycleGen=0,netPlay=false,yearWait=null,sliderVals=[];
+let netSession=null,playSpeed=1;
+const PLAY_SPEEDS=[0.25,0.5,1,1.5,2,3,5];
+function speedLabel(n){return String(n)+'x'}
+function readPlaySpeed(){const q=parseFloat(new URLSearchParams(location.hash.slice(1)).get('speed'));let n=q;if(!(n>=0.25&&n<=5)){try{n=parseFloat(localStorage.getItem('atlasPlaySpeed'))}catch(e){n=1}}if(!(n>=0.25&&n<=5))n=1;playSpeed=PLAY_SPEEDS.reduce((best,s)=>Math.abs(s-n)<Math.abs(best-n)?s:best,1)}
+function setPlaySpeed(n){playSpeed=n;try{localStorage.setItem('atlasPlaySpeed',String(n))}catch(e){}const h=new URLSearchParams(location.hash.slice(1));if(n===1)h.delete('speed');else h.set('speed',String(n));const next=h.toString();history.replaceState(null,'',next?'#'+next:location.pathname);const b=document.querySelector('#tslider .spd');if(b)b.textContent=speedLabel(n)}
+function playMs(ms){return Math.max(40,ms/(playSpeed||1))}
+function destroyNet(){if(!netSession)return;netSession.destroy();netSession=null}
+function networkSig(){const bits=[];document.querySelectorAll('#filters select').forEach(s=>{if(s.dataset.f!=='year')bits.push(s.dataset.f+'='+s.value)});bits.push('hid='+[...hidden].sort().join('|'));bits.push('field='+($('#field')&&$('#field').value||''));return (D&&D.id)+'|'+bits.join('&')}
+function currentYear(){const s=document.querySelector('#filters select[data-f="year"]');return s&&s.value!==''?+s.value:1914}
+async function buildNetwork(Lc,f,sel,AP,C){
+  destroyNet();
+  document.body.classList.add('lines-network');
+  map.getContainer().classList.add('darkmap');
+  if(layer)map.removeLayer(layer);
+  layer=L.geoJSON(D._base,{style:{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1},interactive:false}).addTo(map);
+  if(linesLayer){map.removeLayer(linesLayer);linesLayer=null}
+  if(endLbl){map.removeLayer(endLbl);endLbl=null}
+  if(pts){map.removeLayer(pts);pts=null}
+  const yearSel=sel.find(s=>s.f==='year');
+  const rows=D._rows.filter(r=>sel.every(s=>s.f==='year'?true:s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):String(r[s.f])===s.v)&&!hidden.has(r[f.name]));
+  C=colorer(f,rows.map(r=>r[f.name]));
+  const flags=new Set();
+  AP.forEach(a=>{if(!a.country&&a.cc&&CTY[a.cc]){a.country=CTY[a.cc].name;if(CTY[a.cc].flag)a.country_flag=CTY[a.cc].flag}if(a.country_flag)flags.add(a.country_flag)});
+  await Promise.all([...flags].map(src=>new Promise(res=>{const im=new Image();im.onload=im.onerror=()=>res();im.src=src})));
+  const gcKm=(A,B)=>{const R=6371,p1=A.lat*Math.PI/180,p2=B.lat*Math.PI/180,dp=(B.lat-A.lat)*Math.PI/180,dl=(B.lon-A.lon)*Math.PI/180,x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(x)))};
+  const routes=[];
+  for(const r of rows){const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]);if(!A||!B||typeof A.lat!=='number'||typeof B.lat!=='number')continue;
+    const ll=gcPts([A.lat,A.lon],[B.lat,B.lon],16);
+    routes.push({r,year:+r.year,end:r.end_year==null||r.end_year===''?null:+r.end_year,ll,xy:null,on:false,km:Math.round(gcKm(A,B)),milestone:String(r.id||'').startsWith('m')||r.era==='Milestone route',A,B})}
+  routes.sort((a,b)=>a.year-b.year||String(a.r.id).localeCompare(String(b.r.id)));
+  const box=map.getContainer();
+  const view=document.createElement('canvas');
+  view.style.cssText='position:absolute;inset:0;z-index:450;pointer-events:none';
+  box.appendChild(view);
+  const settled=document.createElement('canvas');
+  let dpr=1,token=0,raf=0,timers=[],drawing=null,featured=null,redrawTok=0,builtNote=false;
+  const shownAt=(rt,y)=>rt.year<=y&&!(rt.end!=null&&rt.end<=y);
+  function sizeOf(cv){const w=box.clientWidth||300,h=box.clientHeight||300;dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.max(1,Math.round(w*dpr));cv.height=Math.max(1,Math.round(h*dpr));cv.style.width=w+'px';cv.style.height=h+'px';return {w,h}}
+  function project(){sizeOf(view);sizeOf(settled);for(const rt of routes){rt.xy=rt.ll.map(p=>{const q=map.latLngToContainerPoint(p);return [q.x*dpr,q.y*dpr]});rt.A._nx=map.latLngToContainerPoint([rt.A.lat,rt.A.lon]).x*dpr;rt.A._ny=map.latLngToContainerPoint([rt.A.lat,rt.A.lon]).y*dpr;rt.B._nx=map.latLngToContainerPoint([rt.B.lat,rt.B.lon]).x*dpr;rt.B._ny=map.latLngToContainerPoint([rt.B.lat,rt.B.lon]).y*dpr}}
+  function addPath(g,xy){if(!xy||xy.length<2)return;g.moveTo(xy[0][0],xy[0][1]);for(let i=1;i<xy.length;i++)g.lineTo(xy[i][0],xy[i][1])}
+  function strokePartial(g,xy,p){if(!xy||xy.length<2)return;const f=1+Math.max(0,Math.min(1,p))*(xy.length-1),n=Math.max(2,Math.floor(f));g.beginPath();g.moveTo(xy[0][0],xy[0][1]);for(let i=1;i<n&&i<xy.length;i++)g.lineTo(xy[i][0],xy[i][1]);if(n<xy.length){const a=xy[n-1],b=xy[n],u=f-Math.floor(f);g.lineTo(a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u)}g.stroke()}
+  function glowTip(ctx,xy,p){if(!xy||xy.length<2||p<=0||p>=1)return;const f=p*(xy.length-1),i=Math.min(xy.length-2,Math.floor(f)),u=f-i,a=xy[i],b=xy[i+1];const x=a[0]+(b[0]-a[0])*u,y=a[1]+(b[1]-a[1])*u;const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,back=Math.min(len,16*dpr);const x0=x-dx/len*back,y0=y-dy/len*back;const fade=p>0.84?(1-p)/0.16:1;ctx.save();const grd=ctx.createLinearGradient(x0,y0,x,y);grd.addColorStop(0,'rgba(255,214,120,0)');grd.addColorStop(1,`rgba(255,248,210,${fade})`);ctx.strokeStyle=grd;ctx.lineWidth=2.4*dpr;ctx.lineCap='round';ctx.shadowColor=`rgba(255,186,40,${0.9*fade})`;ctx.shadowBlur=12*dpr;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x,y);ctx.stroke();ctx.restore()}
+  function redrawSettled(){const mine=++redrawTok;const list=routes.filter(rt=>rt.on&&rt.xy);const g=settled.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,settled.width,settled.height);g.lineJoin='round';g.lineCap='round';g.lineWidth=0.75*dpr;g.strokeStyle='#4C8DFF';g.globalAlpha=list.length>2000?.34:.9;let i=0;const step=()=>{if(mine!==redrawTok||netSession!==session)return;const end=Math.min(list.length,i+3000);g.beginPath();for(;i<end;i++)addPath(g,list[i].xy);g.stroke();if(i<list.length)requestAnimationFrame(step);else if(!drawing)paint()};step()}
+  function stamp(rt){if(!rt.xy)return;rt.on=true;const g=settled.getContext('2d');g.lineJoin='round';g.lineCap='round';g.lineWidth=0.75*dpr;g.strokeStyle='#4C8DFF';g.globalAlpha=routes.filter(x=>x.on).length>2000?.34:.9;g.beginPath();addPath(g,rt.xy);g.stroke()}
+  function airportsNow(extra){const have=new Map(),hot=new Set();if(featured){hot.add(featured.A);if(!extra||extra.dest)hot.add(featured.B)}for(const rt of routes){if(!rt.on)continue;have.set(rt.A,rt.A);have.set(rt.B,rt.B)}if(featured){have.set(featured.A,featured.A);if(!extra||extra.dest)have.set(featured.B,featured.B)}return {have,hot}}
+  function paint(extra){const ctx=view.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,view.width,view.height);if(settled.width)ctx.drawImage(settled,0,0);ctx.lineJoin='round';ctx.lineCap='round';ctx.shadowBlur=0;let onN=0;for(const rt of routes)if(rt.on)onN++;const faint=(onN+((extra&&extra.partial&&extra.partial.length)||0))>2000;if(extra&&extra.partial)extra.partial.forEach(item=>{const feat=item.rt===featured;ctx.strokeStyle=feat?'#F2A541':'#4C8DFF';ctx.globalAlpha=feat?1:(faint?.4:.92);ctx.lineWidth=(feat?1.15:.75)*dpr;strokePartial(ctx,item.rt.xy,item.p);if(feat&&item.p<1)glowTip(ctx,item.rt.xy,item.p)});if(featured&&featured.xy&&!(extra&&extra.partial&&extra.partial.some(it=>it.rt===featured&&it.p<1))){ctx.strokeStyle='#F2A541';ctx.globalAlpha=1;ctx.lineWidth=1.5*dpr;ctx.beginPath();addPath(ctx,featured.xy);ctx.stroke()}
+    const phone=innerWidth<=760;const {have,hot}=airportsNow(extra);ctx.globalAlpha=1;have.forEach(a=>{const on=hot.has(a);ctx.beginPath();ctx.arc(a._nx||0,a._ny||0,(on?4.6:3.1)*(phone?1:.9)*dpr,0,6.2832);ctx.fillStyle=on&&featured&&a===featured.A?'#FFC21A':'#fff';ctx.fill();ctx.lineWidth=dpr;ctx.strokeStyle='#1E2430';ctx.stroke()})}
+  function noun(n,one,many){return n.toLocaleString()+' '+(n===1?one:many)}
+  function counter(extraRoutes){const el=$('#rcount');if(!el)return;const ids=new Set();const air=new Set();for(const rt of routes){if(!rt.on)continue;ids.add(rt.r.id);air.add(rt.A);air.add(rt.B)}if(extraRoutes)extraRoutes.forEach(rt=>{ids.add(rt.r.id);air.add(rt.A);if(rt._dest)air.add(rt.B)});const text=noun(ids.size,'route','routes')+' opened · '+noun(air.size,'airport','airports');el.hidden=false;if(el.textContent!==text)el.textContent=text;const dock=$('#rdock');if(dock)dock.hidden=false}
+  function endBit(word,me,r){if(!me)return `<div class="rend"><b>${esc(word)}</b></div>`;const raw=me.code!=null?String(me.code):'';const code=!me.approx&&/^[A-Za-z]{3}$/.test(raw)?raw:'';const today=me.country&&(me.approx||(r.year!=null&&+r.year<1992));const flag=me.country&&me.country_flag?`<small class="cc" aria-label="Present-day country: ${esc(me.country)}"><img src="${esc(me.country_flag)}" alt="">${esc(me.country)}${today?' today':''}</small>`:'';const nm=me.name?esc(me.name):'';return `<div class="rend"><b>${esc(word)}${code?' · '+esc(code):''}</b>${flag}<small class="an" title="${nm}">${nm}</small></div>`}
+  function showCard(rt,others){const el=$('#rdist'),dock=$('#rdock'),btn=$('#rdockx');if(!rt){if(el){el.hidden=true;el.innerHTML=''}if(btn)btn.hidden=true;if(dock)dock.hidden=false;return}const r=rt.r,A=rt.A,B=rt.B;const km=rt.km,mi=Math.round(km*0.621371);const text=`Calculated great-circle: ${km.toLocaleString()} km / ${mi.toLocaleString()} mi`;const cave=['Not the flown path. Calculated from the endpoint coordinates.'];if((A&&A.approx)||(B&&B.approx))cave.push('Endpoint positions are approximate.');if(((A&&A.approx)||(B&&B.approx)||(r.year!=null&&+r.year<1992))&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');if(others>0)cave.push(others.toLocaleString()+' other routes also opened in '+r.year+'.');const title=r.route||r.name||(A&&B?(A.name+' – '+B.name):'');const note=cave.join(' ');el.hidden=false;el.innerHTML=`<p class="rn" title="${esc(title)}">${esc(title)}</p><p class="rd">${esc(text)}</p><p class="rc" title="${esc(note)}">${esc(note)}</p><div class="rends">${endBit('From',A,r)}${endBit('To',B,r)}</div>`;if(dock)dock.hidden=false;if(btn)btn.hidden=false;featured=rt}
+  function yearNote(y){let el=$('#ynet');const t=Lc.yearNote&&Lc.yearNote[y];if(!el)return;el.innerHTML=t?`<b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t)}`:'';}
+  function writeHash(){const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>{if(s.value)h.set('f_'+s.dataset.f,s.value)});if(playSpeed!==1)h.set('speed',String(playSpeed));history.replaceState(null,'','#'+h)}
+  function legend(){const lg=$('#legend');const by={};routes.forEach(rt=>{by[rt.r[Lc.from]]=1;by[rt.r[Lc.to]]=1});lg.innerHTML=`<h3>${esc(f.label)}</h3>`;C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${rows.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports shown. Small dots are airports. A new route draws on in yellow. From and To sit above the map. Tap a line for its card.</p><p id="ynet" style="font-size:12px"></p>`+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));builtNote=true}
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];if(raf){cancelAnimationFrame(raf);raf=0}}
+  function later(fn,ms,my){const id=setTimeout(()=>{if(my===token)fn()},ms);timers.push(id)}
+  function finish(my){drawing=null;if(my!==token||!netPlay)return;const cb=yearWait;yearWait=null;if(cb)cb()}
+  function commitThrough(y){for(const rt of routes)rt.on=shownAt(rt,y);drawing=null;redrawSettled()}
+  const session={sig:networkSig(),
+    destroy(){clearTimers();token++;redrawTok++;if(view.parentNode)view.parentNode.removeChild(view);if(flushRouteAnim===session.flush)flushRouteAnim=()=>{};document.body.classList.remove('lines-network')},
+    flush(){if(drawing){drawing.forEach(rt=>{rt.on=true});drawing=null;redrawSettled()}clearTimers();token++},
+    reproject(){if(netSession!==session)return;project();redrawSettled();paint()},
+    pick(ll){const q=map.latLngToContainerPoint(ll);const x=q.x*dpr,y=q.y*dpr;let best=null,bd=16*dpr;for(let i=routes.length-1;i>=0;i--){const rt=routes[i];if(!(rt.on||(drawing&&drawing.includes(rt)))||!rt.xy)continue;const xy=rt.xy;for(let k=0;k<xy.length-1;k+=2){const a=xy[k],b=xy[Math.min(xy.length-1,k+1)];const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy||1;let t=((x-a[0])*dx+(y-a[1])*dy)/l;t=Math.max(0,Math.min(1,t));const px=a[0]+t*dx-x,py=a[1]+t*dy-y,d=Math.sqrt(px*px+py*py);if(d<bd){bd=d;best=rt}}}if(!best)return;session.flush();netPlay=false;cycleGen++;yearWait=null;const btn=document.querySelector('#tslider .pl');if(btn)btn.textContent='▶';featured=best;showCard(best,0);counter();paint()},
+    showYear(y,animate){token++;clearTimers();const my=token;yearNote(y);writeHash();const opened=routes.filter(rt=>rt.year===y&&shownAt(rt,y));if(!animate){commitThrough(y);const card=opened.length?opened[opened.length-1]:null;featured=card;showCard(card,0);counter();paint();fitOnce();return}
+      for(const rt of routes){if(rt.year<y)rt.on=shownAt(rt,y);else if(rt.year>y)rt.on=false;else rt.on=false}
+      redrawSettled();
+      if(!opened.length){featured=null;showCard(null);counter();paint();later(()=>finish(my),playMs(700),my);return}
+      const many=opened.length>8;const milestones=opened.filter(rt=>rt.milestone);const cards=many?(milestones.length?milestones.slice(0,4):[opened.slice().sort((a,b)=>b.km-a.km)[0]]):opened;
+      drawing=opened;
+      if(!many){let i=0;const stepOne=()=>{if(my!==token)return;const rt=opened[i];featured=rt;rt._dest=false;showCard(rt,0);counter([rt]);const t0=performance.now(),dur=playMs(1300);const frame=now=>{if(my!==token)return;const p=Math.min(1,(now-t0)/dur);rt._dest=p>=1;paint({partial:[{rt,p}],dest:p>=1});if(p<1)raf=requestAnimationFrame(frame)};raf=requestAnimationFrame(frame);later(()=>{if(my!==token)return;rt.on=true;rt._dest=true;stamp(rt);if(i+1<opened.length){i++;stepOne()}else finish(my)},playMs(1700),my)};stepOne();return}
+      featured=cards[0];showCard(cards[0],opened.length-1);const t0=performance.now(),dur=playMs(1300);const frame=now=>{if(my!==token)return;const p=Math.min(1,(now-t0)/dur);const n=Math.max(1,Math.round(p*opened.length));opened.forEach((rt,i)=>{rt._dest=i<n&&p>=1});counter(opened.slice(0,n));paint({partial:opened.map(rt=>({rt,p})),dest:p>=1});if(p<1)raf=requestAnimationFrame(frame);else {opened.forEach(rt=>{rt.on=true;rt._dest=true});drawing=null;redrawSettled();counter();paint()}};raf=requestAnimationFrame(frame);let ci=0;const next=()=>{if(my!==token)return;ci++;if(ci<cards.length){featured=cards[ci];showCard(cards[ci],opened.length-1);paint();later(next,playMs(1700),my)}else finish(my)};later(next,playMs(1700),my)}
+  };
+  function fitOnce(){if(session.fitted)return;session.fitted=true;fitDock()}
+  netSession=session;
+  flushRouteAnim=()=>session.flush();
+  if(!map._netHook){map._netHook=1;map.on('moveend',()=>netSession&&netSession.reproject());map.on('click',e=>{if(!(D&&D.lines&&D.lines.network)||!netSession)return;netSession.pick(e.latlng)})}
+  if(pendingWorldFit&&D.view){pendingWorldFit=false;map.fitBounds(D.view,{animate:false})}
+  map.invalidateSize({animate:false,pan:false});
+  project();legend();session.showYear(yearSel?+yearSel.v:currentYear(),!!netPlay);fitDock();
+}
 async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#field').value)||D.fields[0];
+  if(Lc.network&&netSession&&netSession.sig===networkSig()){netSession.showYear(currentYear(),!!netPlay);return}
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,v:s.value})).filter(s=>s.v!=='');
   const AP=new Map((await loadRows(Lc.airports)).map(a=>[a[Lc.code||'iata'],a]));
   const FD=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const rows=D._rows.filter(r=>sel.every(s=>s.f==='airport'?(r[Lc.from]===s.v||r[Lc.to]===s.v):FD[s.f]&&FD[s.f].cumulative?(+r[s.f]<=+s.v&&(FD[s.f].history||!(r[FD[s.f].cumulative]!=null&&+r[FD[s.f].cumulative]<=+s.v))):String(r[s.f])===s.v));
   const C=colorer(f,rows.map(r=>r[f.name]));const vis=rows.filter(r=>!hidden.has(r[f.name]));
+  if(Lc.network)return buildNetwork(Lc,f,sel,AP,C);
   if(layer)map.removeLayer(layer);const dk=!!Lc.dark;map.getContainer().classList.toggle('darkmap',dk);layer=L.geoJSON(D._base,{style:dk?{color:'#3A4356',weight:.6,fillColor:'#232A3A',fillOpacity:1}:{color:'#fff',weight:.6,fillColor:'#E4E6EA',fillOpacity:1},interactive:false}).addTo(map);
   if(linesLayer)map.removeLayer(linesLayer);if(endLbl){map.removeLayer(endLbl);endLbl=null}if(pts)map.removeLayer(pts);pts=null;linesLayer=L.layerGroup().addTo(map);const big=vis.length>2000,rend=big?(window.__lr=window.__lr||L.canvas({padding:.3})):undefined;
   const dep={},by={};const PR=[];
@@ -308,9 +391,12 @@ function buildSlider(){const ts=$('#tslider');ts.classList.remove('on');ts.inner
   const fn=$('#field').value,have=new Set(D._rows.filter(r=>r[fn]!=null).map(r=>String(r[fl.field])));
   let vals=[...sel.options].map(o=>o.value).filter(v=>v!==''&&!isNaN(+v));if(vals.some(v=>have.has(v)))vals=vals.filter(v=>have.has(v));vals=vals.map(Number).sort((a,b)=>a-b);if(fl.cumulative&&vals.length>1){const a=vals[0],b=Math.max(vals[vals.length-1],fl.max||0);vals=[];for(let y=a;y<=b;y++){vals.push(y);if(![...sel.options].some(o=>o.value===String(y))){const o=document.createElement('option');o.value=o.textContent=String(y);sel.append(o)}}}
   if(!vals.includes(+sel.value)){sel.value=String(vals[vals.length-1]);render()}if(vals.length<2)return;
-  ts.innerHTML=`<span class="lab">${esc(fl.label)}</span><button class="pl" aria-label="Play">▶</button><input type="range" min="0" max="${vals.length-1}" step="1" aria-label="${esc(fl.label)}"><b class="val"></b>`;
+  readPlaySpeed();
+  const spdBtn=(D.lines&&D.lines.network)?`<button type="button" class="spd" aria-label="Playback speed">${speedLabel(playSpeed)}</button>`:'';
+  ts.innerHTML=`<span class="lab">${esc(fl.label)}</span><button class="pl" aria-label="Play">▶</button>${spdBtn}<input type="range" min="0" max="${vals.length-1}" step="1" aria-label="${esc(fl.label)}"><b class="val"></b>`;
   sliderVals=vals.slice();
-  const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl');
+  const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl'),spd=ts.querySelector('.spd');
+  if(spd)spd.onclick=()=>{const i=Math.max(0,PLAY_SPEEDS.indexOf(playSpeed));setPlaySpeed(PLAY_SPEEDS[(i+1)%PLAY_SPEEDS.length])};
   const set=i=>{r.value=i;v.textContent=vals[i];sel.value=String(vals[i]);render()};
   r.value=Math.max(0,vals.indexOf(+sel.value));v.textContent=vals[+r.value];
   r.oninput=()=>{if(netPlay){netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶'}set(+r.value)};

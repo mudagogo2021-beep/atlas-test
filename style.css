@@ -94,6 +94,7 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
 #tslider{position:fixed;left:calc((100vw - 340px)/2);transform:translateX(-50%);bottom:44px;z-index:1001;display:none;align-items:center;gap:10px;background:var(--bar);color:#fff;border-radius:999px;padding:6px 16px 6px 8px;box-shadow:0 6px 18px #0004;width:min(460px,calc(100vw - 760px))}
 #tslider.on{display:flex}#tslider .lab{font-size:11px;color:#C9CED8;text-transform:uppercase;font-weight:700;padding-left:6px}#tslider input{flex:1;accent-color:var(--accent);min-width:80px}#tslider .val{font-size:16px;color:var(--accent);min-width:42px;text-align:right}
 #tslider .pl{background:var(--accent);color:var(--bar);border:0;border-radius:50%;width:30px;height:30px;font-size:12px;flex:none}
+#tslider .spd{background:#2A3140;color:#fff;border:1px solid #ffffff40;border-radius:999px;height:30px;padding:0 8px;font-size:12px;font-weight:800;flex:none}
 /* hint */
 #hint{position:fixed;top:50%;left:calc((100vw - 340px)/2);transform:translate(-50%,-50%);z-index:1003;background:var(--bar);color:#fff;font-weight:700;padding:12px 18px;border-radius:999px;box-shadow:0 8px 24px #0005;display:none;cursor:pointer;border:2px solid var(--accent)}
 #hint.on{display:block;animation:hintin .4s}@keyframes hintin{from{opacity:0;transform:translate(-50%,-30%)}}
@@ -122,6 +123,12 @@ body.home #fleg,body.home #info,body.home #tslider,body.home #hint{display:none!
  .aport b{font-size:10.5px}.aport small{font-size:10px}
 }
 #rdock{position:fixed;z-index:1004;top:56px;left:0;right:340px;background:#fffffffa;border-bottom:1px solid var(--line);box-shadow:0 2px 8px #00000014;padding:6px 12px 8px}
+body.lines-network #rdock{height:168px;overflow:hidden}
+body.lines-network #rdock.min{height:40px}
+@media (max-width:760px){
+ body.lines-network #rdock{height:150px}
+ body.lines-network #rdock.min{height:38px}
+}
 #rdock[hidden]{display:none!important}
 .rdocktop{display:flex;align-items:center;gap:8px;min-height:22px}
 #rcount{margin:0;font-weight:800;font-size:13px;color:#17202E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
