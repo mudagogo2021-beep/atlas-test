@@ -1,9 +1,9 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109x', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109y', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
-const posters=POST.posters||[];
+const posters=POST.posters||[], AIR=await J('data/aircraft_photos.json').catch(()=>({}));
 const NODATA=PAL.no_data||'#D9DBE0';
 const map=L.map('map',{zoomSnap:0.5,worldCopyJump:true,preferCanvas:true}).setView([30,0],2);
 const worldRend=L.canvas({padding:0.8}),lineRend=L.canvas({padding:0.8});
@@ -209,7 +209,9 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     const acSrc=r.aircraft_source_label||'';
     const acLabel=r.aircraft_basis==='flight'?'Aircraft on this flight':('Typical type on route'+(acSrc?` (${acSrc})`:''));
     const ac=acOk?`<p class="ra" title="${esc(r.aircraft_source||acSrc)}"><b>${esc(acLabel)}:</b> ${esc(acName)}</p>`:'';
-    el.hidden=false;el.innerHTML=`<p class="rn" title="${esc(title)}">${esc(title)}</p><p class="rd">${esc(d.text)}</p>`+(note?`<p class="rc" title="${esc(note)}">${esc(note)}</p>`:'')+ac+`<div class="rends">${endBit('From',A,r)}${endBit('To',B,r)}</div>`;
+    const ph=AIR[r.id];
+    const photo=ph?`<a class="rphoto" href="${esc(ph.page)}" target="_blank" rel="noopener"><img src="${esc(bust(ph.file))}" alt="${esc(ph.alt||'Aircraft')}"><small>${esc(ph.credit||'')}</small></a>`:'';
+    el.hidden=false;el.innerHTML=`<div class="rbody"><div class="rcopy"><p class="rn" title="${esc(title)}">${esc(title)}</p><p class="rd">${esc(d.text)}</p>`+(note?`<p class="rc" title="${esc(note)}">${esc(note)}</p>`:'')+ac+`</div>${photo}</div><div class="rends">${endBit('From',A,r)}${endBit('To',B,r)}</div>`;
     if(dock)dock.hidden=false;if(btn)btn.hidden=false}
   function drawEndLabels(){if(endLbl){map.removeLayer(endLbl);endLbl=null}if(!(Lc.ends||thin))return;endLbl=L.layerGroup();
     const phone=innerWidth<=760,shifts=big?[0]:[-360,0,360];
