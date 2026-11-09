@@ -1,6 +1,7 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const $=s=>document.querySelector(s), J=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
+const V='20261109n', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
 const NODATA=PAL.no_data||'#D9DBE0';
@@ -10,7 +11,7 @@ async function loadBase(id,iso){const b=M.bases[id];const k=id+(iso||'');if(cach
   const url=b.tiled?b.pattern.replace('{iso3}',iso):b.file;let g=await J(url);
   if(url.endsWith('.topojson'))g=topojson.feature(g,g.objects[b.object||Object.keys(g.objects)[0]]);return cache[k]=g}
 async function loadRows(f){if(cache[f])return cache[f];let r;
-  if(f.endsWith('.csv')){const t=await fetch(f).then(r=>r.text());const[h,...ls]=t.trim().split(/\r?\n/).map(l=>l.split(','));r=ls.map(l=>Object.fromEntries(h.map((k,i)=>[k,isNaN(+l[i])||l[i]===''?l[i]:+l[i]])))}else r=await J(f);return cache[f]=r}
+  if(f.endsWith('.csv')){const t=await fetch(bust(f)).then(r=>r.text());const[h,...ls]=t.trim().split(/\r?\n/).map(l=>l.split(','));r=ls.map(l=>Object.fromEntries(h.map((k,i)=>[k,isNaN(+l[i])||l[i]===''?l[i]:+l[i]])))}else r=await J(f);return cache[f]=r}
 // background world
 const world=await loadBase('world');L.geoJSON(world,{style:{color:'#fff',weight:.6,fillColor:'#EDEDEA',fillOpacity:1},interactive:false}).addTo(map);
 // UI
@@ -131,7 +132,11 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   for(const r of vis){const a=AP.get(r[Lc.from]),b=AP.get(r[Lc.to]);if(!a||!b)continue;
     for(const c of[r[Lc.from],r[Lc.to]]){dep[c]=(dep[c]||0)+(+r[Lc.size]||0);(by[c]=by[c]||[]).push(r)}
     const g=gcPts([a.lat,a.lon],[b.lat,b.lon],big?12:64);const col=C.fn(r[f.name]);{const ys=sel.find(x=>x.f==='year');if(!ys||String(r.year)===ys.v)PR.push(g)}
-    for(const sh of(big?[0]:[-360,0,360]))L.polyline(g.map(p=>[p[0],p[1]+sh]),(()=>{const old=isOld(r);return old?{color:'#8A93A6',weight:1.2,opacity:.35,dashArray:'4 4',renderer:rend}:{color:col,weight:big?.7:(hv?4:2.2),opacity:big?(Lc.dark?.22:.35):(hv?1:.75),renderer:rend}})()).bindPopup(()=>popup(D,r)).on('click',()=>{if(!(Lc.ends||Lc.network))return;linePickId=r.id;Lc.network?focusNetwork():focusRoute(r)}).addTo(linesLayer)}
+    const thin=!!Lc.network;
+    for(const sh of(big?[0]:[-360,0,360])){const old=isOld(r);const w=thin?0.7:(old?1.2:(big?.7:(hv?4:2.2)));const op=thin?(big?(Lc.dark?.22:.35):(Lc.dark?.95:.85)):(old?.35:(big?(Lc.dark?.22:.35):(hv?1:.75)));const ln=L.polyline(g.map(p=>[p[0],p[1]+sh]),{color:old&&!thin?'#8A93A6':col,weight:w,opacity:op,dashArray:old&&!thin?'4 4':null,renderer:rend}).bindPopup(()=>popup(D,r));
+      ln.on('click',()=>{if(!(Lc.ends||Lc.network))return;linePickId=r.id;Lc.network?focusNetwork():focusRoute(r)});
+      if(thin){ln.on('mouseover',()=>ln.setStyle({weight:1.05,color:'#F2A541'}));ln.on('mouseout',()=>ln.setStyle({weight:0.7,color:col}))}
+      ln.addTo(linesLayer)}}
   Planes.set(Lc.planes?PR:[]);
   const mx=Math.max(1,...Object.values(dep));
   const apHtml=c=>{const a=AP.get(c),list=by[c];return `<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.ends?'':(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:''))+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>'};
@@ -224,7 +229,7 @@ $('#admchk').onchange=()=>{admGroup.addTo(map);admRefresh()};map.on('moveend',ad
 window.atlasMap=map;
 // ---- floating UI (generic) ----
 let pinned=false,hl2=null;const info=$('#info');
-function hov(l){if(l.setStyle&&l!==hl2){l._o=l._o||{...l.options};l.setStyle({weight:2.5,color:'#F2A541'});l.bringToFront&&l.bringToFront()}}
+function hov(l){if(l.setStyle&&l!==hl2){l._o=l._o||{...l.options};const line=l instanceof L.Polyline&&!(l instanceof L.Polygon);const base=typeof l._o.weight==='number'?l._o.weight:1;l.setStyle({weight:line?Math.min(base+0.35,1.15):2.5,color:'#F2A541'});l.bringToFront&&l.bringToFront()}}
 function unhov(l){if(l!==hl2&&l._o&&l.setStyle)l.setStyle({weight:l._o.weight,color:l._o.color})}
 function showCard(html,pin=true){pinned=pin;info.querySelector('.body').innerHTML=html;info.classList.add('on');info.classList.toggle('pin',pin)}
 function hideCard(force){if(force||!pinned){info.classList.remove('on');pinned=false;if(hl2){const l=hl2;hl2=null;unhov(l)}}}
