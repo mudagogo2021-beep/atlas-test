@@ -1,30 +1,12 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109t', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109s', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
 const NODATA=PAL.no_data||'#D9DBE0';
 const map=L.map('map',{zoomSnap:0.5,worldCopyJump:true,preferCanvas:true}).setView([30,0],2);
-let dockH=-1,pendingWorldFit=false,flushRouteAnim=()=>{},applyNetworkCam=()=>{};
-let camUser=false,camSig='',camToken=0,camAuto=false;
-// Playback camera for the airline network. Years are read from the route file:
-// 1914 is only St Petersburg–Tampa, both in Florida (~25 km).
-// 1915 is the first route outside Florida (Istanbul–Qassim); 1916 Zurich–Mumbai; 1918 Tehran–Delhi.
-// 1919–1925 every new route stays in Europe (Croydon–Paris through Edinburgh and Geneva).
-// 1926 is the first US airports and the first transatlantic routes (Amsterdam–Boston, Amsterdam–Minneapolis).
-const NETWORK_CAM={
-  floridaYear:1914,
-  europeFrom:1915,
-  europeTightFrom:1919,
-  worldFrom:1926,
-  europe:{south:35,north:72,west:-12,east:20},
-  approach:[[40,-8],[66,16]],
-  maxZoom:{florida:11,approach:4.5,europe:6,world:4},
-  seconds:{florida:2.6,approach:3.4,europe:2.8,world:4},
-  ease:0.18
-};
-function userTookNetworkCam(){if(!(D&&D.lines&&D.lines.network&&netPlay))return;camUser=true;camToken++;camAuto=false;map.stop()}
+let dockH=-1,pendingWorldFit=false,flushRouteAnim=()=>{};
 function fitDock(){const dock=$('#rdock');const h=(!dock||dock.hidden)?0:Math.ceil(dock.getBoundingClientRect().height);if(h===dockH)return;dockH=h;document.documentElement.style.setProperty('--dock',h+'px');map.invalidateSize({animate:false})}
 function hideRouteDock(){const dock=$('#rdock');if(dock)dock.hidden=true;const el=$('#rdist');if(el){el.hidden=true;el.innerHTML=''}const c=$('#rcount');if(c)c.hidden=true;const b=$('#rdockx');if(b)b.hidden=true;dockH=-1;fitDock()}
 $('#rdockx').onclick=()=>{const dock=$('#rdock');if(!dock)return;const min=dock.classList.toggle('min');$('#rdockx').textContent=min?'Show':'Hide';$('#rdockx').setAttribute('aria-expanded',String(!min));dockH=-1;fitDock()};
@@ -59,7 +41,7 @@ function colorer(f,vals){
   return{fn:v=>typeof v==='number'?sc[cls(v)]:NODATA,items,cls}}
 async function show(id,opt){
   document.body.classList.remove('poster'); const pv=$('#poster'); if(pv) pv.hidden=true;
-  netPlay=false; cycleGen++; yearWait=null; framedId=null; userHold=false; camUser=false; camSig=''; camToken++;
+  netPlay=false; cycleGen++; yearWait=null; framedId=null; userHold=false;
   D=M.datasets.find(d=>d.id===id)||M.datasets[0];$('#ds').value=D.id;$('#title').textContent=D.title;document.title=D.title+" · Muda's Atlas";document.body.classList.remove('home');
   $('#field').innerHTML='';D.fields.forEach(f=>$('#field').add(new Option(f.label,f.name)));if(opt.field)$('#field').value=opt.field;
   const rows=await loadRows(D.file);const base=await loadBase(D.base,D.country);
@@ -274,11 +256,8 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   const apHtml=c=>{const a=AP.get(c),list=by[c];return `<b>${esc(c)} · ${esc(a.name)}</b><br><small>${esc(a.city||'')}</small><br>${list.length} ${esc(Lc.noun||'A380 route')}${list.length>1?'s':''} shown`+(Lc.ends?'':(Lc.sizeLabel?` · ${esc(Lc.sizeLabel)}: ${dep[c]}`:''))+'<table>'+list.map(r=>`<tr><td><span class="sw" style="display:inline-block;width:10px;height:10px;background:${C.fn(r[f.name])}"></span> ${esc(r[f.name])}</td><td>${esc(r[Lc.from]===c?'→ '+r[Lc.to]+' '+(r.to_city||''):'← '+r[Lc.from]+' '+(r.from_city||''))}</td><td>${Lc.detail?esc(fmt(r[Lc.detail])):esc(fmt(r.weekly_A380_each_way))+'/wk'}</td></tr>`).join('')+'</table>'};
   if(!map._endsBound){map._endsBound=1;
     map.on('zoomend',()=>{if(D&&D.lines&&(D.lines.ends||D.lines.network)&&map._drawEnds)map._drawEnds()});
-    map.on('dragstart',()=>{if(!fitting)userHold=true;userTookNetworkCam()});
+    map.on('dragstart',()=>{if(!fitting)userHold=true});
     map.on('zoomstart',()=>{if(!fitting)userHold=true});
-    map.getContainer().addEventListener('wheel',userTookNetworkCam,{passive:true,capture:true});
-    map.getContainer().addEventListener('touchstart',e=>{if(e.touches&&e.touches.length>=2)userTookNetworkCam()},{passive:true,capture:true});
-    map.getContainer().addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.leaflet-control-zoom'))userTookNetworkCam()},true);
   }
   map._drawEnds=drawEndLabels;
   if(!thin){const labeled=new Set();if(Lc.ends)highlightRoutes().forEach(r=>{labeled.add(r[Lc.from]);labeled.add(r[Lc.to])});
@@ -288,50 +267,13 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   if(Lc.ends){const r0=chosenRoutes()[0];focusRoute(r0)}
   else if(thin)presentNewRoutes();
   else hideRouteDock();
-  function camPad(){const phone=innerWidth<=760;return {paddingTopLeft:[phone?20:36,phone?16:28],paddingBottomRight:[phone?20:36,phone?72:64]}}
-  function europeTightBounds(year){const box=NETWORK_CAM.europe,pts=[];
-    for(const r of routes){if(+r.year>year||+r.year<NETWORK_CAM.europeTightFrom)continue;
-      for(const code of [r[Lc.from],r[Lc.to]]){const a=AP.get(code);if(a&&a.lat>box.south&&a.lat<box.north&&a.lon>box.west&&a.lon<box.east)pts.push(a)}}
-    if(pts.length<2)return L.latLngBounds(NETWORK_CAM.approach);
-    let s=90,n=-90,w=180,e=-180;
-    for(const p of pts){s=Math.min(s,p.lat);n=Math.max(n,p.lat);w=Math.min(w,p.lon);e=Math.max(e,p.lon)}
-    const latPad=Math.max(1.1,(n-s)*0.16),lonPad=Math.max(1.1,(e-w)*0.16);
-    return L.latLngBounds([[s-latPad,w-lonPad],[n+latPad,e+lonPad]])}
-  function floridaBounds(){const pts=[];
-    for(const r of D._rows){if(+r.year!==NETWORK_CAM.floridaYear)continue;
-      for(const code of [r[Lc.from],r[Lc.to]]){const a=AP.get(code);if(a&&typeof a.lat==='number')pts.push(a)}}
-    if(pts.length<2)return L.latLngBounds(NETWORK_CAM.approach);
-    let s=90,n=-90,w=180,e=-180;
-    for(const p of pts){s=Math.min(s,p.lat);n=Math.max(n,p.lat);w=Math.min(w,p.lon);e=Math.max(e,p.lon)}
-    return L.latLngBounds([[s-0.18,w-0.22],[n+0.18,e+0.22]])}
-  function networkTarget(year){const z=NETWORK_CAM.maxZoom,phone=innerWidth<=760;
-    if(year<=NETWORK_CAM.floridaYear)return {phase:'florida',bounds:floridaBounds(),maxZoom:phone?10.5:z.florida,seconds:NETWORK_CAM.seconds.florida};
-    if(year<NETWORK_CAM.europeTightFrom)return {phase:'approach',bounds:L.latLngBounds(NETWORK_CAM.approach),maxZoom:z.approach,seconds:NETWORK_CAM.seconds.approach};
-    if(year<NETWORK_CAM.worldFrom)return {phase:'europe',bounds:europeTightBounds(year),maxZoom:z.europe,seconds:NETWORK_CAM.seconds.europe};
-    return {phase:'world',bounds:L.latLngBounds(D.view),maxZoom:z.world,seconds:NETWORK_CAM.seconds.world}}
-  applyNetworkCam=animate=>{
-    if(!thin||camUser||!yNow)return;
-    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const target=networkTarget(yNow);
-    const b=target.bounds,sw=b.getSouthWest(),ne=b.getNorthEast();
-    const sig=target.phase+'|'+[sw.lat,sw.lng,ne.lat,ne.lng].map(n=>n.toFixed(1)).join(',');
-    if(sig===camSig)return;
-    camSig=sig;const token=++camToken;
-    const opt=Object.assign({maxZoom:target.maxZoom,animate:!!(animate&&!reduce)},camPad());
-    camAuto=true;
-    if(!opt.animate){map.fitBounds(b,opt);camAuto=false;if(map._drawEnds)map._drawEnds();return}
-    map.stop();
-    map.flyToBounds(b,Object.assign(opt,{duration:target.seconds,easeLinearity:NETWORK_CAM.ease}));
-    map.once('moveend',()=>{if(token!==camToken)return;camAuto=false;if(map._drawEnds)map._drawEnds()});
-  };
   fitDock();
-  if(pendingWorldFit&&thin)pendingWorldFit=false;
-  if(thin)applyNetworkCam(!!netPlay&&!camUser);
+  if(pendingWorldFit&&thin&&D.view){pendingWorldFit=false;map.fitBounds(D.view,{animate:false})}
   if(Lc.ends){const r0=chosenRoutes()[0];if(r0&&framedId!==r0.id){userHold=false;framedId=r0.id;frameRoute(r0)}}
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.network?'Small dots are airports. A new route draws on in yellow. From and To sit above the map. Playback opens over Florida, moves to Europe, then out to the world. Tap a line for its card.':Lc.ends?'From and To sit above the map. Tap a line to choose that record.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
+  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.network?'Small dots are airports. A new route draws on in yellow. From and To sit above the map. Tap a line for its card.':Lc.ends?'From and To sit above the map. Tap a line to choose that record.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();
@@ -352,7 +294,7 @@ map.on('popupopen',e=>{const p=e.popup,src=p._source;const c=p.getContent();cons
 map.on('click',()=>{});
 // reset view control
 const RC=L.Control.extend({options:{position:'topleft'},onAdd(){const b=L.DomUtil.create('a','leaflet-bar reset');b.href='#';b.title='Reset view';b.setAttribute('role','button');b.setAttribute('aria-label','Reset view');b.innerHTML='⟲';
-  L.DomEvent.on(b,'click',e=>{L.DomEvent.stop(e);hideCard(true);camUser=false;camSig='';if(D&&D.lines&&D.lines.network){applyNetworkCam(false);return}if(D&&D.view)map.fitBounds(D.view)});return b}});new RC().addTo(map);
+  L.DomEvent.on(b,'click',e=>{L.DomEvent.stop(e);hideCard(true);if(D&&D.view)map.fitBounds(D.view)});return b}});new RC().addTo(map);
 // first-visit hint
 function dismissHint(){const h=$('#hint');if(h.classList.contains('on')){h.classList.remove('on');try{localStorage.setItem('atlasHint','1')}catch(e){}}}
 function maybeHint(){let seen=false;try{seen=localStorage.getItem('atlasHint')}catch(e){}if(seen)return;$('#hint').classList.add('on');setTimeout(dismissHint,7000)}
@@ -371,10 +313,10 @@ function buildSlider(){const ts=$('#tslider');ts.classList.remove('on');ts.inner
   const r=ts.querySelector('input'),v=ts.querySelector('.val'),pl=ts.querySelector('.pl');
   const set=i=>{r.value=i;v.textContent=vals[i];sel.value=String(vals[i]);render()};
   r.value=Math.max(0,vals.indexOf(+sel.value));v.textContent=vals[+r.value];
-  r.oninput=()=>{if(netPlay){netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶'}camUser=false;camSig='';set(+r.value)};
+  r.oninput=()=>{if(netPlay){netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶'}set(+r.value)};
   if(netPlay)pl.textContent='❚❚';
   pl.onclick=()=>{if(netPlay){flushRouteAnim();netPlay=false;cycleGen++;yearWait=null;pl.textContent='▶';return}
-    camUser=false; camSig=''; netPlay=true; pl.textContent='❚❚';
+    netPlay=true; pl.textContent='❚❚';
     const go=()=>{if(!netPlay)return; const selNow=document.querySelector('#filters select[data-f="year"]'); const slider=document.querySelector('#tslider input'); const lab=document.querySelector('#tslider .val'); const btn=document.querySelector('#tslider .pl');
       if(!selNow||!slider||!sliderVals.length){netPlay=false;return} const cur=sliderVals.indexOf(+selNow.value); if(cur<0||cur>=sliderVals.length-1){netPlay=false; if(btn)btn.textContent='▶'; return}
       const next=cur+1; slider.value=String(next); if(lab)lab.textContent=String(sliderVals[next]); selNow.value=String(sliderVals[next]); if(btn)btn.textContent='❚❚'; yearWait=go; render()};
