@@ -2852,6 +2852,49 @@
    "category": "History & land",
    "hidden": true,
    "country": "GBR"
+  },
+  {
+   "id": "us_roads",
+   "title": "How did the U.S. road network grow?",
+   "category": "Roads",
+   "icon": "🛣️",
+   "region": "USA",
+   "blurb": "From the 1795 Philadelphia and Lancaster Turnpike to the Interstates. The card says whether the year is an opening, construction, or a designation.",
+   "base": "us_states",
+   "file": "data/us_roads.json",
+   "key": "id",
+   "view": [[24.5, -125], [49.4, -66.8]],
+   "fields": [{
+    "name": "system",
+    "label": "Road system",
+    "type": "category",
+    "colors": {
+     "Turnpike": "#E7C36A",
+     "Federal road": "#C4A574",
+     "Auto trail": "#F2A541",
+     "U.S. Highway": "#4C8DFF",
+     "Interstate": "#3DDC97"
+    }
+   }],
+   "filters": [{
+    "field": "year",
+    "label": "Year",
+    "slider": true,
+    "cumulative": true,
+    "default": "1795",
+    "max": 2024
+   }],
+   "lines": {"roads": true, "dark": true},
+   "notes": "Opens on the Philadelphia and Lancaster Turnpike, opened in 1795. FHWA calls it the first important turnpike and the first long-distance broken-stone road built in America to formal plans. Older colonial paths exist, but they do not have one engineered opening date. The National Road is shown as construction began at Cumberland in 1811, then the Cumberland to Wheeling section completed in 1818. The Lincoln Highway is the 31 Oct 1913 auto-trail dedication; its line is the modern U.S. 30 centerline, not the 1913 alignment. U.S. route years and Interstate years are establishment years from Wikipedia lists, not the year every mile opened. Numbered-route geometry is Natural Earth 10m roads, simplified. Early roads without a centerline there are schematics through documented towns. 42 listed routes had no usable Natural Earth line and are omitted, including a real U.S. 66 centerline. Same-numbered Interstate pairs are split at 90 degrees west.",
+   "sources": [
+    {"label": "FHWA, Philadelphia and Lancaster Turnpike, 1795", "url": "https://www.fhwa.dot.gov/rakeman/1795.htm"},
+    {"label": "FHWA National Road fact sheet", "url": "https://www.fhwa.dot.gov/candc/factsheets/nationalroadroute40.pdf"},
+    {"label": "FHWA, From Names to Numbers (adopted 11 Nov 1926)", "url": "https://www.fhwa.dot.gov/infrastructure/numbers.cfm"},
+    {"label": "Wikipedia, List of United States Numbered Highways", "url": "https://en.wikipedia.org/wiki/List_of_United_States_Numbered_Highways"},
+    {"label": "Wikipedia, List of primary Interstate Highways", "url": "https://en.wikipedia.org/wiki/List_of_primary_Interstate_Highways"},
+    {"label": "Wikipedia, Pennsylvania Turnpike (opened 1 Oct 1940)", "url": "https://en.wikipedia.org/wiki/Pennsylvania_Turnpike"},
+    {"label": "Natural Earth 10m roads (public domain)", "url": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/"}
+   ]
   }
  ],
  "categories": [
@@ -2861,7 +2904,8 @@
   "Religion & communities",
   "Regions",
   "History & land",
-  "Aviation"
+  "Aviation",
+  "Roads"
  ],
  "categoryInfo": {
   "Languages": {
@@ -2898,6 +2942,11 @@
    "icon": "✈️",
    "color": "#17A2A4",
    "blurb": "A380 routes, record flights, and how the network grew"
+  },
+  "Roads": {
+   "icon": "🛣️",
+   "color": "#C4A574",
+   "blurb": "How the U.S. road and highway network grew"
   }
  }
 }
