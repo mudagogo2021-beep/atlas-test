@@ -1,6 +1,6 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109q', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261109r', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
@@ -64,7 +64,7 @@ async function show(id,opt){
   for(const oid of (D.overlays||[])){const od=M.datasets.find(d=>d.id===oid);if(!od)continue;const ob=await loadBase(od.base,od.country),orows=await loadRows(od.file),oi=new Map(orows.map(r=>[String(r[od.key]),r])),of=od.fields[0];const oc=colorer(of,orows.map(r=>r[of.name]));
     const outline=oid==='regions13_outline';
     overlays.push(L.geoJSON(ob,{style:ft=>outline?{color:'#111',weight:2,fill:false}:{color:'#fff',weight:.7,fillColor:oc.fn((oi.get(String(ft.properties[M.bases[od.base].key]))||{})[of.name]),fillOpacity:1},interactive:!outline,onEachFeature:(ft,l)=>!outline&&oi.has(String(ft.properties[M.bases[od.base].key]))&&l.bindPopup(()=>popup(od,{...ft.properties,...oi.get(String(ft.properties[M.bases[od.base].key]))}))}).addTo(map));if(od.followMain){const ly=overlays[overlays.length-1];ly._od=od;ly._oi=oi;ly._oc=oc}}
-  if(D.view&&!opt.keepView&&!(D.lines&&(D.lines.ends||D.lines.network)))map.fitBounds(D.view);
+  if(D.view&&!opt.keepView&&!(D.lines&&D.lines.ends))map.fitBounds(D.view);
   syncCby();render();buildSlider();$('#flegt').textContent=(D.fields.find(x=>x.name===$('#field').value)||D.fields[0]).label;maybeHint()}
 function keyOf(v){return D._bk.normalize?norm(v):String(v)}
 function indexRows(rows){return new Map(rows.map(r=>[D._bk.normalize?norm(r[D.key]):String(r[D.key]),r]))}
@@ -193,17 +193,12 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
     if(((A&&A.approx)||(B&&B.approx)||(r.year!=null&&+r.year<1992))&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');
     el.hidden=false; el.innerHTML=`<p class="rn">${esc(r.route||r.name||'')}</p><p class="rd">${esc(d.text)}</p>`+(cave.length?`<p class="rc">${esc(cave.join(' '))}</p>`:'');
     if(framedId!==r.id){userHold=false; framedId=r.id; frameRoute(r)}}
-  function fitWorld(){if(!D.view)return; fitting++; let done=false; const fin=()=>{if(done)return; done=true; fitting=Math.max(0,fitting-1)}; map.once('moveend',fin); map.fitBounds(D.view,{padding:[24,24],maxZoom:4,animate:true}); setTimeout(fin,900)}
   function focusNetwork(){const hs=highlightRoutes(),r=hs[0],el=$('#rdist'); drawEndLabels();
-    const short=!linePickId&&setIsShort(vis);
-    const key=linePickId?('pick:'+linePickId):short?('short:'+vis.map(x=>x.id).sort().join(',')):('world:'+(hv?hv.v:'')+':'+vis.length);
-    if(!r){if(el){el.hidden=true;el.innerHTML=''}}
-    else {const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]); for(const p of [A,B]){if(p&&!p.country&&p.cc&&CTY[p.cc]){p.country=CTY[p.cc].name;if(CTY[p.cc].flag)p.country_flag=CTY[p.cc].flag}}
-      const d=distInfo(r),cave=[]; if(d.note)cave.push(d.note); if((A&&A.approx)||(B&&B.approx))cave.push('Endpoint positions are approximate.');
-      if((r.year!=null&&+r.year<1992)&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');
-      el.hidden=false; el.innerHTML=`<p class="rn">${esc(r.route||(A&&B?(A.name+' – '+B.name):'')||'')}</p><p class="rd">${esc(d.text)}</p>`+(cave.length?`<p class="rc">${esc(cave.join(' '))}</p>`:'')}
-    if(framedId===key)return; userHold=false; framedId=key;
-    if(linePickId&&r)frameRoute(r); else if(short&&r)frameRoute(r); else if(short)frameRoute(vis[0]); else fitWorld()}
+    if(!r){if(el){el.hidden=true;el.innerHTML=''};return}
+    const A=AP.get(r[Lc.from]),B=AP.get(r[Lc.to]); for(const p of [A,B]){if(p&&!p.country&&p.cc&&CTY[p.cc]){p.country=CTY[p.cc].name;if(CTY[p.cc].flag)p.country_flag=CTY[p.cc].flag}}
+    const d=distInfo(r),cave=[]; if(d.note)cave.push(d.note); if((A&&A.approx)||(B&&B.approx))cave.push('Endpoint positions are approximate.');
+    if((r.year!=null&&+r.year<1992)&&((A&&A.country)||(B&&B.country)))cave.push('Flags are today’s countries of the airport sites, not the flag of the flight year.');
+    el.hidden=false; el.innerHTML=`<p class="rn">${esc(r.route||(A&&B?(A.name+' – '+B.name):'')||'')}</p><p class="rd">${esc(d.text)}</p>`+(cave.length?`<p class="rc">${esc(cave.join(' '))}</p>`:'')}
   function presentNewRoutes(){const gen=++cycleGen; const ySel=sel.find(s=>s.f==='year'); const y=ySel?+ySel.v:null;
     const opened=y==null?[]:vis.filter(r=>+r.year===y); const list=(!netPlay&&opened.length>8)?opened.slice(-1):opened;
     const done=()=>{if(gen!==cycleGen)return; const cb=yearWait; yearWait=null; if(cb)cb()};
@@ -224,7 +219,7 @@ async function renderLines(){const Lc=D.lines,f=D.fields.find(x=>x.name===$('#fi
   const nAl=new Set(vis.flatMap(r=>Lc.airlineList?(r[Lc.airlineList]||[]):[r.airline])).size;
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0).forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.network?'Small dots are airports. Tap a line to name that route, its calculated distance and present-day countries. A short route zooms in.':Lc.ends?'Labels name the selected record’s departure and destination. Tap a line to label that route.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
+  lg.insertAdjacentHTML('beforeend',`<p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. Routes: ${vis.length.toLocaleString()} (unique airport pairs) · ${Object.keys(by).length.toLocaleString()} airports${Lc.airlineList?' · '+nAl.toLocaleString()+' airlines':''} shown. ${Lc.network?'Small dots are airports. Tap a line to name that route, its calculated distance and present-day countries. The map stays at the world view.':Lc.ends?'Labels name the selected record’s departure and destination. Tap a line to label that route.':'Circle size = '+esc(Lc.sizeLabel||'size')+'.'}</p>`+(Lc.yearNote?(()=>{const ys=sel.find(x=>x.f==='year');const t=ys&&Lc.yearNote[ys.v];return `<p style="font-size:12px"><b>${esc(Lc.yearNoteLabel||'')}:</b> ${esc(t||'no sourced figure for this year')}</p>`})():'')+(Lc.today?`<p style="font-size:12px;border-top:1px solid #ddd;padding-top:4px"><b>Today:</b> ${esc(Lc.today)}</p>`:''));
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));history.replaceState(null,'','#'+h)}
 // worldwide admin units, loaded per country on zoom
 const admIdx=await J(M.bases.adm.index).catch(()=>({}));const admLayers={};const admGroup=L.layerGroup();
