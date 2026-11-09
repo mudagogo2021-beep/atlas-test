@@ -124,6 +124,8 @@
 - Images: `posters/whales/whales_all_v9.png` (1080×1350), `whales_all_v9_2160.png` (2160×2700), `whales_all_v9_4320.png` (4320×5400).
 
 ## How did the world's airline network grow? (`airline_timeline`)
+- No flown distance is stored. The figure on a selected route is the great-circle between the endpoint coordinates, labelled as calculated, not the flown path.
+- Present-day country is the `cc` code already on each airport, named from OurAirports countries (public domain). The flag is today's flag of that country. Routes from before 1992 say the flag is today's, not the flag of the flight year. A code is shown beside the name only when it is a 3-letter code in the airport file.
 - Milestone routes 1914–2018 (22 segments): each verified against its Wikipedia article (link in each route's popup), accessed 2 Nov 2026. Milestones only, not complete networks.
 - 2014 network: OpenFlights routes.dat/airlines.dat (June 2014 snapshot, ODbL) https://openflights.org/data.php — 67,663 records → 18,763 undirected airport pairs; 1,460 records skipped (airport not matched).
 - Airport positions: OurAirports (public domain), incl. closed Croydon (GB-1268) and Kemayoran (ID-0231).
