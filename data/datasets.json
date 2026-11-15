@@ -66,6 +66,30 @@
    "file": "base/poland_powiaty.geojson",
    "key": "code",
    "name": "name"
+  },
+  "none": {
+   "label": "No polygon layer",
+   "file": "base/empty.geojson",
+   "key": "id",
+   "name": "name"
+  },
+  "melaka_dun": {
+   "label": "Melaka DUN seats (2018 delimitation)",
+   "file": "base/melaka_dun.geojson",
+   "key": "code_dun",
+   "name": "name"
+  },
+  "jerusalem_subquarters": {
+   "label": "Jerusalem CBS sub-quarters (Statistical Areas 2022, dissolved)",
+   "file": "base/jerusalem_subquarters.geojson",
+   "key": "code",
+   "name": "name"
+  },
+  "new_haven_city": {
+   "label": "City of New Haven, Connecticut",
+   "file": "base/new_haven_city.geojson",
+   "key": "id",
+   "name": "name"
   }
  },
  "overlayOutlines": {
@@ -2895,6 +2919,580 @@
     {"label": "Wikipedia, Pennsylvania Turnpike (opened 1 Oct 1940)", "url": "https://en.wikipedia.org/wiki/Pennsylvania_Turnpike"},
     {"label": "Natural Earth 10m roads (public domain)", "url": "https://www.naturalearthdata.com/downloads/10m-cultural-vectors/roads/"}
    ]
+  },
+  {
+   "id": "melaka_election",
+   "title": "How did Melaka vote in 2026 vs 2021?",
+   "category": "Elections",
+   "icon": "🗳️",
+   "region": "Malaysia",
+   "blurb": "All 28 DUN seats. Slide the year to see which seats changed hands.",
+   "base": "melaka_dun",
+   "file": "data/melaka_election.json",
+   "key": "code",
+   "view": [
+    [
+     2.0653,
+     101.9182
+    ],
+    [
+     2.5317,
+     102.6444
+    ]
+   ],
+   "showChoices": true,
+   "fields": [
+    {
+     "name": "coalition",
+     "label": "Winning coalition",
+     "type": "category",
+     "colors": {
+      "BN": "#1F3A93",
+      "PH": "#D7263D",
+      "PN": "#0F7A6C"
+     }
+    },
+    {
+     "name": "turnout_pct",
+     "label": "Turnout, %",
+     "type": "number",
+     "scale": [
+      "#F7FCF5",
+      "#C7E9C0",
+      "#74C476",
+      "#238B45",
+      "#00441B"
+     ],
+     "breaks": [
+      60,
+      65,
+      70,
+      75
+     ]
+    },
+    {
+     "name": "majority",
+     "label": "Majority, votes",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "year",
+     "label": "Year",
+     "default": 2026,
+     "noAll": true,
+     "slider": true
+    }
+   ],
+   "popup": [
+    "name",
+    "year",
+    "winner",
+    "party",
+    "coalition",
+    "majority",
+    "turnout_pct",
+    "electorate",
+    "valid_votes",
+    "flipped",
+    "flip_from",
+    "flip_to",
+    "source_url",
+    "notes"
+   ],
+   "sources": [
+    {
+     "label": "BERNAMA election desk, 16th Melaka state election official results (2026)",
+     "url": "https://election.bernama.com/prn/melaka/2026/keputusan/"
+    },
+    {
+     "label": "SPR Chairman Ramlan Harun, official statewide tally (RTM, 15 Nov 2026)",
+     "url": "https://berita.rtm.gov.my/mandat/senarai-berita-mandat/senarai-artikel/keputusan-rasmi-prn-melaka-bn-menang-21-kerusi-ph-4-pn-3-pengerusi-spr/"
+    },
+    {
+     "label": "Tindak Malaysia compilation of SPR 2021 Melaka results (CC BY 4.0)",
+     "url": "https://github.com/TindakMalaysia/HISTORICAL-ELECTION-RESULTS/blob/main/2021-MELAKA-STATE-ELECTIONS/MELAKA_2021_ELECTION_RESULTS.csv"
+    },
+    {
+     "label": "Boundaries: Malaysian Election Corpus (MECo) MLK_SE-15, 2018 DUN delimitation (CC0 1.0)",
+     "url": "https://github.com/Thevesh/paper-meco-maps/blob/main/data/geojson/elections/MLK_SE-15.geojson"
+    }
+   ],
+   "notes": "BN held 21 of 28 seats in both 2021 and 2026, keeping a two-thirds majority. Three seats changed hands: BN took Sungai Udang from PN; PAS (PN) took Paya Rumput from BN and Bukit Katil from PH. Turnout rose from 65.85% to 71.77%. In 2026 BN and PN ran as a pact (no BN-vs-PN fights), so coalition vote shares are not a straight comparison with 2021. The map colours the winning coalition of each seat, not vote share. 2026 figures are BERNAMA's seat-level SPR totals, checked against NST and Kosmo lists (two typographical conflicts resolved from turnout arithmetic; see source list). No DUN redelineation between the two elections."
+  },
+  {
+   "id": "meteorite_landings",
+   "title": "Where have meteorites fallen to Earth?",
+   "category": "Nature & space",
+   "icon": "☄️",
+   "region": "World",
+   "blurb": "31,963 landings from NASA's catalogue, sized by mass. Most dots in Antarctica are finds, not a higher fall rate.",
+   "base": "none",
+   "file": "data/meteorite_landings.json",
+   "key": "nasa_id",
+   "view": [
+    [
+     -85,
+     -170
+    ],
+    [
+     80,
+     180
+    ]
+   ],
+   "zoomOnFilter": false,
+   "showChoices": true,
+   "fields": [
+    {
+     "name": "fall",
+     "label": "Fell or found",
+     "type": "category",
+     "colors": {
+      "Fell": "#E23B2E",
+      "Found": "#4C6B8A"
+     }
+    },
+    {
+     "name": "mass_g",
+     "label": "Mass, grams",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      10,
+      100,
+      1000,
+      10000
+     ]
+    }
+   ],
+   "filters": [
+    {
+     "field": "fall",
+     "label": "Fell or found"
+    },
+    {
+     "field": "continent",
+     "label": "Continent"
+    }
+   ],
+   "popup": [
+    "name",
+    "fall",
+    "mass_label",
+    "year",
+    "recclass",
+    "country",
+    "nasa_id"
+   ],
+   "points": {
+    "file": "data/meteorite_landings.json",
+    "lat": "lat",
+    "lon": "lon",
+    "size": "mass_g",
+    "label": "name",
+    "popup": [
+     "name",
+     "fall",
+     "mass_label",
+     "year",
+     "recclass",
+     "country",
+     "nasa_id"
+    ],
+    "color": true,
+    "filter": true,
+    "legend": true,
+    "radiusMin": 2,
+    "radiusMax": 16
+   },
+   "sources": [
+    {
+     "label": "NASA Open Data, Meteorite Landings (Meteoritical Society catalogue snapshot, modified 31 Jan 2023)",
+     "url": "https://data.nasa.gov/dataset/meteorite-landings"
+    },
+    {
+     "label": "Country assignment: Natural Earth 10m admin-0 (public domain)",
+     "url": "https://www.naturalearthdata.com/"
+    }
+   ],
+   "notes": "31,963 mappable records from the NASA 'Meteorite Landings' snapshot (45,716 catalogue rows). 13,753 records are not plotted because they have no usable Earth coordinates (missing, 0,0, Yamato rows with latitude 0, or the Meridiani Planum Mars find); the dropped list is in the project files, not silently omitted from this count. 'Fell' means the fall was observed; 'Found' is a later recovery. Antarctica holds 69% of mapped finds because dark stones show up on ice, not because more meteorites land there. This is not a map of fall rate, and it is not the live Meteoritical Bulletin. Coordinates were rounded to 4 decimal degrees (~11 m) and the file is stored as a packed keys/rows table so the static site stays smaller; no records were dropped in that step. 118 records have no mass (n/a) and are drawn at the minimum size."
+  },
+  {
+   "id": "shipwrecks",
+   "title": "Where are the world's shipwrecks?",
+   "category": "Nature & space",
+   "icon": "⚓",
+   "region": "World",
+   "blurb": "10,267 unique NOAA ENC wrecks in US charted waters and 7,073 EMODnet heritage wrecks in parts of Europe. Coverage is not worldwide.",
+   "base": "none",
+   "file": "data/shipwrecks.json",
+   "key": "id",
+   "view": [
+    [
+     -75,
+     -170
+    ],
+    [
+     75,
+     40
+    ]
+   ],
+   "zoomOnFilter": true,
+   "fields": [
+    {
+     "name": "source",
+     "label": "Source layer",
+     "type": "category",
+     "colors": {
+      "NOAA ENC (US charted waters)": "#1F4E79",
+      "EMODnet heritage shipwrecks": "#C45C26"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "source",
+     "label": "Source"
+    },
+    {
+     "field": "country",
+     "label": "Country"
+    }
+   ],
+   "popup": [
+    "name",
+    "source",
+    "kind",
+    "sink_year",
+    "country",
+    "us_state",
+    "detail"
+   ],
+   "points": {
+    "file": "data/shipwrecks.json",
+    "lat": "lat",
+    "lon": "lon",
+    "size": "dot",
+    "label": "name",
+    "popup": [
+     "name",
+     "source",
+     "kind",
+     "sink_year",
+     "country",
+     "us_state",
+     "detail"
+    ],
+    "color": true,
+    "filter": true,
+    "legend": true,
+    "radiusMin": 3,
+    "radiusMax": 3
+   },
+   "sources": [
+    {
+     "label": "NOAA ENC Direct wreck points (harbour, approach, overview and berthing bands; downloaded 10–11 Nov 2026)",
+     "url": "https://gis.charttools.noaa.gov/arcgis/rest/services/encdirect/enc_harbour/MapServer"
+    },
+    {
+     "label": "EMODnet Human Activities, Heritage Shipwrecks, 9 Apr 2025 (CC BY 4.0)",
+     "url": "https://ows.emodnet-humanactivities.eu/geonetwork/srv/api/records/e965088b-a265-4517-84df-c49b156af8a7"
+    }
+   ],
+   "notes": "This is not a world wreck census. The open data that could be verified covers US charted waters (10,267 unique NOAA ENC points, deduplicated to ~11 m across scale bands) and a heritage extract for parts of Europe (7,073 EMODnet sites, mostly France and Ireland). ENC coastal and general bands were down at download, and the retired AWOIS wreck service was not available, so US coverage is incomplete. EMODnet's United Kingdom count is mostly protected wrecks, not every wreck in UK waters. Most ENC points have no name, so famous wrecks are not identified by guessing. RMS Titanic and SS Andrea Doria are not plotted: no official public decimal-degree fix was in these two sources. Coordinates were rounded to 4 decimal degrees and the file is stored as a packed keys/rows table; no records were dropped in that step. 'not on land' means the point sits outside a Natural Earth land polygon (typical for offshore wrecks)."
+  },
+  {
+   "id": "jerusalem_population",
+   "title": "How many people live in each part of Jerusalem?",
+   "category": "Population & ethnicity",
+   "icon": "🕌",
+   "region": "Jerusalem",
+   "blurb": "57 CBS sub-quarters, coloured by end-2024 population. Main religion is the 2022 Census label, not a headcount.",
+   "base": "jerusalem_subquarters",
+   "file": "data/jerusalem_population.json",
+   "key": "code",
+   "view": [
+    [
+     31.6957,
+     35.0708
+    ],
+    [
+     31.897,
+     35.2794
+    ]
+   ],
+   "showChoices": true,
+   "fields": [
+    {
+     "name": "pop_2024",
+     "label": "Population (end of 2024)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": [
+      10000,
+      20000,
+      35000,
+      50000
+     ]
+    },
+    {
+     "name": "main_religion_2022",
+     "label": "Main religion (2022 Census)",
+     "type": "category",
+     "colors": {
+      "Jewish": "#3B6FB6",
+      "Muslim": "#2E9E4F",
+      "Mixed": "#8B6B4A"
+     }
+    },
+    {
+     "name": "density_2024_per_km2",
+     "label": "Density, people per km² (2024)",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": "quantile"
+    }
+   ],
+   "filters": [
+    {
+     "field": "main_religion_2022",
+     "label": "Main religion"
+    }
+   ],
+   "popup": [
+    "name",
+    "pop_2024",
+    "pop_2022_census",
+    "area_km2",
+    "density_2024_per_km2",
+    "main_religion_2022",
+    "religion_share_jewish",
+    "religion_share_muslim",
+    "religion_share_christian",
+    "religion_share_other",
+    "religion_note"
+   ],
+   "sources": [
+    {
+     "label": "Israel CBS, Statistical Areas 2022 demographic data for 2024 (Pop_Total) and 2022 Census Religion_Stat",
+     "url": "https://www.cbs.gov.il/en/Surveys/Pages/Population-Census.aspx"
+    },
+    {
+     "label": "Jerusalem Institute for Policy Research, Statistical Yearbook / Al Netuneich Yerushalayim 2026 (names and city-wide religion)",
+     "url": "https://jerusaleminstitute.org.il/en/yearbook/"
+    }
+   ],
+   "notes": "Geometry follows the Jerusalem municipal boundary as published by Israel's CBS, including East Jerusalem. The status of East Jerusalem is disputed. Population is end of 2024 (CBS statistical-area sum 1,050,150). Main religion is the 2022 Census classification of each statistical area, not a headcount of residents by religion; neighbourhood religion shares are not published and are marked n/a. The Old City sub-quarter is Mixed. Inside it, CBS classifies the Armenian Quarter (SA 2513, 2,773 people at end-2024) as Jewish; that is the source label, not an ethnic count, and religion shares are n/a. City-wide religion among 997,900 Israeli residents (JIPR, end-2024): Jews 584,700; Muslims 387,900; Christians 15,500; not classified 9,600. Foreigners 52,300, religion n/a."
+  },
+  {
+   "id": "new_haven_pizza",
+   "title": "Where are New Haven's pizza shops?",
+   "category": "Food",
+   "icon": "🍕",
+   "region": "New Haven, CT",
+   "blurb": "38 pizza places inside the city limit from OpenStreetMap, coloured by style. Opening year only when a source exists.",
+   "base": "none",
+   "file": "data/new_haven_pizza.json",
+   "key": "name",
+   "view": [
+    [
+     41.2381,
+     -73.0091
+    ],
+    [
+     41.3589,
+     -72.8498
+    ]
+   ],
+   "zoomOnFilter": true,
+   "fields": [
+    {
+     "name": "pizza_style",
+     "label": "Pizza style",
+     "type": "category",
+     "colors": {
+      "New Haven apizza": "#C2410C",
+      "Neapolitan": "#7C3AED",
+      "Greek-style": "#0D9488",
+      "Chain / fast food": "#64748B",
+      "Other local": "#D97706"
+     }
+    }
+   ],
+   "filters": [
+    {
+     "field": "pizza_style",
+     "label": "Style"
+    }
+   ],
+   "popup": [
+    "name",
+    "pizza_style",
+    "year_opened",
+    "address",
+    "year_source_label",
+    "year_source_url",
+    "osm_url",
+    "website"
+   ],
+   "points": {
+    "file": "data/new_haven_pizza.json",
+    "lat": "lat",
+    "lon": "lon",
+    "size": "dot",
+    "label": "name",
+    "popup": [
+     "name",
+     "pizza_style",
+     "year_opened",
+     "address",
+     "year_source_label",
+     "year_source_url",
+     "osm_url",
+     "website"
+    ],
+    "color": true,
+    "filter": true,
+    "legend": true,
+    "radiusMin": 8,
+    "radiusMax": 8
+   },
+   "outlines": [
+    {
+     "base": "new_haven_city",
+     "label": "City limit",
+     "style": {
+      "color": "#1E2430",
+      "weight": 2
+     },
+     "default": true
+    }
+   ],
+   "sources": [
+    {
+     "label": "OpenStreetMap pizza shops inside City of New Haven (relation 270191); © OpenStreetMap contributors (ODbL)",
+     "url": "https://www.openstreetmap.org/copyright"
+    },
+    {
+     "label": "City boundary: OSM relation 270191 via Nominatim",
+     "url": "https://www.openstreetmap.org/relation/270191"
+    }
+   ],
+   "notes": "Contains information from OpenStreetMap, which is made available under the Open Database License (ODbL). 38 shops present in the Connecticut OSM extract (retrieved 9 Nov 2026) that fall inside the city boundary. Style is a working classification (apizza / Neapolitan / Greek-style / chain / other local), not a formal culinary survey. Opening year is shown only when a cited source exists (13 of 38 shops); otherwise n/a. Zuppardi's Apizza is a classic New Haven-style shop that now stands in West Haven, outside the city limit, and is not plotted."
+  },
+  {
+   "id": "us_passports",
+   "title": "Which US states have the most estimated active passports?",
+   "category": "Travel",
+   "icon": "🛂",
+   "region": "USA",
+   "blurb": "An estimate: each state's passport issuances (books + cards) summed over FY2016–FY2025, not a count of valid passports.",
+   "base": "us_states",
+   "file": "data/us_passports.json",
+   "key": "state",
+   "view": [
+    [
+     24,
+     -125
+    ],
+    [
+     50,
+     -66
+    ]
+   ],
+   "showChoices": true,
+   "fields": [
+    {
+     "name": "est_active_passports",
+     "label": "Estimated active passports (FY2016–FY2025 issuances)",
+     "type": "number",
+     "scale": [
+      "#F7FBFF",
+      "#C6DBEF",
+      "#6BAED6",
+      "#2171B5",
+      "#08306B"
+     ],
+     "breaks": "quantile"
+    },
+    {
+     "name": "per_100_residents",
+     "label": "Estimated active passports per 100 residents",
+     "type": "number",
+     "scale": [
+      "#FFF5EB",
+      "#FDD0A2",
+      "#FD8D3C",
+      "#D94801",
+      "#7F2704"
+     ],
+     "breaks": [
+      30,
+      45,
+      55,
+      70
+     ]
+    }
+   ],
+   "filters": [
+    {
+     "field": "region13",
+     "label": "Region",
+     "from": "base"
+    }
+   ],
+   "popup": [
+    "name",
+    "est_active_passports",
+    "per_100_residents",
+    "pop_2024"
+   ],
+   "sources": [
+    {
+     "label": "U.S. Department of State, passport issuances by state, FY2016–FY2025 (books + cards)",
+     "url": "https://travel.state.gov/content/travel/en/about-us/reports-and-statistics.html"
+    },
+    {
+     "label": "U.S. Department of State, valid U.S. passports in circulation (national only), FY2025 = 183,170,240",
+     "url": "https://travel.state.gov/content/travel/en/about-us/reports-and-statistics.html"
+    },
+    {
+     "label": "U.S. Census Bureau, Vintage 2024 state population estimates (July 1, 2024)",
+     "url": "https://www.census.gov/programs-surveys/popest.html"
+    },
+    {
+     "label": "State boundaries: Census Bureau cartographic boundaries 2023 (public domain)",
+     "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+    }
+   ],
+   "notes": "This is an estimate, not an official count of valid passports by state. The State Department publishes valid passports in circulation only for the whole country (FY2025: 183,170,240). The map sums each state's published issuances (books + cards) for FY2016–FY2025. The 50-state sum is 171.72 million, 93.75% of that national stock; with DC it is 173.98 million (94.98%). The sum overcounts a true stock because child passports last 5 years, renewals are counted again, a book and a card both count, people move between states, and deaths are not removed. DC's very high per-resident figure reflects issuances processed there, not that every resident holds three passports. Territories are not in this file. No official public counts exist by congressional district or county; modelled commercial estimates were not used."
   }
  ],
  "categories": [
@@ -2905,7 +3503,11 @@
   "Regions",
   "History & land",
   "Aviation",
-  "Roads"
+  "Roads",
+  "Elections",
+  "Nature & space",
+  "Food",
+  "Travel"
  ],
  "categoryInfo": {
   "Languages": {
@@ -2947,6 +3549,26 @@
    "icon": "🛣️",
    "color": "#C4A574",
    "blurb": "How the U.S. road and highway network grew"
+  },
+  "Elections": {
+   "icon": "🗳️",
+   "color": "#1F3A93",
+   "blurb": "Who won, seat by seat"
+  },
+  "Nature & space": {
+   "icon": "☄️",
+   "color": "#3D5A80",
+   "blurb": "Meteorites, wrecks, and other marks on the planet"
+  },
+  "Food": {
+   "icon": "🍕",
+   "color": "#C2410C",
+   "blurb": "Where to find a city's signature food"
+  },
+  "Travel": {
+   "icon": "🛂",
+   "color": "#1B4F72",
+   "blurb": "Passports and how people move"
   }
  }
 }

@@ -15,6 +15,10 @@ Everything on screen (dataset picker, "Colour by", filters, legend, popups, sour
 | `base/canada_provinces.geojson` | Props: `code` (CA-QC…), `name` |
 | `base/adm/{ISO3}.geojson` + `index.json` | geoBoundaries ADM2 per country (ADM1 where no ADM2). Props: `id` (shapeID), `name`, `iso3`, `level`. Index: level, units, bytes, bbox, licence, source, year. Loaded only when zoomed in (≥5) and in view. |
 | `base/adm1/{ISO3}.geojson` | ADM1 for MYS, IDN (same props) |
+| `base/melaka_dun.geojson` | Melaka 2018 DUN seats. Props: `code_dun`, `name` |
+| `base/jerusalem_subquarters.geojson` | CBS sub-quarters, WGS84. Props: `code`, `name` |
+| `base/new_haven_city.geojson` | City of New Haven outline (OSM, ODbL) |
+| `base/empty.geojson` | Empty FeatureCollection, used by the `none` base for points-only maps |
 | `data/*.json` | one file per dataset (array of row objects) |
 | `data/datasets.json` | the manifest |
 | `palette.json` | family colours, per-language colours (US counties + world), no-data grey |
@@ -44,7 +48,9 @@ Everything on screen (dataset picker, "Colour by", filters, legend, popups, sour
 - `type:"category"`: `colors` maps values to colours; unmapped values get automatic colours.
 - `filters`: dropdowns built from the distinct values. `from:"base"` filters on a base-layer property (e.g. `region13`, `state`, `continent`). Several rows per area (e.g. per year)? Add a filter with `noAll:true` so one row per area remains.
 - `overlays`: ids of other datasets drawn on top (e.g. Canada provinces, 13 Nations outlines).
-- `points`: `{"file","lat","lon","size","label","popup"}` for a proportional-circle layer.
+- `points`: `{"file","lat","lon","size","label","popup"}` for a proportional-circle layer. Optional: `color:true` colours each point by the selected "Colour by" field, `filter:true` applies the dataset filters to the points, `legend:true` builds the legend from the points (use with base `none` for a points-only map), `radiusMin` / `radiusMax` set the circle-size range.
+- Large point files may be stored packed as `{"keys":[...],"rows":[[...],...]}`. `loadRows` expands that to ordinary row objects. Coordinates may be rounded; records must not be dropped silently — say so in `notes`.
+- Points-only maps use `"base":"none"` (`base/empty.geojson`). The world basemap underneath still draws.
 - New base layer: add it under `bases` (`file`, `key`, `name`; `object` for TopoJSON; `tiled`+`pattern` for per-country files).
 3. Reload. The URL hash (`#ds=…&field=…&f_year=…`) is shareable.
 

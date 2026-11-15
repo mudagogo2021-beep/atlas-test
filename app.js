@@ -1,6 +1,6 @@
 // Generic atlas: everything is driven by data/datasets.json (see README).
 (async function(){
-const V='20261109ab', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
+const V='20261115a', bust=u=>u+(String(u).includes('?')?'&':'?')+'v='+V;
 const $=s=>document.querySelector(s), J=u=>fetch(bust(u)).then(r=>{if(!r.ok)throw new Error(u+' '+r.status);return r.json()});
 const M=await J('data/datasets.json'), PAL=await J('palette.json').catch(()=>({})), POST=await J('data/posters.json').catch(()=>({posters:[]})), CTY=await J('data/country_flags.json').catch(()=>({}));
 const posters=POST.posters||[];
@@ -15,7 +15,7 @@ async function loadBase(id,iso){const b=M.bases[id];const k=id+(iso||'');if(cach
   const url=b.tiled?b.pattern.replace('{iso3}',iso):b.file;let g=await J(url);
   if(url.endsWith('.topojson'))g=topojson.feature(g,g.objects[b.object||Object.keys(g.objects)[0]]);return cache[k]=g}
 async function loadRows(f){if(cache[f])return cache[f];let r;
-  if(f.endsWith('.csv')){const t=await fetch(bust(f)).then(r=>r.text());const[h,...ls]=t.trim().split(/\r?\n/).map(l=>l.split(','));r=ls.map(l=>Object.fromEntries(h.map((k,i)=>[k,isNaN(+l[i])||l[i]===''?l[i]:+l[i]])))}else r=await J(f);return cache[f]=r}
+  if(f.endsWith('.csv')){const t=await fetch(bust(f)).then(r=>r.text());const[h,...ls]=t.trim().split(/\r?\n/).map(l=>l.split(','));r=ls.map(l=>Object.fromEntries(h.map((k,i)=>[k,isNaN(+l[i])||l[i]===''?l[i]:+l[i]])))}else{r=await J(f);if(r&&Array.isArray(r.keys)&&Array.isArray(r.rows))r=r.rows.map(row=>Object.fromEntries(r.keys.map((k,i)=>[k,row[i]])))}return cache[f]=r}
 // background world
 const world=await loadBase('world');L.geoJSON(world,{style:{color:'#fff',weight:.6,fillColor:'#EDEDEA',fillOpacity:1},interactive:false}).addTo(map);
 // UI
@@ -84,23 +84,31 @@ function render(){hideCard(true);if(!D.lines)map.getContainer().classList.remove
   const sel=[...document.querySelectorAll('#filters select')].map(s=>({f:s.dataset.f,base:!!s.dataset.from,v:s.value})).filter(s=>s.v!=='');
   const FDc=Object.fromEntries((D.filters||[]).map(x=>[x.field,x]));const pass=r=>sel.every(s=>s.base||(FDc[s.f]&&FDc[s.f].cumulative===true?(f.noSlider?true:(r[s.f]!=null&&+r[s.f]<=+s.v)):String(r[s.f])===s.v));const rows=D._rows.filter(pass);const idx=indexRows(rows);const idxAll=indexRows(D._rows);
   const feats=D._base.features.map(ft=>({ft,r:idx.get(keyOf(ft.properties[bk.key]))})).filter(o=>o.r&&sel.every(s=>!s.base||String(o.ft.properties[s.f])===s.v));
-  const C=colorer(f,feats.map(o=>o.r[f.name]));const hk=v=>f.type==='category'?v:(typeof v==='number'?C.cls(v):null);
-  if(layer)map.removeLayer(layer);
-  const drawn=new Set(feats.map(o=>o.ft));
-  layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const o=feats.find?null:null;const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
+  const pt=D.points||{},pointMode=!!(pt.legend||(pt.color&&!(D._base.features||[]).length));
+  const C=colorer(f,pointMode?rows.map(r=>r[f.name]):feats.map(o=>o.r[f.name]));const hk=v=>f.type==='category'?v:(typeof v==='number'?C.cls(v):null);
+  if(layer)map.removeLayer(layer);layer=null;
+  if((D._base.features||[]).length){const drawn=new Set(feats.map(o=>o.ft));
+  layer=L.geoJSON({type:'FeatureCollection',features:D._base.features},{style:ft=>{const r=drawn.has(ft)?idx.get(keyOf(ft.properties[bk.key])):null;const v=r?r[f.name]:null;const off=r&&hidden.has(hk(v));
       return{color:/adm/.test(D.base)?'#7A6F6A':'#fff',weight:D.base==='world'?.6:/adm/.test(D.base)?.5:.3,fillColor:r&&!off?C.fn(v):NODATA,fillOpacity:r&&!off?1:.55}},
     onEachFeature:(ft,l)=>{const P=()=>popup(D,{...ft.properties,...(idxAll.get(keyOf(ft.properties[bk.key]))||{})});l.bindPopup(P);
-      l.on('mouseover',()=>{if(!matchMedia('(hover:hover)').matches)return;hov(l);if(!pinned)showCard(P(),false)});l.on('mouseout',()=>{unhov(l);if(!pinned)hideCard()})}}).addTo(map);
+      l.on('mouseover',()=>{if(!matchMedia('(hover:hover)').matches)return;hov(l);if(!pinned)showCard(P(),false)});l.on('mouseout',()=>{unhov(l);if(!pinned)hideCard()})}}).addTo(map)}
   overlays.forEach(o=>{if(o._oi){if(f.noSlider){map.hasLayer(o)&&map.removeLayer(o);return}if(!map.hasLayer(o))o.addTo(map);const k=M.bases[o._od.base].key;o.setStyle(ft=>{const r=o._oi.get(String(ft.properties[k]));if(!r)return{fillOpacity:0,opacity:.35,color:'#fff',weight:.4};const ok=pass(r)&&!hidden.has(r[f.name]);return{color:'#fff',weight:.4,fillColor:ok?o._oc.fn(r[f.name]):NODATA,fillOpacity:ok?1:.55,opacity:1}})}o.bringToFront()});outl.forEach(o=>o.on&&o.g.bringToFront());
   const sk=D.id+JSON.stringify(sel),zf=sk!==lastSel;lastSel=sk;
   if(zf&&sel.length&&D.zoomOnFilter!==false&&feats.length&&feats.length<D._base.features.length*0.5)map.fitBounds(L.geoJSON({type:'FeatureCollection',features:feats.map(o=>o.ft)}).getBounds(),{padding:[20,20],maxZoom:9});
   if(pts)map.removeLayer(pts);pts=null;
-  if(D.points)loadRows(D.points.file).then(P=>{const mx=Math.max(...P.map(p=>p[D.points.size]||1));pts=L.layerGroup(P.map(p=>L.circleMarker([p[D.points.lat],p[D.points.lon]],{radius:4+14*Math.sqrt((p[D.points.size]||1)/mx),color:'#3A1407',weight:1,fillColor:'#fff',fillOpacity:.8}).bindPopup(popup({popup:D.points.popup,key:D.points.label},p)))).addTo(map)});
+  const drawPts=P=>{const P0=pt.filter?P.filter(pass):P;const mx=Math.max(1,...P0.map(p=>+p[pt.size]||1));const r0=pt.radiusMin??4,r1=pt.radiusMax??18;
+    pts=L.layerGroup(P0.map(p=>{const v=p[f.name];if(pt.color&&hidden.has(hk(v)))return null;const lat=p[pt.lat],lon=p[pt.lon];if(lat==null||lon==null||lat==='n/a'||lon==='n/a')return null;
+      return L.circleMarker([lat,lon],{radius:r0+(r1-r0)*Math.sqrt((+p[pt.size]||1)/mx),color:'#3A1407',weight:pt.color?.5:1,fillColor:pt.color?C.fn(v):'#fff',fillOpacity:pt.color?.75:.8}).bindPopup(()=>popup({popup:pt.popup,key:pt.label},p))}).filter(Boolean)).addTo(map);
+    if(pointMode&&zf&&sel.length&&D.zoomOnFilter!==false&&P0.length)map.fitBounds(L.latLngBounds(P0.map(p=>[p[pt.lat],p[pt.lon]])),{padding:[30,30],maxZoom:14})};
+  if(pt.file){if(pt.file===D.file)drawPts(pt.filter?rows:D._rows);else loadRows(pt.file).then(drawPts)}
   // legend
   const lg=$('#legend');lg.innerHTML=`<h3>${esc(f.label)}</h3>`;
   C.items.filter(i=>i.n>0||f.type!=='category').forEach(i=>{const d=document.createElement('div');d.className='row'+(hidden.has(i.key)?' off':'');
     d.innerHTML=`<span class="sw" style="background:${i.color}"></span><span>${esc(i.label)} <small>(${i.n})</small></span>`;d.onclick=()=>{hidden.has(i.key)?hidden.delete(i.key):hidden.add(i.key);render()};lg.append(d)});
-  const nd=D._base.features.length-feats.length;lg.insertAdjacentHTML('beforeend',`<div class="row"><span class="sw" style="background:${NODATA}"></span><span>No data / filtered out <small>(${nd})</small></span></div><p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${feats.length} areas shown.</p>`);
+  const nShown=pointMode?rows.filter(r=>!hidden.has(hk(r[f.name]))).length:feats.length;
+  const nd=pointMode?(D._rows.length-rows.length):((D._base.features||[]).length-feats.length);
+  const unit=pointMode?'points':'areas';
+  lg.insertAdjacentHTML('beforeend',`<div class="row"><span class="sw" style="background:${NODATA}"></span><span>No data / filtered out <small>(${nd})</small></span></div><p style="font-size:11px;color:#5A6270">Tap a legend row to hide it. ${nShown} ${unit} shown.</p>`);
   const h=new URLSearchParams({ds:D.id,field:f.name});document.querySelectorAll('#filters select').forEach(s=>s.value&&h.set('f_'+s.dataset.f,s.value));outl.forEach(o=>h.set('o_'+o.base,o.on?'1':'0'));history.replaceState(null,'','#'+h)}
 
 // generic origin–destination lines layer (manifest "lines": {airports, from, to, size})
@@ -471,7 +479,7 @@ const zc=()=>{const z=map.getZoom(),c=map.getContainer().classList;c.toggle('low
 // scale bar (mi + km)
 L.control.scale({position:innerWidth<=760?'topleft':'bottomleft',metric:true,imperial:true,maxWidth:130}).addTo(map);
 // place search: local index of base units only (no geocoder)
-const SRC=[['world'],['us_states'],['us_counties'],['uk_lad2021'],['poland_powiaty'],['adm1','MYS'],['adm','MYS'],['adm','SGP'],['adm1','IDN'],['adm','IDN'],['adm','FRA']];
+const SRC=[['world'],['us_states'],['us_counties'],['uk_lad2021'],['poland_powiaty'],['melaka_dun'],['jerusalem_subquarters'],['adm1','MYS'],['adm','MYS'],['adm','SGP'],['adm1','IDN'],['adm','IDN'],['adm','FRA']];
 const CN={MYS:'Malaysia',SGP:'Singapore',IDN:'Indonesia',FRA:'France'};let SI=null,hl=null;const seen=new Set();
 function addIdx(id,iso,g){const k=id+(iso||'');if(seen.has(k))return;seen.add(k);const lv={world:'Country',us_states:'US state',us_counties:'US county',adm1:'Province / state'}[id]||'District';
   g.features.forEach(ft=>{const p=ft.properties,n=p.name;if(!n)return;let sub=id==='us_counties'?(p.state_name||p.state):id==='us_states'?'USA':iso?(CN[iso]||admIdx[iso]&&iso||iso):(p.continent||'');

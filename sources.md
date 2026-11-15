@@ -141,3 +141,39 @@
 - Dropped as not confirmed in a source this session: AUT, CHE, IND, ZAF, BRA, RUS, Quebec, Ontario, Nova Scotia, New Brunswick, Queensland, Tasmania, Western Australia.
 - Boundaries: geoBoundaries ADM1 AUS/GBR (CC BY 4.0).
 - Added fields: government (CIA World Factbook "Government type", factbook.json mirror updated 11 Sep 2026; grouped into 9 classes), colonial/imperial ruler + independence (ICOW Colonial History v1.1, Hensel), title guarantee (Torrens title / HM Land Registry = state; US = private title insurance per Wikipedia Title insurance; Canada mixed). "Deeds under colonial rule" and "first deeds issued by" are inferred by comparing the register year with the ICOW independence year.
+
+## How did Melaka vote in 2026 vs 2021? (`melaka_election`)
+- 2026 seat results: BERNAMA election desk (SPR figures) — https://election.bernama.com/prn/melaka/2026/keputusan/
+- Statewide 2026 tally: SPR Chairman Datuk Seri Ramlan Harun, quoted by RTM, 15 Nov 2026 — https://berita.rtm.gov.my/mandat/senarai-berita-mandat/senarai-artikel/keputusan-rasmi-prn-melaka-bn-menang-21-kerusi-ph-4-pn-3-pengerusi-spr/
+- Cross-checks: NST official full results — https://www.nst.com.my/news/nation/2026/11/1577894/official-full-results-16th-melaka-state-election ; Kosmo official list — https://www.kosmo.com.my/2026/11/14/prn-melaka-senarai-penuh-keputusan-rasmi/
+- 2021 seat results: Tindak Malaysia compilation of SPR Form 14 / Form 15 (CC BY 4.0; credit Tindak Malaysia and SPR) — https://github.com/TindakMalaysia/HISTORICAL-ELECTION-RESULTS/blob/main/2021-MELAKA-STATE-ELECTIONS/MELAKA_2021_ELECTION_RESULTS.csv
+- Boundaries: Malaysian Election Corpus (MECo) `MLK_SE-15.geojson`, 2018 Peninsular DUN delimitation, CC0 1.0. Cite: Thevananthan, T. and Chacko, D. P., The Malaysian Election Corpus (MECo). — https://github.com/Thevesh/paper-meco-maps/blob/main/data/geojson/elections/MLK_SE-15.geojson
+- Note: No DUN redelineation between 2021 and 2026. In 2026 BN and PN ran as a pact, so coalition vote shares are not directly comparable. Three seats flipped: Sungai Udang PN→BN, Paya Rumput BN→PN, Bukit Katil PH→PN.
+
+## Where have meteorites fallen to Earth? (`meteorite_landings`)
+- NASA Open Data, “Meteorite Landings” (legacy `gh4g-9sfh`), Meteoritical Society catalogue snapshot, modified 31 Jan 2023; CSV downloaded 10 Nov 2026 — https://data.nasa.gov/dataset/meteorite-landings
+- Country assignment: Natural Earth 10m admin-0 (public domain) — https://www.naturalearthdata.com/
+- 45,716 catalogue records; 31,963 mapped; 13,753 dropped for unusable Earth coordinates (missing, 0,0, Yamato latitude 0, or Meridiani Planum on Mars). Dropped records are listed in the project files.
+- Atlas layer: all 31,963 mapped records kept. Coordinates rounded to 4 decimal degrees (~11 m). File stored as a packed `{keys, rows}` table to shrink the static download; no records dropped in that step.
+
+## Where are the world's shipwrecks? (`shipwrecks`)
+- NOAA ENC Direct wreck points, bands harbour / approach / overview / berthing, downloaded 10–11 Nov 2026, then deduplicated to 4 decimal degrees: 10,267 unique points — https://gis.charttools.noaa.gov/arcgis/rest/services/encdirect/enc_harbour/MapServer
+- EMODnet Human Activities, Heritage Shipwrecks, 9 Apr 2025, 7,073 records, CC BY 4.0 (EMODnet Human Activities / AND-International) — https://ows.emodnet-humanactivities.eu/geonetwork/srv/api/records/e965088b-a265-4517-84df-c49b156af8a7
+- Note: Not a world wreck census. ENC coastal and general bands were down at download; AWOIS is retired. EMODnet is a heritage extract (France and Ireland dominate; UK count is mostly protected wrecks). Titanic and Andrea Doria are not plotted (no official public coordinate in these sources). Coordinates rounded to 4 decimal degrees; file stored as packed `{keys, rows}`; no records dropped in that step.
+
+## How many people live in each part of Jerusalem? (`jerusalem_population`)
+- Israel Central Bureau of Statistics, Statistical Areas 2022, demographic data for 2024 (`Pop_Total`) and 2022 Census (`Religion_Stat`). Geometry reprojected from Israel TM (EPSG:2039) to WGS84 for the atlas. Credit: CBS; this is not an official CBS product. — https://www.cbs.gov.il/en/Surveys/Pages/Population-Census.aspx
+- Names and city-wide religion: Jerusalem Institute for Policy Research, Statistical Yearbook of Jerusalem (Table I/3 names; Table III/10 religion) and *Al Netuneich Yerushalayim* 2026 — https://jerusaleminstitute.org.il/en/yearbook/
+- Note: Uses the CBS municipal boundary, including East Jerusalem; the status of East Jerusalem is disputed. Neighbourhood religion shares are not published (n/a). Main religion is a 2022 Census classification, not a headcount. The Old City sub-quarter is Mixed. CBS classifies the Armenian Quarter (SA 2513) as Jewish; religion shares n/a.
+
+## Where are New Haven's pizza shops? (`new_haven_pizza`)
+- Shop locations and the city boundary (OSM relation 270191): OpenStreetMap, © OpenStreetMap contributors, Open Database License (ODbL) — https://www.openstreetmap.org/copyright
+- Connecticut Geofabrik extract, retrieved 9 Nov 2026. 38 shops inside the City of New Haven.
+- Opening years only where a cited source exists (13 of 38); otherwise n/a. Style is a working classification, not a formal culinary survey. Zuppardi's Apizza (West Haven) is outside the city limit and is not plotted.
+
+## Which US states have the most estimated active passports? (`us_passports`)
+- U.S. Department of State, passport issuances by state or territory, FY2016–FY2025 (books + cards), recovered from the Reports and Statistics page (including Wayback Machine snapshots) — https://travel.state.gov/content/travel/en/about-us/reports-and-statistics.html
+- U.S. Department of State, valid U.S. passports in circulation, national only, FY2025 = 183,170,240 — same page
+- Population: U.S. Census Bureau Vintage 2024 state estimates, 1 July 2024 — https://www.census.gov/programs-surveys/popest.html
+- State boundaries: Census Bureau cartographic boundaries 2023 (public domain)
+- Note: The mapped value is an estimate (the 10-year issuance sum), not valid passports in circulation by state. The 50-state sum is 171.72 million (93.75% of the national valid-stock figure). The sum overcounts a true stock (5-year child passports, renewals, book + card, movers, deaths). DC's per-resident figure reflects issuances processed there. No official public counts exist by congressional district or county.
